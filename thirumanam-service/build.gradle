@@ -1,0 +1,53 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+	baseName = 'thirumanam-service'
+	version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+	//Compile Dependencies
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile("org.springframework.boot:spring-boot-starter-data-mongodb") //Added for MongoDB
+	//compile("com.mysema.querydsl:querydsl-mongodb") //Query DSL
+	//compile("com.mysema.querydsl:querydsl-apt") //Query DSL
+	
+	//Log4j 
+	compile ('org.apache.logging.log4j:log4j-api')
+  	compile ('org.apache.logging.log4j:log4j-core')
+  	
+  	//Query DSL
+  	//compile("com.querydsl:querydsl-core")
+    //compile("com.querydsl:querydsl-jpa")
+    //querydslapt("com.querydsl:querydsl-apt")
+	//compile group: 'com.querydsl', name: 'querydsl-mongodb', version: '4.0.0'
+	
+	
+	//mongodb driver
+	compile ('org.mongodb:mongodb-driver')
+    
+	
+	//Test Dependencies
+	testCompile('org.springframework.boot:spring-boot-starter-test') // For TEST
+}
