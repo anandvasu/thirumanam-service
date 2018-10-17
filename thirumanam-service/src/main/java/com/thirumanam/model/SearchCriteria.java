@@ -4,12 +4,31 @@ public class SearchCriteria {
 
 	private int ageGreater;
 	private int ageLess;
-	private String gender;
+	private String gender;	
 	private String maritalStatus;
 	private String education;
 	private String city;
 	private String state;
 	private String country;
+	
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	public String getMaritalStatus() {
+		return maritalStatus;
+	}
+	public void setMaritalStatus(String maritalStatus) {
+		this.maritalStatus = maritalStatus;
+	}
+	public String getEducation() {
+		return education;
+	}
+	public void setEducation(String education) {
+		this.education = education;
+	}
 	
 	public int getAgeGreater() {
 		return ageGreater;
