@@ -23,7 +23,14 @@ public class User {
 	private int height;
 	private int weight;
 	private String education;
+	private String thumbImage;
 	
+	public String getThumbImage() {
+		return thumbImage;
+	}
+	public void setThumbImage(String thumbImage) {
+		this.thumbImage = thumbImage;
+	}
 	public String getStatus() {
 		return status;
 	}

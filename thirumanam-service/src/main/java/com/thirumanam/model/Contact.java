@@ -2,6 +2,7 @@ package com.thirumanam.model;
 
 public class Contact {
 	
+	private String id;
 	private String name;
 	private String doorNumber;
 	private String addressLine1;
@@ -18,6 +19,12 @@ public class Contact {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getDoorNumber() {
 		return doorNumber;
