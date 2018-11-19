@@ -2,40 +2,104 @@ package com.thirumanam.model;
 
 public class User {
 	
+	private String id;	
 	private String firstName;
+	private String lastName;	
 	private int age;	
 	private int bDay;
 	private int bMonth;
 	private int bYear;
-	private String lastName;	
-	private String dob;
-	private String country;
-	private String state;
-	private String city;
-	private String mCountryCode;
-	private String mobile;
 	private String email;
 	private String password;
 	private String gender;
 	private String registerBy;
 	private String registerByName;
-	private String status;
+	private String dob;	
+	
+	private String country;
+	private String state;
+	private String district;		
+	private String city;
+	
+	private String mStatus;	
+	private String familyType;
+	private String familyValue;
+	private String disabled;	
+	private String disInfo;
 	private int height;
 	private int weight;
-	private String education;
-	private String thumbImage;
 	
-	public String getThumbImage() {
-		return thumbImage;
+	private String education;
+	private String employment;
+	private String income;
+	
+	private String mCountryCode;
+	private String mobile;		
+	
+	private String status;	
+	private String image;
+	
+	public String getmStatus() {
+		return mStatus;
 	}
-	public void setThumbImage(String thumbImage) {
-		this.thumbImage = thumbImage;
+	public void setmStatus(String mStatus) {
+		this.mStatus = mStatus;
 	}
-	public String getStatus() {
-		return status;
+	public String getFamilyType() {
+		return familyType;
 	}
-	public void setStatus(String status) {
-		this.status = status;
+	public void setFamilyType(String familyType) {
+		this.familyType = familyType;
+	}
+	public String getFamilyValue() {
+		return familyValue;
+	}
+	public void setFamilyValue(String familyValue) {
+		this.familyValue = familyValue;
+	}	
+	public String getDisabled() {
+		return disabled;
+	}
+	public void setDisabled(String disabled) {
+		this.disabled = disabled;
+	}
+	public String getDisInfo() {
+		return disInfo;
+	}
+	public void setDisInfo(String disInfo) {
+		this.disInfo = disInfo;
+	}
+	public String getEmployment() {
+		return employment;
+	}
+	public void setEmployment(String employment) {
+		this.employment = employment;
+	}
+	public String getIncome() {
+		return income;
+	}
+	public void setIncome(String income) {
+		this.income = income;
+	}	
+	
+	public String getDistrict() {
+		return district;
+	}
+	public void setDistrict(String district) {
+		this.district = district;
+	}
+		
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	public int getHeight() {
 		return height;
@@ -54,7 +118,26 @@ public class User {
 	}
 	public void setEducation(String education) {
 		this.education = education;
+	}	
+	public String getState() {
+		return state;
 	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -79,18 +162,7 @@ public class User {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	public String getState() {
-		return state;
-	}
-	public void setState(String state) {
-		this.state = state;
-	}
-	public String getCity() {
-		return city;
-	}
-	public void setCity(String city) {
-		this.city = city;
-	}
+	
 	public String getmCountryCode() {
 		return mCountryCode;
 	}
