@@ -17,7 +17,7 @@ public class User {
 	private String dob;	
 	
 	private String country;
-	private String state;
+	private String pstate;	
 	private String district;		
 	private String city;
 	
@@ -38,6 +38,13 @@ public class User {
 	
 	private String status;	
 	private String image;
+	
+	public String getPstate() {
+		return pstate;
+	}
+	public void setPstate(String pstate) {
+		this.pstate = pstate;
+	}
 	
 	public String getmStatus() {
 		return mStatus;
@@ -119,12 +126,7 @@ public class User {
 	public void setEducation(String education) {
 		this.education = education;
 	}	
-	public String getState() {
-		return state;
-	}
-	public void setState(String state) {
-		this.state = state;
-	}
+	
 	public String getCity() {
 		return city;
 	}

@@ -56,7 +56,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)
-	public ResponseEntity<User> searchUser(@PathVariable("profileId") String profileId) {
+	public ResponseEntity<User> getUser(@PathVariable("profileId") String profileId) {
 		Optional<User> userObj = userRepository.findById(profileId);
 		User user = userObj.get();
 
@@ -103,7 +103,7 @@ public class UserController {
 		User user = userObj.get();
 		
 		user.setCountry(inputUser.getCountry());
-		user.setState(inputUser.getState());
+		user.setPstate(inputUser.getPstate());
 		user.setCity(inputUser.getCity());
 		user.setDistrict(inputUser.getDistrict());
 		
@@ -132,7 +132,7 @@ public class UserController {
 		return ResponseEntity.ok().body(usersList);
 	}
 	
-	@RequestMapping ("/image")
+	@RequestMapping("/image")
 	public ResponseEntity uploadProfileImage(@RequestParam MultipartFile imageFile, @RequestParam String profileId) {
 		try {
 			

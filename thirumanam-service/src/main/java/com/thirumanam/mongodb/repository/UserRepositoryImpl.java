@@ -26,14 +26,17 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	@Override
 	public List<User> searchUserData(SearchCriteria searchCriteria) {
   
-		Criteria criteria = Criteria.where("age").gt(searchCriteria.getAgeGreater()).lt(searchCriteria.getAgeLess());
+		Criteria criteria = Criteria.where("age").gt(searchCriteria.getAgeGreater()-1).lt(searchCriteria.getAgeLess()+1);
+		
 		if(searchCriteria.getCity() != null && !searchCriteria.getCity().isEmpty()) {
 			Criteria citryCriteria = Criteria.where(FieldConstants.CITY).is(searchCriteria.getCity());	
 			criteria.andOperator(citryCriteria);
 		}
 		if(searchCriteria.getGender() != null && !searchCriteria.getGender().isEmpty()) {
-			Criteria genderCriteria = Criteria.where(FieldConstants.GENDER).is(searchCriteria.getGender());	
-			criteria.andOperator(genderCriteria);
+			criteria.and(FieldConstants.GENDER).in(searchCriteria.getGender());
+		}
+		if(searchCriteria.getMaritalStatus() != null && !searchCriteria.getMaritalStatus().isEmpty()) {
+			criteria.and(FieldConstants.MARITAL_STATUS).in(searchCriteria.getMaritalStatus());
 		}
 		if(searchCriteria.getEducation() != null && !searchCriteria.getEducation().isEmpty()) {
 			Criteria eduCriteria = Criteria.where(FieldConstants.EDUCATION).is(searchCriteria.getEducation());	
