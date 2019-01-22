@@ -24,8 +24,10 @@ public class User {
 	private String mStatus;	
 	private String familyType;
 	private String familyValue;
+	private String foodHabit;	
 	private String disabled;	
 	private String disInfo;
+	private String bodyType;	
 	private int height;
 	private int weight;
 	
@@ -38,6 +40,28 @@ public class User {
 	
 	private String status;	
 	private String image;
+	private String externalId;	
+	
+	public String getBodyType() {
+		return bodyType;
+	}
+	public void setBodyType(String bodyType) {
+		this.bodyType = bodyType;
+	}
+	
+	public String getFoodHabit() {
+		return foodHabit;
+	}
+	public void setFoodHabit(String foodHabit) {
+		this.foodHabit = foodHabit;
+	}
+	
+	public String getExternalId() {
+		return externalId;
+	}
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
 	
 	public String getPstate() {
 		return pstate;

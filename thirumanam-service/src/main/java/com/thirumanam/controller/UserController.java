@@ -55,6 +55,14 @@ public class UserController {
 	    return String.format("%06d", number);
 	}
 	
+	@RequestMapping(value = "/external/{externalId}", method = RequestMethod.GET)
+	public ResponseEntity<User> getUserByExternalId(@PathVariable("externalId") String externalId) {
+		List<User> userObj = userRepository.findByExternalId(externalId);
+		User user = userObj.get(0);
+
+		return ResponseEntity.ok().body(user);
+	}
+	
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)
 	public ResponseEntity<User> getUser(@PathVariable("profileId") String profileId) {
 		Optional<User> userObj = userRepository.findById(profileId);

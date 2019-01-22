@@ -45,9 +45,15 @@ dependencies {
 	
 	
 	//mongodb driver
-	//compile ('org.mongodb:mongodb-driver')
-    
+	//compile ('org.mongodb:mongodb-driver')	
+	
+	compile ('org.glassfish.jersey.core:jersey-client:2.26')
+  	compile ('org.glassfish.jersey.media:jersey-media-json-jackson:2.26')
+  	compile ('org.glassfish.jersey.inject:jersey-hk2:2.26')
+   
 	
 	//Test Dependencies
 	testCompile('org.springframework.boot:spring-boot-starter-test') // For TEST
+	testCompile('org.glassfish.jersey.core:jersey-client:2.26')
+	testCompile('org.glassfish.jersey.media:jersey-media-json-jackson:2.26')
 }
