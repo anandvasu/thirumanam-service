@@ -7,5 +7,6 @@ import com.thirumanam.model.User;
 
 public interface UserRepositoryCustom {
 	
-	List<User> searchUserData(SearchCriteria criteria);
+	List<User> searchUserData(SearchCriteria criteria, long skipNumber, int noOfDocs);
+	long getSearchCount(SearchCriteria searchCriteria);
 }

@@ -2,6 +2,8 @@ package com.thirumanam.model;
 
 public class SearchCriteria {
 
+	private long totalDocs;	
+	private int pageNumber;
 	private int ageGreater;
 	private int ageLess;
 	private String gender;	
@@ -10,6 +12,19 @@ public class SearchCriteria {
 	private String city;
 	private String state;
 	private String country;
+	
+	public long getTotalDocs() {
+		return totalDocs;
+	}
+	public void setTotalDocs(long totalDocs) {
+		this.totalDocs = totalDocs;
+	}
+	public int getPageNumber() {
+		return pageNumber;
+	}
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
 	
 	public String getGender() {
 		return gender;

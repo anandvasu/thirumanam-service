@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -134,10 +135,20 @@ public class UserController {
 	
 	@PostMapping("/list")
 	public ResponseEntity<List<User>> searchUser(@RequestBody SearchCriteria searchCriteria) {
-		List<User> usersList = userRepositoryImpl.searchUserData(searchCriteria);	
+		long totalUsers = searchCriteria.getTotalDocs();
+		if(totalUsers == 0) {
+			totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	
+		}
+		
+		int skipnumber = (searchCriteria.getPageNumber() == 1) ? 0 : ((searchCriteria.getPageNumber()-1) * 10);
+		int numberOfDocs = (skipnumber +10 < totalUsers) ? 10 : (int)(totalUsers-skipnumber);		
+		
+		List<User> usersList = userRepositoryImpl.searchUserData(searchCriteria, skipnumber, numberOfDocs);	
 				
-		logger.info("User Size in new class" + usersList.size());
-		return ResponseEntity.ok().body(usersList);
+		logger.info("User Size in new class" + usersList.size());				   
+		return ResponseEntity.ok()
+							 .header("X-TOTAL-DOCS", Long.toString(totalUsers))
+							 .body(usersList);
 	}
 	
 	@RequestMapping("/image")
