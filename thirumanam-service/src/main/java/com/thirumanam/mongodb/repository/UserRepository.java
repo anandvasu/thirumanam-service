@@ -8,7 +8,7 @@ import com.thirumanam.model.User;
 
 public interface UserRepository extends MongoRepository<User, String>, UserRepositoryCustom {
 	
-	public List<User> findByEmail(String email);
-	public List<User> findByFirstName(String firstName);
-	public List<User> findByExternalId(String externalId);
+	List<User> findByEmail(String email);
+	List<User> findByFirstName(String firstName);
+	List<User> findByExternalId(String externalId);
 }

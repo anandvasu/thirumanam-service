@@ -41,6 +41,14 @@ public class User {
 	private String status;	
 	private String image;
 	private String externalId;	
+	private boolean isFP;
+	
+	public boolean isFP() {
+		return isFP;
+	}
+	public void setFP(boolean isFP) {
+		this.isFP = isFP;
+	}
 	
 	public String getBodyType() {
 		return bodyType;

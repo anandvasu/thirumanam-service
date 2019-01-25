@@ -77,4 +77,12 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 		query.addCriteria(criteria);	
 		return mongoTemplate.count(query, "user");
 	}	
+	
+	@Override
+	public List<User> getFeaturedProfiles() {
+		Criteria criteria = Criteria.where("isFP").exists(true);
+		Query query = new Query();
+		query.addCriteria(criteria);	
+		return mongoTemplate.find(query, User.class);		
+	}
 }

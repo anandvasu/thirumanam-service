@@ -38,7 +38,7 @@ public class LoadProfiles {
 		user.setEducation("BE");
 		user.setEmployment("P");
 		user.setIncome("12354544");
-		user.setRegisterBy("S");
+		user.setRegisterBy("S");		
 		return user;
 	}
 	
@@ -52,9 +52,9 @@ public class LoadProfiles {
 		WebTarget employeeWebTarget 
 		  = webTarget.path("/thirumanam/user//register");
 		Invocation.Builder invocationBuilder 
-		  = employeeWebTarget.request(MediaType.APPLICATION_JSON);
+		  = employeeWebTarget.request(MediaType.APPLICATION_JSON);		
 		
-		for(int i=0; i<1001; i++) {
+		for(int i=0; i<1000; i++) {
 			Response response 
 			  = invocationBuilder.post(Entity.entity(loadProfiles.getUser(i), MediaType.APPLICATION_JSON));
 			System.out.println("Response Status" + response.getStatus());

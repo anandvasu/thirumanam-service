@@ -14,7 +14,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -104,6 +103,13 @@ public class UserController {
 				Util.populateStatus(profileString, "User registered successfully."));	
 	}
 	
+	@PutMapping("/profile/summary")
+	public ResponseEntity<User> getProfileSummary(@RequestParam("profileId") String profileId) throws URISyntaxException {
+		Optional<User> userObj = userRepository.findById(profileId);
+		User user = userObj.get();
+
+		return ResponseEntity.ok().body(user);
+	}
 	
 	@PutMapping("/profile")
 	public ResponseEntity<Status> updateProfile(@RequestBody User inputUser) throws URISyntaxException {
@@ -151,8 +157,9 @@ public class UserController {
 							 .body(usersList);
 	}
 	
-	@RequestMapping("/image")
-	public ResponseEntity uploadProfileImage(@RequestParam MultipartFile imageFile, @RequestParam String profileId) {
+	@PostMapping("/image")
+	public ResponseEntity uploadProfileImage(@RequestParam("imageFile") MultipartFile imageFile, 
+			@RequestParam("profileId") String profileId) {
 		try {
 			
 			InputStream inStream = imageFile.getInputStream();

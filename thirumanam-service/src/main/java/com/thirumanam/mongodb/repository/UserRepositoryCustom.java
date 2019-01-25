@@ -9,4 +9,5 @@ public interface UserRepositoryCustom {
 	
 	List<User> searchUserData(SearchCriteria criteria, long skipNumber, int noOfDocs);
 	long getSearchCount(SearchCriteria searchCriteria);
+	List<User> getFeaturedProfiles();
 }
