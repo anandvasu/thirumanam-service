@@ -14,8 +14,8 @@ public class User {
 	private String gender;
 	private String registerBy;
 	private String registerByName;
-	private String dob;	
-	
+	private String dob;
+	private String profileCompPercent;		
 	private String country;
 	private String pstate;	
 	private String district;		
@@ -42,6 +42,15 @@ public class User {
 	private String image;
 	private String externalId;	
 	private boolean isFP;
+	
+	
+	public void setProfileCompPercent(String profileCompPercent) {			
+		this.profileCompPercent = profileCompPercent;
+	}
+	
+	public String getProfileCompPercent() {		
+		return profileCompPercent;
+	}
 	
 	public boolean isFP() {
 		return isFP;
