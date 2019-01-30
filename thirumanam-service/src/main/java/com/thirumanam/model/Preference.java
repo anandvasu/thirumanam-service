@@ -5,7 +5,8 @@ import java.util.List;
 
 public class Preference {
 
-	private String id;	
+	private String id;
+	private String gender;		
 	private int ageFrom;
 	private int ageTo;
 	private List<String> mStatus;	
@@ -16,6 +17,13 @@ public class Preference {
 	private List<LabelValue> states = new ArrayList<LabelValue>();
 	private List<LabelValue> religions = new ArrayList<LabelValue>();
 	private List<LabelValue> castes = new ArrayList<LabelValue>();
+	
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
 	
 	public List<String> getmStatus() {
 		return mStatus;

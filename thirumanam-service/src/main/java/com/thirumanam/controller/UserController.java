@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,11 +26,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.thirumanam.model.Preference;
 import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
+import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
+import com.thirumanam.util.ThirumanamConstant;
 import com.thirumanam.util.Util;
 
 @RestController
@@ -41,6 +45,9 @@ public class UserController {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	PreferenceRepository prefRepository;
 	
 	@Autowired
 	private UserRepositoryImpl userRepositoryImpl;
@@ -121,14 +128,47 @@ public class UserController {
 		user.setbMonth(Integer.parseInt(data[1]));
 		user.setbYear(Integer.parseInt(data[2]));
 		user.setAge(Period.between(birthday, LocalDate.now()).getYears());
-		String profileString = "TM" + getRandomNumberString();
-		user.setId(profileString);
+		String profileId = ThirumanamConstant.PROFILE_ID_PREFIX + getRandomNumberString();
+		user.setId(profileId);
 		
 		userRepository.save(user);		
 		
+		Preference preference = new Preference();
+		preference.setId(profileId);
+		preference.setGender(
+				(user.getGender().equals(ThirumanamConstant.GENDER_M) ? ThirumanamConstant.GENDER_F: ThirumanamConstant.GENDER_M));
+		prefRepository.save(preference);
+		
 		logger.info("User Registration Successfull");
-		return ResponseEntity.created(new URI("/user")).header("PROFILEID", profileString).body(
-				Util.populateStatus(profileString, "User registered successfully."));	
+		return ResponseEntity.created(new URI("/user")).header("PROFILEID", profileId).body(
+				Util.populateStatus(profileId, "User registered successfully."));	
+	}
+	
+	private SearchCriteria buildSearchCriteria(Preference preference) {
+		SearchCriteria searchCriteria = new SearchCriteria();
+		searchCriteria.setAgeLess(preference.getAgeTo());
+		searchCriteria.setAgeGreater(preference.getAgeFrom());
+		return searchCriteria;
+	}
+	
+	@GetMapping("/{profileId}/preference/matches")
+	public ResponseEntity<List<User>> getMyProfileMatches(@PathVariable("profileId") String profileId) {		
+		long totalUsers = 0;
+		List<User> usersList = null;
+		Optional<Preference> prefObj  = prefRepository.findById(profileId);
+		if(prefObj.isPresent()) {
+			SearchCriteria searchCriteria = buildSearchCriteria(prefObj.get());
+			
+			if(totalUsers == 0) {
+				totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	
+			}			
+			usersList = userRepositoryImpl.searchUserData(searchCriteria, 0, 3);	
+					
+			logger.info("User Size in new class" + usersList.size());	
+		}
+		return ResponseEntity.ok()
+							 .header("X-TOTAL-DOCS", Long.toString(totalUsers))
+							 .body(usersList);
 	}
 	
 	@PutMapping("/profile/summary")
