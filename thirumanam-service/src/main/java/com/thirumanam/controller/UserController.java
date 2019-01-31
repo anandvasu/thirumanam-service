@@ -148,6 +148,7 @@ public class UserController {
 		SearchCriteria searchCriteria = new SearchCriteria();
 		searchCriteria.setAgeLess(preference.getAgeTo());
 		searchCriteria.setAgeGreater(preference.getAgeFrom());
+		searchCriteria.setGender(preference.getGender());		
 		return searchCriteria;
 	}
 	

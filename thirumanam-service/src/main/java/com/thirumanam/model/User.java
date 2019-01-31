@@ -19,8 +19,9 @@ public class User {
 	private String country;
 	private String pstate;	
 	private String district;		
-	private String city;
-	
+	private String city;	
+	private String religion;	
+	private String caste;	
 	private String mStatus;	
 	private String familyType;
 	private String familyValue;
@@ -43,6 +44,21 @@ public class User {
 	private String externalId;	
 	private boolean isFP;
 	
+	public String getReligion() {
+		return religion;
+	}
+
+	public void setReligion(String religion) {
+		this.religion = religion;
+	}
+
+	public String getCaste() {
+		return caste;
+	}
+
+	public void setCaste(String caste) {
+		this.caste = caste;
+	}
 	
 	public void setProfileCompPercent(String profileCompPercent) {			
 		this.profileCompPercent = profileCompPercent;
