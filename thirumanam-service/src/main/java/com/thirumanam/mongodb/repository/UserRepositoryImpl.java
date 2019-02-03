@@ -1,7 +1,6 @@
 package com.thirumanam.mongodb.repository;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.thirumanam.model.LabelValue;
 import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.User;
 import com.thirumanam.util.FieldConstants;
@@ -59,45 +57,54 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 		return mongoTemplate.find(query, User.class);		
 	}
 	
-	private List<String> getValues(List<LabelValue> labelValues) {
-		List<String> values = new ArrayList<String>();
-		for(LabelValue labelValue: labelValues) {
-			values.add(labelValue.getValue());
-		}
-		return values;
-	}
-	
 	private Criteria buildCriteria(SearchCriteria searchCriteria) {
 		
 			Criteria criteria =  Criteria.where(FieldConstants.GENDER).in(searchCriteria.getGender());
 			
-			Criteria ageLessCriteria = Criteria.where(FieldConstants.AGE).gt(searchCriteria.getAgeGreater()-1).lt(searchCriteria.getAgeLess()+1);
-			criteria.andOperator(ageLessCriteria);
+			//Criteria ageLessCriteria = Criteria.where(FieldConstants.AGE).gt(searchCriteria.getAgeGreater()-1).lt(searchCriteria.getAgeLess()+1);
+			//criteria.andOperator(ageLessCriteria);			
 			
-			criteria.and(FieldConstants.HEIGHT).gt(searchCriteria.getMinHeight()-1).lt(searchCriteria.getMaxHeight()+1);
+			if(searchCriteria.getMaxHeight() > 0 || searchCriteria.getMaxHeight() > 0 ) {
+				Criteria heightCriteria = new Criteria();
+				heightCriteria.orOperator(Criteria.where(FieldConstants.HEIGHT_CM).gt(searchCriteria.getMinHeight()-1).lt(searchCriteria.getMaxHeight()+1), 
+						Criteria.where(FieldConstants.HEIGHT_INCH).gt(searchCriteria.getMinHeight()-1).lt(searchCriteria.getMaxHeight()+1));
+				criteria.andOperator(heightCriteria);
+			}		
+			
+			if(searchCriteria.getAgeLess() > 0 || searchCriteria.getAgeGreater() > 0 ) {
+				criteria.and(FieldConstants.AGE).gt(searchCriteria.getAgeGreater()-1).lt(searchCriteria.getAgeLess()+1);
+			}			
 						
+			if(searchCriteria.getCountries() != null && !searchCriteria.getCountries().isEmpty()) {
+				criteria.and(FieldConstants.COUNTRY).in(searchCriteria.getCountries());
+			}
+			
+			if(searchCriteria.getStates() != null && !searchCriteria.getStates().isEmpty()) {
+				criteria.and(FieldConstants.STATE).in(searchCriteria.getStates());
+			}
+			
 			if(searchCriteria.getCity() != null && !searchCriteria.getCity().isEmpty()) {
 				criteria.and(FieldConstants.CITY).in(searchCriteria.getCity());
 			}
 			
 			if(!searchCriteria.getReligions().isEmpty()) {
-				criteria.and(FieldConstants.RELIGION).in(getValues(searchCriteria.getReligions()));
+				criteria.and(FieldConstants.RELIGION).in(searchCriteria.getReligions());
 			}
 			
 			if(!searchCriteria.getCastes().isEmpty()) {
-				criteria.and(FieldConstants.CASTE).in(getValues(searchCriteria.getCastes()));
+				criteria.and(FieldConstants.CASTE).in(searchCriteria.getCastes());
 			}
 			
 			if(!searchCriteria.getGothrams().isEmpty()) {
-				criteria.and(FieldConstants.GOTHRAM).in(getValues(searchCriteria.getGothrams()));
+				criteria.and(FieldConstants.GOTHRAM).in(searchCriteria.getGothrams());
 			}
 			
 			if(searchCriteria.getMaritalStatus() != null && !searchCriteria.getMaritalStatus().isEmpty()) {
 				criteria.and(FieldConstants.MARITAL_STATUS).in(searchCriteria.getMaritalStatus());
 			}
+			
 			if(searchCriteria.getEducation() != null && !searchCriteria.getEducation().isEmpty()) {
-				Criteria eduCriteria = Criteria.where(FieldConstants.EDUCATION).is(searchCriteria.getEducation());	
-				criteria.andOperator(eduCriteria);
+				criteria.and(FieldConstants.EDUCATION).in(searchCriteria.getMaritalStatus());				
 			}
 			return criteria;
 		}

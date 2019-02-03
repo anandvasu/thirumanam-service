@@ -17,7 +17,7 @@ public class LoadProfiles {
 		return dob;
 	}
 	
-	private User getUser(int incrNumber) {
+	private User getUser(int incrNumber, int reglionValue) {
 		User user = new User();
 		user.setFirstName("Test User First Name"+incrNumber);
 		user.setLastName("Test User Last Name"+ incrNumber);
@@ -29,8 +29,14 @@ public class LoadProfiles {
 		user.setPstate("TN");
 		user.setDistrict("VP");
 		user.setCity("Villupuram");
+		user.setReligion(reglionValue);
+		if((incrNumber % 2 == 0)) {
+			user.setHeightCm(165);
+		} else {
+			user.setHeightInch(165);
+		}
 		user.setmStatus("NM");
-		user.setHeight(165);
+		
 		user.setFamilyType("NU");
 		user.setFamilyValue("TL");
 		user.setFoodHabit("V");
@@ -52,11 +58,18 @@ public class LoadProfiles {
 		WebTarget employeeWebTarget 
 		  = webTarget.path("/thirumanam/user//register");
 		Invocation.Builder invocationBuilder 
-		  = employeeWebTarget.request(MediaType.APPLICATION_JSON);		
+		  = employeeWebTarget.request(MediaType.APPLICATION_JSON);	
+		
+		int reglionValue = 1;
 		
 		for(int i=0; i<1000; i++) {
+			
+			if (reglionValue > 12) 
+				reglionValue = 1;
+			
 			Response response 
-			  = invocationBuilder.post(Entity.entity(loadProfiles.getUser(i), MediaType.APPLICATION_JSON));
+			  = invocationBuilder.post(Entity.entity(loadProfiles.getUser(i, reglionValue), MediaType.APPLICATION_JSON));
+			reglionValue = reglionValue + 1;
 			System.out.println("Response Status" + response.getStatus());
 		}
 	}

@@ -36,7 +36,13 @@ public class LoadFeaturedProfiles {
 		user.setDistrict("VP");
 		user.setCity("Villupuram");
 		user.setmStatus("NM");
-		user.setHeight(165);
+		user.setReligion(11);
+		if((incrNumber % 2 == 0)) {
+			user.setHeightCm(175);
+		} else {
+			user.setHeightInch(175);
+		}
+		user.setHeightCm(165);
 		user.setFamilyType("NU");
 		user.setFamilyValue("TL");
 		user.setFoodHabit("V");

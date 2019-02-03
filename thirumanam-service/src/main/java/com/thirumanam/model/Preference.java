@@ -13,62 +13,20 @@ public class Preference {
 	private int minHeight;
 	private int maxHeight;
 	private List<String> foodHabits = new ArrayList<String>();
-	private List<LabelValue> countries  = new ArrayList<LabelValue>();
-	private List<LabelValue> states = new ArrayList<LabelValue>();
-	private List<LabelValue> religions = new ArrayList<LabelValue>();
-	private List<LabelValue> castes = new ArrayList<LabelValue>();
+	private List<String> countries  = new ArrayList<String>();
+	private List<String> states = new ArrayList<String>();
+	private List<Integer> religions = new ArrayList<Integer>();
+	private List<String> castes = new ArrayList<String>();
 	
 	public String getGender() {
 		return gender;
 	}
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-	
-	public List<String> getmStatus() {
-		return mStatus;
-	}
-	public void setmStatus(List<String> mStatus) {
-		this.mStatus = mStatus;
-	}
-	public List<String> getFoodHabits() {
-		return foodHabits;
-	}
-	public void setFoodHabits(List<String> foodHabits) {
-		this.foodHabits = foodHabits;
-	}
-	public List<LabelValue> getCountries() {
-		return countries;
-	}
-	public void setCountries(List<LabelValue> countries) {
-		this.countries = countries;
-	}
-	public List<LabelValue> getStates() {
-		return states;
-	}
-	public void setStates(List<LabelValue> states) {
-		this.states = states;
-	}
-	public List<LabelValue> getReligions() {
-		return religions;
-	}
-	public void setReligions(List<LabelValue> religions) {
-		this.religions = religions;
-	}
-	public List<LabelValue> getCastes() {
-		return castes;
-	}
-	public void setCastes(List<LabelValue> castes) {
-		this.castes = castes;
-	}	
-	
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-		
 	public int getAgeFrom() {
 		return ageFrom;
 	}
@@ -81,6 +39,12 @@ public class Preference {
 	public void setAgeTo(int ageTo) {
 		this.ageTo = ageTo;
 	}
+	public List<String> getmStatus() {
+		return mStatus;
+	}
+	public void setmStatus(List<String> mStatus) {
+		this.mStatus = mStatus;
+	}
 	public int getMinHeight() {
 		return minHeight;
 	}
@@ -92,5 +56,38 @@ public class Preference {
 	}
 	public void setMaxHeight(int maxHeight) {
 		this.maxHeight = maxHeight;
-	}		
+	}
+	public List<String> getFoodHabits() {
+		return foodHabits;
+	}
+	public void setFoodHabits(List<String> foodHabits) {
+		this.foodHabits = foodHabits;
+	}
+	public List<String> getCountries() {
+		return countries;
+	}
+	public void setCountries(List<String> countries) {
+		this.countries = countries;
+	}
+	public List<String> getStates() {
+		return states;
+	}
+	public void setStates(List<String> states) {
+		this.states = states;
+	}	
+	public List<Integer> getReligions() {
+		return religions;
+	}
+	public void setReligions(List<Integer> religions) {
+		this.religions = religions;
+	}
+	public List<String> getCastes() {
+		return castes;
+	}
+	public void setCastes(List<String> castes) {
+		this.castes = castes;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}	
 }

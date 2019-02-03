@@ -69,7 +69,7 @@ public class UserController {
 		counter = (user.getFamilyValue() != null) ? (counter + 1) : counter; //13
 		counter = (user.getFoodHabit() != null) ? (counter + 1) : counter; //14
 		counter = (user.getBodyType() != null) ? (counter + 1) : counter; //15
-		counter = (user.getHeight() != 0) ? (counter + 1) : counter; //16
+		counter = ((user.getHeightCm() != 0) || (user.getHeightInch() != 0 )) ? (counter + 1) : counter; //16
 		counter = (user.getEducation() != null) ? (counter + 1) : counter; //17
 		counter = (user.getEmployment() != null) ? (counter + 1) : counter; //18
 		counter = (user.getIncome() != null) ? (counter + 1) : counter; //19
@@ -148,7 +148,13 @@ public class UserController {
 		SearchCriteria searchCriteria = new SearchCriteria();
 		searchCriteria.setAgeLess(preference.getAgeTo());
 		searchCriteria.setAgeGreater(preference.getAgeFrom());
-		searchCriteria.setGender(preference.getGender());		
+		searchCriteria.setMinHeight(preference.getMinHeight());
+		searchCriteria.setMaxHeight(preference.getMaxHeight());
+		searchCriteria.setGender(preference.getGender());	
+		searchCriteria.setReligions(preference.getReligions());
+		searchCriteria.setCountries(preference.getCountries());
+		searchCriteria.setStates(preference.getStates());
+		searchCriteria.setMaritalStatus(preference.getmStatus());
 		return searchCriteria;
 	}
 	
@@ -180,6 +186,54 @@ public class UserController {
 		return ResponseEntity.ok().body(user);
 	}
 	
+	@PutMapping("/profile/personal")
+	public ResponseEntity<Status> updatePersonalDetail(@RequestBody User inputUser) throws URISyntaxException {
+		
+		Optional<User> userObj = userRepository.findById(inputUser.getId());
+		User user = userObj.get();
+		user.setmStatus(inputUser.getmStatus());
+		user.setWeight(inputUser.getWeight());
+		user.setHeightCm(inputUser.getHeightCm());
+		user.setHeightInch(inputUser.getHeightInch());
+		user.setFamilyType(inputUser.getFamilyType());
+		user.setFamilyValue(inputUser.getFamilyValue());
+		user.setBodyType(inputUser.getBodyType());
+		user.setDisabled(inputUser.getDisabled());
+		user.setFoodHabit(inputUser.getFoodHabit());
+		user.setDisInfo(inputUser.getDisInfo());				
+		userRepository.save(user);
+		
+		return ResponseEntity.created(new URI("/user")).body(Util.populateStatus("t-200", "User registered successfully."));	
+	}
+	
+	@PutMapping("/profile/location")
+	public ResponseEntity<Status> updateLocationDetail(@RequestBody User inputUser) throws URISyntaxException {
+		
+		Optional<User> userObj = userRepository.findById(inputUser.getId());
+		User user = userObj.get();		
+		user.setCountry(inputUser.getCountry());
+		user.setPstate(inputUser.getPstate());
+		user.setCity(inputUser.getCity());
+		user.setDistrict(inputUser.getDistrict());	
+		userRepository.save(user);
+		
+		return ResponseEntity.created(new URI("/user")).body(Util.populateStatus("t-200", "User registered successfully."));	
+	}
+	
+	@PutMapping("/profile/professional")
+	public ResponseEntity<Status> updateProfessionalDetail(@RequestBody User inputUser) throws URISyntaxException {
+		
+		Optional<User> userObj = userRepository.findById(inputUser.getId());
+		User user = userObj.get();				
+		user.setEducation(inputUser.getEducation());
+		user.setEmployment(inputUser.getEmployment());
+		user.setIncome(inputUser.getIncome());		
+				
+		userRepository.save(user);
+		
+		return ResponseEntity.created(new URI("/user")).body(Util.populateStatus("t-200", "User registered successfully."));	
+	}
+	
 	@PutMapping("/profile")
 	public ResponseEntity<Status> updateProfile(@RequestBody User inputUser) throws URISyntaxException {
 		
@@ -193,16 +247,54 @@ public class UserController {
 		
 		user.setmStatus(inputUser.getmStatus());
 		user.setWeight(inputUser.getWeight());
-		user.setHeight(inputUser.getHeight());
+		user.setHeightCm(inputUser.getHeightCm());
+		user.setHeightInch(inputUser.getHeightInch());
 		user.setFamilyType(inputUser.getFamilyType());
 		user.setFamilyValue(inputUser.getFamilyValue());
+		user.setBodyType(inputUser.getBodyType());
 		user.setDisabled(inputUser.getDisabled());
+		user.setFoodHabit(inputUser.getFoodHabit());
 		user.setDisInfo(inputUser.getDisInfo());
 				
 		user.setEducation(inputUser.getEducation());
 		user.setEmployment(inputUser.getEmployment());
-		user.setIncome(inputUser.getIncome());
+		user.setIncome(inputUser.getIncome());		
+				
+		userRepository.save(user);
 		
+		return ResponseEntity.created(new URI("/user")).body(Util.populateStatus("t-200", "User registered successfully."));	
+	}
+	
+	@PutMapping("/completeprofile")
+	public ResponseEntity<Status> updateCompleteProfile(@RequestBody User inputUser) throws URISyntaxException {
+		
+		Optional<User> userObj = userRepository.findById(inputUser.getId());
+		User user = userObj.get();
+		user.setFirstName(inputUser.getFirstName());
+		user.setLastName(inputUser.getLastName());
+		user.setbDay(inputUser.getbDay());
+		user.setbMonth(inputUser.getbMonth());
+		user.setbYear(inputUser.getbYear());
+		user.setmStatus(inputUser.getmStatus());
+		user.setWeight(inputUser.getWeight());
+		user.setHeightCm(inputUser.getHeightCm());
+		user.setHeightInch(inputUser.getHeightInch());
+		user.setFamilyType(inputUser.getFamilyType());
+		user.setFamilyValue(inputUser.getFamilyValue());
+		user.setBodyType(inputUser.getBodyType());
+		user.setFoodHabit(inputUser.getFoodHabit());
+		user.setDisabled(inputUser.getDisabled());
+		user.setDisInfo(inputUser.getDisInfo());
+		user.setBodyType(inputUser.getBodyType());		
+		user.setCountry(inputUser.getCountry());
+		user.setPstate(inputUser.getPstate());
+		user.setCity(inputUser.getCity());
+		user.setDistrict(inputUser.getDistrict());
+				
+		user.setEducation(inputUser.getEducation());
+		user.setEmployment(inputUser.getEmployment());
+		user.setIncome(inputUser.getIncome());		
+				
 		userRepository.save(user);
 		
 		return ResponseEntity.created(new URI("/user")).body(Util.populateStatus("t-200", "User registered successfully."));	

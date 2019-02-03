@@ -20,7 +20,7 @@ public class User {
 	private String pstate;	
 	private String district;		
 	private String city;	
-	private String religion;	
+	private int religion;		
 	private String caste;	
 	private String mStatus;	
 	private String familyType;
@@ -29,7 +29,8 @@ public class User {
 	private String disabled;	
 	private String disInfo;
 	private String bodyType;	
-	private int height;
+	private int heightInch;	
+	private int heightCm;
 	private int weight;
 	
 	private String education;
@@ -42,16 +43,33 @@ public class User {
 	private String status;	
 	private String image;
 	private String externalId;	
-	private boolean isFP;
+	private boolean isFP;	
 	
-	public String getReligion() {
+	public int getHeightInch() {
+		return heightInch;
+	}
+
+	public void setHeightInch(int heightInch) {
+		this.heightInch = heightInch;
+	}
+
+	public int getHeightCm() {
+		return heightCm;
+	}
+
+	public void setHeightCm(int heightCm) {
+		this.heightCm = heightCm;
+	}
+	
+	
+	public int getReligion() {
 		return religion;
 	}
 
-	public void setReligion(String religion) {
+	public void setReligion(int religion) {
 		this.religion = religion;
 	}
-
+	
 	public String getCaste() {
 		return caste;
 	}
@@ -164,13 +182,7 @@ public class User {
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public int getHeight() {
-		return height;
-	}
-	public void setHeight(int height) {
-		this.height = height;
-	}
+	}	
 	public int getWeight() {
 		return weight;
 	}
