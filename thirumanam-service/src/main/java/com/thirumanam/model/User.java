@@ -35,7 +35,7 @@ public class User {
 	private int heightInch;	
 	private int heightCm;
 	private int weight;
-	
+	private String horoscope;	
 	private String education;
 	private String employment;
 	private String income;
@@ -47,6 +47,14 @@ public class User {
 	private String image;
 	private String externalId;	
 	private boolean isFP;	
+	
+	public String getHoroscope() {
+		return horoscope;
+	}
+
+	public void setHoroscope(String horoscope) {
+		this.horoscope = horoscope;
+	}
 	
 	public String getGothram() {
 		return gothram;

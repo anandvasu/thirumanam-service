@@ -338,19 +338,33 @@ public class UserController {
 		try {
 			
 			InputStream inStream = imageFile.getInputStream();
-			//byte[] buffer = new byte[inStream.available()];
-			//inStream.read(buffer);
-			
 			Optional<User> userObj = userRepository.findById(profileId);
 			User user = userObj.get();
 			user.setImage(Base64.getEncoder().encodeToString(IOUtils.toByteArray(inStream)));
-			userRepository.save(user);
+			userRepository.save(user);			
+			inStream.close();
 			
-			/*File targetFile = new File("uploaded.jpg");
-			OutputStream outStream = new FileOutputStream(targetFile);
-			outStream.write(buffer);
-			outStream.close();	*/	
+		} catch (Exception exp) {
+			exp.printStackTrace();
+		}
+		return ResponseEntity.ok().build();
+	}
+	
+	
+	@PostMapping("/horoscope")
+	public ResponseEntity uploadHoroscopeImage(@RequestParam("horoscopeImage") MultipartFile horoscopeImage, 
+			@RequestParam("profileId") String profileId) {
+		try {
 			
+			InputStream inStream = horoscopeImage.getInputStream();
+			Optional<User> userObj = userRepository.findById(profileId);
+			User user = userObj.get();
+			user.setHoroscope(Base64.getEncoder().encodeToString(IOUtils.toByteArray(inStream)));
+			if (user.getHoroscope().getBytes().length > 1048576) {
+				Status status = Util.populateStatus("t-420", "Horoscope size greater than 1MB. Please reduce the file size and then upload.");
+				return ResponseEntity.badRequest().body(status);
+			}
+			userRepository.save(user);			
 			inStream.close();
 			
 		} catch (Exception exp) {
