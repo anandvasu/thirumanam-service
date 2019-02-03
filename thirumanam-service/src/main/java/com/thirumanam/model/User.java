@@ -21,7 +21,10 @@ public class User {
 	private String district;		
 	private String city;	
 	private int religion;		
-	private String caste;	
+	private String caste;
+	private String subcaste;	
+	private String gothram;		
+	private String dhosham;
 	private String mStatus;	
 	private String familyType;
 	private String familyValue;
@@ -44,6 +47,30 @@ public class User {
 	private String image;
 	private String externalId;	
 	private boolean isFP;	
+	
+	public String getGothram() {
+		return gothram;
+	}
+
+	public void setGothram(String gothram) {
+		this.gothram = gothram;
+	}
+
+	public String getDhosham() {
+		return dhosham;
+	}
+
+	public void setDhosham(String dhosham) {
+		this.dhosham = dhosham;
+	}
+	
+	public String getSubcaste() {
+		return subcaste;
+	}
+
+	public void setSubcaste(String subcaste) {
+		this.subcaste = subcaste;
+	}
 	
 	public String getDisablityInfo() {
 		return disablityInfo;

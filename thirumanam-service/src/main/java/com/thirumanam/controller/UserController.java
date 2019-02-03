@@ -203,7 +203,21 @@ public class UserController {
 		user.setDisablityInfo(inputUser.getDisablityInfo());				
 		userRepository.save(user);
 		
-		return ResponseEntity.created(new URI("/user")).body(Util.populateStatus("t-200", "User registered successfully."));	
+		return ResponseEntity.noContent().build();	
+	}
+	
+	@PutMapping("/profile/religion")
+	public ResponseEntity<Status> updateReligionDetail(@RequestBody User inputUser) throws URISyntaxException {
+		
+		Optional<User> userObj = userRepository.findById(inputUser.getId());
+		User user = userObj.get();		
+		user.setCaste(inputUser.getCaste());
+		user.setSubcaste(inputUser.getSubcaste());
+		user.setGothram(inputUser.getGothram());
+		user.setDhosham(inputUser.getDhosham());	
+		userRepository.save(user);
+		
+		return ResponseEntity.noContent().build();		
 	}
 	
 	@PutMapping("/profile/location")
@@ -217,7 +231,7 @@ public class UserController {
 		user.setDistrict(inputUser.getDistrict());	
 		userRepository.save(user);
 		
-		return ResponseEntity.created(new URI("/user")).body(Util.populateStatus("t-200", "User registered successfully."));	
+		return ResponseEntity.noContent().build();		
 	}
 	
 	@PutMapping("/profile/professional")
@@ -231,7 +245,7 @@ public class UserController {
 				
 		userRepository.save(user);
 		
-		return ResponseEntity.created(new URI("/user")).body(Util.populateStatus("t-200", "User registered successfully."));	
+		return ResponseEntity.noContent().build();		
 	}
 	
 	@PutMapping("/profile")
