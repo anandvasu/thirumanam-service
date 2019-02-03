@@ -27,7 +27,7 @@ public class User {
 	private String familyValue;
 	private String foodHabit;	
 	private String disabled;	
-	private String disInfo;
+	private String disablityInfo;	
 	private String bodyType;	
 	private int heightInch;	
 	private int heightCm;
@@ -44,6 +44,14 @@ public class User {
 	private String image;
 	private String externalId;	
 	private boolean isFP;	
+	
+	public String getDisablityInfo() {
+		return disablityInfo;
+	}
+
+	public void setDisablityInfo(String disablityInfo) {
+		this.disablityInfo = disablityInfo;
+	}
 	
 	public int getHeightInch() {
 		return heightInch;
@@ -144,13 +152,7 @@ public class User {
 	}
 	public void setDisabled(String disabled) {
 		this.disabled = disabled;
-	}
-	public String getDisInfo() {
-		return disInfo;
-	}
-	public void setDisInfo(String disInfo) {
-		this.disInfo = disInfo;
-	}
+	}	
 	public String getEmployment() {
 		return employment;
 	}

@@ -200,7 +200,7 @@ public class UserController {
 		user.setBodyType(inputUser.getBodyType());
 		user.setDisabled(inputUser.getDisabled());
 		user.setFoodHabit(inputUser.getFoodHabit());
-		user.setDisInfo(inputUser.getDisInfo());				
+		user.setDisablityInfo(inputUser.getDisablityInfo());				
 		userRepository.save(user);
 		
 		return ResponseEntity.created(new URI("/user")).body(Util.populateStatus("t-200", "User registered successfully."));	
@@ -254,7 +254,7 @@ public class UserController {
 		user.setBodyType(inputUser.getBodyType());
 		user.setDisabled(inputUser.getDisabled());
 		user.setFoodHabit(inputUser.getFoodHabit());
-		user.setDisInfo(inputUser.getDisInfo());
+		user.setDisablityInfo(inputUser.getDisablityInfo());
 				
 		user.setEducation(inputUser.getEducation());
 		user.setEmployment(inputUser.getEmployment());
@@ -284,7 +284,7 @@ public class UserController {
 		user.setBodyType(inputUser.getBodyType());
 		user.setFoodHabit(inputUser.getFoodHabit());
 		user.setDisabled(inputUser.getDisabled());
-		user.setDisInfo(inputUser.getDisInfo());
+		user.setDisablityInfo(inputUser.getDisablityInfo());
 		user.setBodyType(inputUser.getBodyType());		
 		user.setCountry(inputUser.getCountry());
 		user.setPstate(inputUser.getPstate());
