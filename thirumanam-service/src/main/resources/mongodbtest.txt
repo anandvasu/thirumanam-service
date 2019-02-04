@@ -1,0 +1,6 @@
+mongo "mongodb+srv://cluster0-thph3.mongodb.net/test" --username anand
+
+db.user.find({"email":"anandakumarv@gmail.com"})
+
+db.user.remove({"email":"anandakumarv@gmail.com"})
+
