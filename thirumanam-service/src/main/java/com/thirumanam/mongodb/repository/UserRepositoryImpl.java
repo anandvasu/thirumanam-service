@@ -118,6 +118,19 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 			if(searchCriteria.getEducation() != null && !searchCriteria.getEducation().isEmpty()) {
 				criteria.and(FieldConstants.EDUCATION).in(searchCriteria.getMaritalStatus());				
 			}
+			
+			if(searchCriteria.getFoodHabits() != null && !searchCriteria.getFoodHabits().isEmpty()) {
+				criteria.and(FieldConstants.FOODHABIT).in(searchCriteria.getFoodHabits());				
+			}
+			
+			if(searchCriteria.getBodyTypes() != null && !searchCriteria.getBodyTypes().isEmpty()) {
+				criteria.and(FieldConstants.BODYTYPE).in(searchCriteria.getBodyTypes());				
+			}
+			
+			if(searchCriteria.getEmployments() != null && !searchCriteria.getEmployments().isEmpty()) {
+				criteria.and(FieldConstants.EMPLOYMENT).in(searchCriteria.getEmployments());				
+			}			
+			
 			return criteria;
 		}
 	}

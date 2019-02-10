@@ -24,7 +24,21 @@ public class SearchCriteria {
 	private List<String> castes = new ArrayList<String>();
 	private List<String> gothrams = new ArrayList<String>();
 	private List<String> district = new ArrayList<String>();
+	private List<String> bodyTypes = new ArrayList<String>();
+	private List<String> employments = new ArrayList<String>();
 	
+	public List<String> getEmployments() {
+		return employments;
+	}
+	public void setEmployments(List<String> employments) {
+		this.employments = employments;
+	}
+	public List<String> getBodyTypes() {
+		return bodyTypes;
+	}
+	public void setBodyTypes(List<String> bodyTypes) {
+		this.bodyTypes = bodyTypes;
+	}
 	public List<String> getDistrict() {
 		return district;
 	}
