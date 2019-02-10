@@ -29,6 +29,15 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 		Criteria criteria = buildCriteria(searchCriteria);
 				
 		Query query = new Query();
+		query.fields().include(FieldConstants.FIRSTNAME)
+					  .include(FieldConstants.LASTNAME)
+					  .include(FieldConstants.BDAY)
+					  .include(FieldConstants.BMONTH)
+					  .include(FieldConstants.BYEAR)
+					  .include(FieldConstants.EDUCATION)
+					  .include(FieldConstants.CITY)
+					  .include(FieldConstants.IMAGE)
+					  .include(FieldConstants.AGE);
 		query.addCriteria(criteria);
 		if (skipNumber > 0) {
 			query.skip(skipNumber);
@@ -42,9 +51,9 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	@Override
 	public long getSearchCount(SearchCriteria searchCriteria) {
   
-		Criteria criteria = buildCriteria(searchCriteria);
-				
+		Criteria criteria = buildCriteria(searchCriteria);				
 		Query query = new Query();
+		query.fields().include(FieldConstants.ID);
 		query.addCriteria(criteria);	
 		return mongoTemplate.count(query, "user");
 	}	
@@ -53,6 +62,9 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	public List<User> getFeaturedProfiles() {
 		Criteria criteria = Criteria.where("isFP").exists(true);
 		Query query = new Query();
+		query.fields().include(FieldConstants.FIRSTNAME)
+					  .include(FieldConstants.LASTNAME)
+					  .include(FieldConstants.IMAGE);
 		query.addCriteria(criteria);	
 		return mongoTemplate.find(query, User.class);		
 	}

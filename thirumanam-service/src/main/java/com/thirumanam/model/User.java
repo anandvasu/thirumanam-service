@@ -47,7 +47,16 @@ public class User {
 	private String image;
 	private String externalId;	
 	private boolean isFP;	
-	
+	private boolean paymentDone;
+		
+	public boolean isPaymentDone() {
+		return paymentDone;
+	}
+
+	public void setPaymentDone(boolean paymentDone) {
+		this.paymentDone = paymentDone;
+	}
+
 	public String getHoroscope() {
 		return horoscope;
 	}

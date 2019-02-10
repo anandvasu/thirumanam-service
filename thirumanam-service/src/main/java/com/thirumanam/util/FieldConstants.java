@@ -16,4 +16,11 @@ public class FieldConstants {
 	public static final String RELIGION = "religion";
 	public static final String CASTE = "caste";
 	public static final String GOTHRAM = "gothram";
+	public static final String ID = "id";
+	public static final String FIRSTNAME = "firstName";
+	public static final String LASTNAME = "lastName";
+	public static final String BDAY = "bDay";
+	public static final String BMONTH = "bMonth";
+	public static final String BYEAR = "bYear";
+	public static final String IMAGE = "image";
 }
