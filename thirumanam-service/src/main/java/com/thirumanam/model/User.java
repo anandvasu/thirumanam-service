@@ -48,7 +48,16 @@ public class User {
 	private String externalId;	
 	private boolean isFP;	
 	private boolean paymentDone;
+	private String about;
 		
+	public String getAbout() {
+		return about;
+	}
+
+	public void setAbout(String about) {
+		this.about = about;
+	}
+
 	public boolean isPaymentDone() {
 		return paymentDone;
 	}

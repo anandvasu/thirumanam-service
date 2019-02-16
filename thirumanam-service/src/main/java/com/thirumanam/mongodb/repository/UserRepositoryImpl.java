@@ -116,7 +116,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 			}
 			
 			if(searchCriteria.getEducation() != null && !searchCriteria.getEducation().isEmpty()) {
-				criteria.and(FieldConstants.EDUCATION).in(searchCriteria.getMaritalStatus());				
+				criteria.and(FieldConstants.EDUCATION).in(searchCriteria.getEducation());				
 			}
 			
 			if(searchCriteria.getFoodHabits() != null && !searchCriteria.getFoodHabits().isEmpty()) {

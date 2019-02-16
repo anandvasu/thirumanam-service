@@ -31,6 +31,7 @@ import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
+import com.thirumanam.mongodb.repository.SequenceRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
 import com.thirumanam.util.ThirumanamConstant;
@@ -51,6 +52,9 @@ public class UserController {
 	
 	@Autowired
 	private UserRepositoryImpl userRepositoryImpl;
+	
+	@Autowired
+	private SequenceRepository sequenceRepository;
 	
 	private void updateProfileCompPercent(User user) {
 		int counter = 0;
@@ -128,7 +132,7 @@ public class UserController {
 		user.setbMonth(Integer.parseInt(data[1]));
 		user.setbYear(Integer.parseInt(data[2]));
 		user.setAge(Period.between(birthday, LocalDate.now()).getYears());
-		String profileId = ThirumanamConstant.PROFILE_ID_PREFIX + getRandomNumberString();
+		String profileId = ThirumanamConstant.PROFILE_ID_PREFIX + sequenceRepository.getNextProfileId();
 		user.setId(profileId);
 		
 		userRepository.save(user);		

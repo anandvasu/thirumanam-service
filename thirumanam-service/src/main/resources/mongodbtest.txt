@@ -6,3 +6,9 @@ db.user.remove({"email":"anandakumarv@gmail.com"})
 
 
 db.user.find({"email":/ravi/})
+
+
+
+DbSetup:
+
+db.sequence.insert({ 'name' : 'ProfileId', sequence : 2000000});
