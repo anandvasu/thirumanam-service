@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -30,10 +31,13 @@ import com.thirumanam.model.Preference;
 import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
+import com.thirumanam.model.VisitedProfiles;
+import com.thirumanam.model.Visitor;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.SequenceRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
+import com.thirumanam.mongodb.repository.VisitedProfileRepository;
 import com.thirumanam.util.ThirumanamConstant;
 import com.thirumanam.util.Util;
 
@@ -55,6 +59,9 @@ public class UserController {
 	
 	@Autowired
 	private SequenceRepository sequenceRepository;
+	
+	@Autowired
+	private VisitedProfileRepository visitedProfileRepository;
 	
 	private void updateProfileCompPercent(User user) {
 		int counter = 0;
@@ -103,10 +110,22 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)
-	public ResponseEntity<User> getUser(@PathVariable("profileId") String profileId) {
+	public ResponseEntity<User> getUser(@PathVariable("profileId") String profileId, @RequestParam("userId") String userId) {
 		Optional<User> userObj = userRepository.findById(profileId);
 		User user = userObj.get();
-		updateProfileCompPercent(user);
+		Optional<VisitedProfiles> vProfiles = visitedProfileRepository.findById(userId);
+		VisitedProfiles visitedProfile = null;
+		if(vProfiles.isPresent()) {
+			visitedProfile = vProfiles.get();
+		} else {
+			visitedProfile = new VisitedProfiles();			
+			visitedProfile.setId(userId);
+		}
+		Visitor visitor = new Visitor();
+		visitor.setId(profileId);
+		visitor.setVisitedDate(new Date());
+		visitedProfile.getProfiles().add(visitor);
+		visitedProfileRepository.save(visitedProfile);
 		return ResponseEntity.ok().body(user);
 	}
 		
