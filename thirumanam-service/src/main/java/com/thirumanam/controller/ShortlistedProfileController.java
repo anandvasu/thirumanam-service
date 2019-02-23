@@ -33,7 +33,7 @@ public class ShortlistedProfileController {
 	@Autowired
 	private UserRepositoryImpl userRepositoryImpl;
 	
-	@RequestMapping("/list")
+	@RequestMapping("/list/{profileId}")
 	public ResponseEntity<List<User>> getVisitedProfiles(@PathVariable("profileId") String profileId) {
 		List<User> shortListedProfilesList = new ArrayList<User>();
 		Map<String, Date> profileMap = new HashMap<String,Date>();

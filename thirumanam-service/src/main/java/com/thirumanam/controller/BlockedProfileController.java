@@ -68,7 +68,7 @@ public class BlockedProfileController {
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.PUT)
 	public ResponseEntity<Status> shortlistProfile(
 			@PathVariable("profileId") String profileId, 
-			@RequestParam("userId") String userId) throws URISyntaxException {
+			@RequestParam("blockedProfileId") String userId) throws URISyntaxException {
 		BlockedProfiles blockedProfiles = null;
 		BlockedProfile profile = new BlockedProfile();
 		profile.setId(userId);
