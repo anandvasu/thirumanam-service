@@ -59,6 +59,17 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	}	
 	
 	@Override
+	public List<User> findUsersByd(List<String> profileIds) {
+		Criteria criteria = Criteria.where("id").in(profileIds);
+		Query query = new Query();
+		query.fields().include(FieldConstants.FIRSTNAME)
+					  .include(FieldConstants.LASTNAME)
+					  .include(FieldConstants.IMAGE);
+		query.addCriteria(criteria);	
+		return mongoTemplate.find(query, User.class);	
+	}
+	
+	@Override
 	public List<User> getFeaturedProfiles() {
 		Criteria criteria = Criteria.where("isFP").exists(true);
 		Query query = new Query();
