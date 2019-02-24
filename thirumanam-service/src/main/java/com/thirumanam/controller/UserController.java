@@ -32,6 +32,8 @@ import com.thirumanam.model.BlockedProfile;
 import com.thirumanam.model.BlockedProfiles;
 import com.thirumanam.model.Preference;
 import com.thirumanam.model.SearchCriteria;
+import com.thirumanam.model.ShortListedProfile;
+import com.thirumanam.model.ShortListedProfiles;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
 import com.thirumanam.model.VisitedProfiles;
@@ -39,6 +41,7 @@ import com.thirumanam.model.Visitor;
 import com.thirumanam.mongodb.repository.BlockedProfileRepository;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.SequenceRepository;
+import com.thirumanam.mongodb.repository.ShortlistedProfileRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
 import com.thirumanam.mongodb.repository.VisitedProfileRepository;
@@ -63,6 +66,9 @@ public class UserController {
 	
 	@Autowired
 	private SequenceRepository sequenceRepository;
+	
+	@Autowired
+	private ShortlistedProfileRepository shortlistedProfileRepository;
 	
 	@Autowired
 	private BlockedProfileRepository blockedProfileRepository;
@@ -203,11 +209,22 @@ public class UserController {
 		
 		//Get Blocked Profiles 
 		List<String> blockedProfileIds = new ArrayList<String>();
-		Optional<BlockedProfiles> sProfiles = blockedProfileRepository.findById(profileId);	
-		if(sProfiles.isPresent()) {
-			BlockedProfiles blockedProfiles = sProfiles.get();
+		Optional<BlockedProfiles> bProfiles = blockedProfileRepository.findById(profileId);	
+		if(bProfiles.isPresent()) {
+			BlockedProfiles blockedProfiles = bProfiles.get();
 			List<BlockedProfile> profiles = blockedProfiles.getProfiles();
 			for(BlockedProfile profile: profiles) {
+				blockedProfileIds.add(profile.getId());
+			}			
+		}
+		
+		//Get shortlisted Profiles 
+		Optional<ShortListedProfiles> sProfiles = shortlistedProfileRepository.findById(profileId);	
+		if(sProfiles.isPresent()) {
+			ShortListedProfiles sListedProfiles = sProfiles.get();
+			List<ShortListedProfile> profiles = sListedProfiles.getProfiles();
+			for(ShortListedProfile profile: profiles) {
+				//add shortlisted profiles to blocked list
 				blockedProfileIds.add(profile.getId());
 			}			
 		}

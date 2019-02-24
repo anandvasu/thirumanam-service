@@ -69,16 +69,17 @@ public class ShortlistedProfileController {
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.PUT)
 	public ResponseEntity<Status> shortlistProfile(
 			@PathVariable("profileId") String profileId, 
-			@RequestParam("userId") String userId) throws URISyntaxException {
+			@RequestParam("shortListedProfileId") String shortListedProfileId) throws URISyntaxException {
 		ShortListedProfiles shortListProfiles = null;
 		ShortListedProfile profile = new ShortListedProfile();
-		profile.setId(userId);
+		profile.setId(shortListedProfileId);
 		profile.setShortlistedDate(new Date());
 		Optional<ShortListedProfiles> sProfiles = shortlistedProfileRepository.findById(profileId);
 		if(sProfiles.isPresent()) {
 			shortListProfiles = sProfiles.get();			
-		} else {
+		} else {			
 			shortListProfiles = new ShortListedProfiles();
+			shortListProfiles.setId(profileId);
 		}
 		shortListProfiles.getProfiles().add(profile);			
 		shortlistedProfileRepository.save(shortListProfiles);		
