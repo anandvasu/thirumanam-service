@@ -39,7 +39,7 @@ public class ShortlistedProfileController {
 		Map<String, Date> profileMap = new HashMap<String,Date>();
 		Optional<ShortListedProfiles> sProfiles = shortlistedProfileRepository.findById(profileId);
 		
-		int peopleViewed = 0;
+		int shortListedCount = 0;
 		
 		List<String> profileIds = new ArrayList<String>();
 		
@@ -55,11 +55,11 @@ public class ShortlistedProfileController {
 			
 			if(!profileIds.isEmpty()) {
 				shortListedProfilesList = userRepositoryImpl.findUsersByd(profileIds);
-				peopleViewed = profileIds.size();
+				shortListedCount = profileIds.size();
 			}
 		}
 		return ResponseEntity.ok()
-				 .header("X-TOTAL-DOCS", Integer.toString(peopleViewed))
+				 .header("X-TOTAL-DOCS", Integer.toString(shortListedCount))
 				 .body(shortListedProfilesList);
 	}	
 	

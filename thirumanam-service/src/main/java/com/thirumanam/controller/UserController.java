@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -27,12 +28,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.thirumanam.model.BlockedProfile;
+import com.thirumanam.model.BlockedProfiles;
 import com.thirumanam.model.Preference;
 import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
 import com.thirumanam.model.VisitedProfiles;
 import com.thirumanam.model.Visitor;
+import com.thirumanam.mongodb.repository.BlockedProfileRepository;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.SequenceRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
@@ -59,6 +63,9 @@ public class UserController {
 	
 	@Autowired
 	private SequenceRepository sequenceRepository;
+	
+	@Autowired
+	private BlockedProfileRepository blockedProfileRepository;
 	
 	@Autowired
 	private VisitedProfileRepository visitedProfileRepository;
@@ -192,9 +199,23 @@ public class UserController {
 	public ResponseEntity<List<User>> getMyProfileMatches(@PathVariable("profileId") String profileId) {		
 		long totalUsers = 0;
 		List<User> usersList = null;
+		
+		
+		//Get Blocked Profiles 
+		List<String> blockedProfileIds = new ArrayList<String>();
+		Optional<BlockedProfiles> sProfiles = blockedProfileRepository.findById(profileId);	
+		if(sProfiles.isPresent()) {
+			BlockedProfiles blockedProfiles = sProfiles.get();
+			List<BlockedProfile> profiles = blockedProfiles.getProfiles();
+			for(BlockedProfile profile: profiles) {
+				blockedProfileIds.add(profile.getId());
+			}			
+		}
+		
 		Optional<Preference> prefObj  = prefRepository.findById(profileId);
 		if(prefObj.isPresent()) {
 			SearchCriteria searchCriteria = buildSearchCriteria(prefObj.get());
+			searchCriteria.setBlockedProfiles(blockedProfileIds);
 			
 			if(totalUsers == 0) {
 				totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	

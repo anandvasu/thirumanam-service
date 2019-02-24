@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.thirumanam.model.BlockedProfile;
 import com.thirumanam.model.BlockedProfiles;
-import com.thirumanam.model.ShortListedProfile;
-import com.thirumanam.model.ShortListedProfiles;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
 import com.thirumanam.mongodb.repository.BlockedProfileRepository;
@@ -35,13 +33,13 @@ public class BlockedProfileController {
 	@Autowired
 	private UserRepositoryImpl userRepositoryImpl;
 	
-	@RequestMapping("/list")
+	@RequestMapping("/list/{profileId}")
 	public ResponseEntity<List<User>> getVisitedProfiles(@PathVariable("profileId") String profileId) {
 		List<User> shortListedProfilesList = new ArrayList<User>();
 		Map<String, Date> profileMap = new HashMap<String,Date>();
 		Optional<BlockedProfiles> sProfiles = blockedProfileRepository.findById(profileId);
 		
-		int peopleViewed = 0;
+		int blockedCount = 0;
 		
 		List<String> profileIds = new ArrayList<String>();
 		
@@ -57,16 +55,16 @@ public class BlockedProfileController {
 			
 			if(!profileIds.isEmpty()) {
 				shortListedProfilesList = userRepositoryImpl.findUsersByd(profileIds);
-				peopleViewed = profileIds.size();
+				blockedCount = profileIds.size();
 			}
 		}
 		return ResponseEntity.ok()
-				 .header("X-TOTAL-DOCS", Integer.toString(peopleViewed))
+				 .header("X-TOTAL-DOCS", Integer.toString(blockedCount))
 				 .body(shortListedProfilesList);
 	}	
 	
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.PUT)
-	public ResponseEntity<Status> shortlistProfile(
+	public ResponseEntity<Status> blockProfile(
 			@PathVariable("profileId") String profileId, 
 			@RequestParam("blockedProfileId") String userId) throws URISyntaxException {
 		BlockedProfiles blockedProfiles = null;
@@ -78,8 +76,29 @@ public class BlockedProfileController {
 			blockedProfiles = sProfiles.get();			
 		} else {
 			blockedProfiles = new BlockedProfiles();
+			blockedProfiles.setId(profileId);
 		}
 		blockedProfiles.getProfiles().add(profile);			
+		blockedProfileRepository.save(blockedProfiles);		
+		return ResponseEntity.noContent().build();		
+	}
+	
+	@RequestMapping(value = "unblock/{profileId}", method = RequestMethod.PUT)
+	public ResponseEntity<Status> unblockProfile(
+			@PathVariable("profileId") String profileId, 
+			@RequestParam("unBlockProfileId") String unBlockProfileId) throws URISyntaxException {
+		BlockedProfiles blockedProfiles = null;
+		Optional<BlockedProfiles> sProfiles = blockedProfileRepository.findById(profileId);
+		if(sProfiles.isPresent()) {
+			blockedProfiles = sProfiles.get();		
+			List<BlockedProfile> profiles = blockedProfiles.getProfiles();
+			for(BlockedProfile profile: profiles) {
+				if(unBlockProfileId.equals(profile.getId())) {
+					profiles.remove(profile);
+					break;
+				}
+			}
+		}
 		blockedProfileRepository.save(blockedProfiles);		
 		return ResponseEntity.noContent().build();		
 	}

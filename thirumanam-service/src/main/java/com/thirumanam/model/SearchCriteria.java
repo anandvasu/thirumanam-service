@@ -26,7 +26,14 @@ public class SearchCriteria {
 	private List<String> district = new ArrayList<String>();
 	private List<String> bodyTypes = new ArrayList<String>();
 	private List<String> employments = new ArrayList<String>();
+	private List<String> blockedProfiles = new ArrayList<String>();
 	
+	public List<String> getBlockedProfiles() {
+		return blockedProfiles;
+	}
+	public void setBlockedProfiles(List<String> blockedProfiles) {
+		this.blockedProfiles = blockedProfiles;
+	}
 	public List<String> getEmployments() {
 		return employments;
 	}

@@ -27,6 +27,9 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	public List<User> searchUserData(SearchCriteria searchCriteria, long skipNumber, int noOfDocs) {
   
 		Criteria criteria = buildCriteria(searchCriteria);
+		if(!searchCriteria.getBlockedProfiles().isEmpty()) {
+			criteria.and(FieldConstants.ID).nin(searchCriteria.getBlockedProfiles());
+		}
 				
 		Query query = new Query();
 		query.fields().include(FieldConstants.FIRSTNAME)
@@ -39,6 +42,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 					  .include(FieldConstants.IMAGE)
 					  .include(FieldConstants.AGE);
 		query.addCriteria(criteria);
+		
 		if (skipNumber > 0) {
 			query.skip(skipNumber);
 		}
@@ -51,10 +55,15 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	@Override
 	public long getSearchCount(SearchCriteria searchCriteria) {
   
-		Criteria criteria = buildCriteria(searchCriteria);				
+		Criteria criteria = buildCriteria(searchCriteria);	
+		if(!searchCriteria.getBlockedProfiles().isEmpty()) {
+			criteria.and(FieldConstants.ID).nin(searchCriteria.getBlockedProfiles());
+		}
+		
 		Query query = new Query();
 		query.fields().include(FieldConstants.ID);
 		query.addCriteria(criteria);	
+		
 		return mongoTemplate.count(query, "user");
 	}	
 	
