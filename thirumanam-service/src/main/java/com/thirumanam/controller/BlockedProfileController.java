@@ -34,7 +34,7 @@ public class BlockedProfileController {
 	private UserRepositoryImpl userRepositoryImpl;
 	
 	@RequestMapping("/list/{profileId}")
-	public ResponseEntity<List<User>> getVisitedProfiles(@PathVariable("profileId") String profileId) {
+	public ResponseEntity<List<User>> getVisitedProfiles(@PathVariable("profileId") String profileId, @RequestParam("pageNo") int pageNo) {
 		List<User> shortListedProfilesList = new ArrayList<User>();
 		Map<String, Date> profileMap = new HashMap<String,Date>();
 		Optional<BlockedProfiles> sProfiles = blockedProfileRepository.findById(profileId);
@@ -53,8 +53,10 @@ public class BlockedProfileController {
 				}
 			}
 			
+			int skipCount = (pageNo-1) * 10;
+			
 			if(!profileIds.isEmpty()) {
-				shortListedProfilesList = userRepositoryImpl.findUsersByd(profileIds);
+				shortListedProfilesList = userRepositoryImpl.findUsersByd(profileIds, skipCount, 10);
 				blockedCount = profileIds.size();
 			}
 		}

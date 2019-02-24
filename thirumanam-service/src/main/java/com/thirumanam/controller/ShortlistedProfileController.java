@@ -34,7 +34,8 @@ public class ShortlistedProfileController {
 	private UserRepositoryImpl userRepositoryImpl;
 	
 	@RequestMapping("/list/{profileId}")
-	public ResponseEntity<List<User>> getVisitedProfiles(@PathVariable("profileId") String profileId) {
+	public ResponseEntity<List<User>> getVisitedProfiles(@PathVariable("profileId") String profileId, 
+			@RequestParam("pageNo") int pageNo) {
 		List<User> shortListedProfilesList = new ArrayList<User>();
 		Map<String, Date> profileMap = new HashMap<String,Date>();
 		Optional<ShortListedProfiles> sProfiles = shortlistedProfileRepository.findById(profileId);
@@ -53,8 +54,10 @@ public class ShortlistedProfileController {
 				}
 			}
 			
+			int skipCount = (pageNo-1) * 10;
+			
 			if(!profileIds.isEmpty()) {
-				shortListedProfilesList = userRepositoryImpl.findUsersByd(profileIds);
+				shortListedProfilesList = userRepositoryImpl.findUsersByd(profileIds, skipCount , 10);
 				shortListedCount = profileIds.size();
 			}
 		}

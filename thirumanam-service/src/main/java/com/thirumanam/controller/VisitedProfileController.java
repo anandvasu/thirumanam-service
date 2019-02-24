@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thirumanam.model.User;
@@ -30,7 +31,8 @@ public class VisitedProfileController {
 	private UserRepositoryImpl userRepositoryImpl;
 	
 	@RequestMapping("/list/{profileId}")
-	public ResponseEntity<List<User>> getVisitedProfiles(@PathVariable("profileId") String profileId) {
+	public ResponseEntity<List<User>> getVisitedProfiles(@PathVariable("profileId") String profileId, 
+			@RequestParam("pageNo") int pageNo) {
 		List<User> visitedProfileList = new ArrayList<User>();
 		Map<String, Date> profileMap = new HashMap<String,Date>();
 		Optional<VisitedProfiles> vProfiles = visitedProfileRepository.findById(profileId);
@@ -49,8 +51,10 @@ public class VisitedProfileController {
 				}
 			}
 			
+			int skipCount = (pageNo-1) * 10;
+			
 			if(!profileIds.isEmpty()) {
-				visitedProfileList = userRepositoryImpl.findUsersByd(profileIds);
+				visitedProfileList = userRepositoryImpl.findUsersByd(profileIds, skipCount, pageNo);
 				peopleViewed = profileIds.size();
 			}
 		}

@@ -68,13 +68,21 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	}	
 	
 	@Override
-	public List<User> findUsersByd(List<String> profileIds) {
+	public List<User> findUsersByd(List<String> profileIds, long skipNumber, int noOfDocs) {
 		Criteria criteria = Criteria.where("id").in(profileIds);
 		Query query = new Query();
 		query.fields().include(FieldConstants.FIRSTNAME)
 					  .include(FieldConstants.LASTNAME)
+					  .include(FieldConstants.AGE)
+					  .include(FieldConstants.BDAY)
+					  .include(FieldConstants.BMONTH)
+					  .include(FieldConstants.BYEAR)
+					  .include(FieldConstants.EDUCATION)
+					  .include(FieldConstants.CITY)
 					  .include(FieldConstants.IMAGE);
 		query.addCriteria(criteria);	
+		query.skip(skipNumber);
+		query.limit(noOfDocs);	
 		return mongoTemplate.find(query, User.class);	
 	}
 	
