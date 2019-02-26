@@ -81,7 +81,9 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 					  .include(FieldConstants.CITY)
 					  .include(FieldConstants.IMAGE);
 		query.addCriteria(criteria);	
-		query.skip(skipNumber);
+		if(skipNumber > 0) {
+			query.skip(skipNumber);
+		}		
 		query.limit(noOfDocs);	
 		return mongoTemplate.find(query, User.class);	
 	}

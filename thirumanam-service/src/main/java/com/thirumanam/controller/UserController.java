@@ -130,22 +130,39 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)
-	public ResponseEntity<User> getUser(@PathVariable("profileId") String profileId, @RequestParam("userId") String userId) {
+	public ResponseEntity<User> getUser(@PathVariable("profileId") String profileId, @RequestParam("userId") String loggedInUserId) {
 		Optional<User> userObj = userRepository.findById(profileId);
 		User user = userObj.get();
 		Optional<VisitedProfiles> vProfiles = visitedProfileRepository.findById(profileId);
 		VisitedProfiles visitedProfile = null;
 		if(vProfiles.isPresent()) {
 			visitedProfile = vProfiles.get();
+			List<Visitor> vistoryList = visitedProfile.getProfiles();
+			boolean isUserAlreadyExists = false;
+			for(Visitor visitor: vistoryList) {
+				if(visitor.getId().equals(loggedInUserId)) {
+					isUserAlreadyExists = true;
+					break;
+				}
+			}
+			if(!isUserAlreadyExists) {
+				Visitor visitor = new Visitor();
+				visitor.setId(loggedInUserId);
+				visitor.setVisitedDate(new Date());
+				visitedProfile.getProfiles().add(0, visitor);
+				visitedProfileRepository.save(visitedProfile);
+			}
 		} else {
 			visitedProfile = new VisitedProfiles();			
 			visitedProfile.setId(profileId);
-		}
-		Visitor visitor = new Visitor();
-		visitor.setId(userId);
-		visitor.setVisitedDate(new Date());
-		visitedProfile.getProfiles().add(0, visitor);
-		visitedProfileRepository.save(visitedProfile);
+			Visitor visitor = new Visitor();
+			visitor.setId(loggedInUserId);
+			visitor.setVisitedDate(new Date());
+			visitedProfile.getProfiles().add(0, visitor);
+			visitedProfileRepository.save(visitedProfile);
+		}		
+		
+		
 		return ResponseEntity.ok().body(user);
 	}
 		

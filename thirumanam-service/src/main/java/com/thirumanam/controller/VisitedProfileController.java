@@ -33,7 +33,7 @@ public class VisitedProfileController {
 	@RequestMapping("/list/{profileId}")
 	public ResponseEntity<List<User>> getVisitedProfiles(@PathVariable("profileId") String profileId, 
 			@RequestParam("pageNo") int pageNo) {
-		List<User> visitedProfileList = new ArrayList<User>();
+		List<User> visitedProfileList = new ArrayList<User>();		
 		Map<String, Date> profileMap = new HashMap<String,Date>();
 		Optional<VisitedProfiles> vProfiles = visitedProfileRepository.findById(profileId);
 		
@@ -41,21 +41,43 @@ public class VisitedProfileController {
 		
 		List<String> profileIds = new ArrayList<String>();
 		
+		int loopCnt = 0;
+		int noOfRecords = 3;
+		int skipRecords = (pageNo == 1) ? 0 : ((pageNo -1) * 10);
+		
 		if(vProfiles.isPresent()) {
 			VisitedProfiles visitedProfile = vProfiles.get();
 			List<Visitor> visitors = visitedProfile.getProfiles();
+			
+			peopleViewed = visitors.size();
 			for(Visitor visitor: visitors) {
+				loopCnt = loopCnt + 1;
 				if(!profileIds.contains(visitor.getId())) {
-					profileIds.add(visitor.getId());
+					if(pageNo ==0 && profileMap.size() >= 3) {
+						break;
+					} else {
+						if(loopCnt <= skipRecords) {
+							continue;
+						} else {
+							if(profileMap.size() >= 10) {
+								break;
+							}
+						}
+					}
+					//profileIds.add(visitor.getId());
 					profileMap.put(visitor.getId(), visitor.getVisitedDate());
+					
 				}
 			}
-			
-			int skipCount = (pageNo-1) * 10;
-			
-			if(!profileIds.isEmpty()) {
-				visitedProfileList = userRepositoryImpl.findUsersByd(profileIds, skipCount, pageNo);
-				peopleViewed = profileIds.size();
+					
+			if(!profileMap.isEmpty()) {
+				profileIds.addAll(profileMap.keySet());
+				
+				
+				if(pageNo > 0) {					
+					noOfRecords = 10;
+				}				
+				visitedProfileList = userRepositoryImpl.findUsersByd(profileIds, 0, noOfRecords);
 			}
 		}
 		return ResponseEntity.ok()
