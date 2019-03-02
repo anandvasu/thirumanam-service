@@ -13,8 +13,13 @@ import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.CodeMismatchException;
+import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
+import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpResult;
+import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
+import com.amazonaws.services.cognitoidp.model.ForgotPasswordResult;
+import com.amazonaws.services.cognitoidp.model.LimitExceededException;
 import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpResult;
@@ -118,6 +123,37 @@ public class CognitoHelper {
 	        }
 		 return true;
 	 }
+	 
+	 public ForgotPasswordResult resetPassword(String username) throws LimitExceededException{
+	        AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+	                .withRegion(Regions.fromName(REGION))
+	                .build();
+
+	        ForgotPasswordRequest forgotPasswordRequest = new ForgotPasswordRequest();
+	        forgotPasswordRequest.setUsername(username);
+	        forgotPasswordRequest.setClientId(CLIENTAPP_ID);
+	        return cognitoIdentityProvider.forgotPassword(forgotPasswordRequest);	       
+	  }
+	 
+	 
+	 public ConfirmForgotPasswordResult updatePassword(String username, String newpw, String code) {
+	        AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+	                .withRegion(Regions.fromName(REGION))
+	                .build();
+
+	        ConfirmForgotPasswordRequest confirmPasswordRequest = new ConfirmForgotPasswordRequest();
+	        confirmPasswordRequest.setUsername(username);
+	        confirmPasswordRequest.setPassword(newpw);
+	        confirmPasswordRequest.setConfirmationCode(code);
+	        confirmPasswordRequest.setClientId(CLIENTAPP_ID);
+	        return cognitoIdentityProvider.confirmForgotPassword(confirmPasswordRequest);	        
+	    }
 	
 	
 	 /**

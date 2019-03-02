@@ -15,13 +15,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amazonaws.services.cognitoidp.model.CodeMismatchException;
+import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
+import com.amazonaws.services.cognitoidp.model.ForgotPasswordResult;
+import com.amazonaws.services.cognitoidp.model.LimitExceededException;
 import com.thirumanam.aws.AWSLoginResponse;
 import com.thirumanam.aws.CognitoHelper;
 import com.thirumanam.model.AccessCode;
+import com.thirumanam.model.ForgotPasswordResponse;
 import com.thirumanam.model.LoginRequest;
 import com.thirumanam.model.LoginResponse;
 import com.thirumanam.model.Preference;
 import com.thirumanam.model.RegisterUser;
+import com.thirumanam.model.ResetPasswordResponse;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.ThirumanamUtil;
 import com.thirumanam.model.User;
@@ -118,6 +123,39 @@ public class UserSecurityController {
 			loginResponse.setUserConfirmed(awsLoginResponse.getUserConfirmed());
 		}		
 		return ResponseEntity.ok().body(loginResponse);
+	}
+	
+	@PostMapping("/password/forgot")
+	public ResponseEntity<ForgotPasswordResponse> forgotPassword(@RequestBody AccessCode accessCode) throws URISyntaxException {	
+		ForgotPasswordResponse resetPwdResponse = new ForgotPasswordResponse();
+		try {
+			ForgotPasswordResult forgotPwdResult = cognitoHelper.resetPassword(accessCode.getUsername());	
+			resetPwdResponse.setDeliveryMedium(forgotPwdResult.getCodeDeliveryDetails().getDeliveryMedium());
+			resetPwdResponse.setDestination(forgotPwdResult.getCodeDeliveryDetails().getDestination());
+			resetPwdResponse.setSuccess(true);
+		} catch (LimitExceededException exp) {
+			resetPwdResponse.setLimitExceed(true);
+			exp.printStackTrace();
+		}
+		return ResponseEntity.ok().body(resetPwdResponse);
+	}
+	
+	@PostMapping("/password/reset")
+	public ResponseEntity<ResetPasswordResponse> 
+		resetPassword(@RequestBody AccessCode accessCode) throws URISyntaxException {	
+		ResetPasswordResponse resetPwdResponse = new ResetPasswordResponse();
+		try {
+			ConfirmForgotPasswordResult updatePasswordResult =
+					cognitoHelper.updatePassword(
+								accessCode.getUsername(), 
+								accessCode.getPassword(),
+								accessCode.getAccessCode());				
+			resetPwdResponse.setSuccess(true);
+		} catch (LimitExceededException exp) {
+			resetPwdResponse.setLimitExceed(true);
+			exp.printStackTrace();
+		}
+		return ResponseEntity.ok().body(resetPwdResponse);
 	}
 	
 	@PostMapping("/accesscode/resend")
