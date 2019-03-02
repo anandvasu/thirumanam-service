@@ -7,14 +7,17 @@ import java.time.Period;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amazonaws.services.cognitoidp.model.CodeMismatchException;
 import com.thirumanam.aws.AWSLoginResponse;
 import com.thirumanam.aws.CognitoHelper;
+import com.thirumanam.model.AccessCode;
 import com.thirumanam.model.LoginRequest;
 import com.thirumanam.model.LoginResponse;
 import com.thirumanam.model.Preference;
@@ -97,19 +100,46 @@ public class UserSecurityController {
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest login) throws URISyntaxException {		
 		LoginResponse loginResponse = new LoginResponse();
-		AWSLoginResponse awsLoginResponse = cognitoHelper.ValidateUser(login.getUsername(), login.getPassword());		
-		List<User> userObj = userRepository.findByExternalId(awsLoginResponse.getExternalId());
-		if(!userObj.isEmpty()) {
-			User user = userObj.get(0);
-			loginResponse.setProfileId(user.getId());
-			loginResponse.setFirstName(user.getFirstName());
-			loginResponse.setLastName(user.getLastName());
-			loginResponse.setProfilePerCompleted(ThirumanamUtil.updateProfileCompPercent(user));
-		}
-		loginResponse.setIdToken(awsLoginResponse.getIdToken());
-		loginResponse.setRefrehToken(awsLoginResponse.getRefreshToken());
-		
+		AWSLoginResponse awsLoginResponse = cognitoHelper.ValidateUser(login.getUsername(), login.getPassword());	
+		if(awsLoginResponse.getExternalId() != null) {
+			List<User> userObj = userRepository.findByExternalId(awsLoginResponse.getExternalId());
+			if(!userObj.isEmpty()) {
+				User user = userObj.get(0);
+				loginResponse.setProfileId(user.getId());
+				loginResponse.setFirstName(user.getFirstName());
+				loginResponse.setLastName(user.getLastName());
+				loginResponse.setProfilePerCompleted(ThirumanamUtil.updateProfileCompPercent(user));
+			}
+			loginResponse.setIdToken(awsLoginResponse.getIdToken());
+			loginResponse.setRefrehToken(awsLoginResponse.getRefreshToken());
+			loginResponse.setAuthSuccess(true);
+		} else {
+			loginResponse.setAuthSuccess(false);
+			loginResponse.setUserConfirmed(awsLoginResponse.getUserConfirmed());
+		}		
 		return ResponseEntity.ok().body(loginResponse);
+	}
+	
+	@PostMapping("/accesscode/resend")
+	public ResponseEntity<String> resendAccessCode(@RequestBody AccessCode accessCode) throws URISyntaxException {		
+		if(!cognitoHelper.resendAccessCode(accessCode.getUsername())) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}		
+		return ResponseEntity.ok().build();
+	}
+	
+	@PostMapping("/accesscode/verify")
+	public ResponseEntity<Status> confirmAccessCode(@RequestBody AccessCode accessCode) throws URISyntaxException {	
+		try {
+			if(!cognitoHelper.VerifyAccessCode(accessCode.getUsername(), accessCode.getAccessCode())) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (CodeMismatchException exp) {
+			return ResponseEntity.ok().body(
+					Util.populateStatus("400", "Invalid Code entered. Please try again."));	
+		}
+		return ResponseEntity.ok().body(
+				Util.populateStatus("200", "User registered successfully."));	
 	}
 	
 	private Status validateUserRegistration(RegisterUser user) {

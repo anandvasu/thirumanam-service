@@ -12,6 +12,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
+import com.amazonaws.services.cognitoidp.model.CodeMismatchException;
+import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
+import com.amazonaws.services.cognitoidp.model.ConfirmSignUpResult;
+import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpResult;
 
@@ -75,6 +79,45 @@ public class CognitoHelper {
         }
         return externalId;
     }
+	
+	 public boolean VerifyAccessCode(String username, String code) throws CodeMismatchException {
+	        AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+	                .withRegion(Regions.fromName(REGION))
+	                .build();	        
+	        		        
+	        ConfirmSignUpRequest confirmSignUpRequest = new ConfirmSignUpRequest();
+	        confirmSignUpRequest.setUsername(username);
+	        confirmSignUpRequest.setConfirmationCode(code);
+	        confirmSignUpRequest.setClientId(CLIENTAPP_ID);
+	
+            ConfirmSignUpResult confirmSignUpResult = cognitoIdentityProvider.confirmSignUp(confirmSignUpRequest);
+            System.out.println("confirmSignupResult=" + confirmSignUpResult.toString());
+	        
+	        return true;
+	  }
+	 
+	 public boolean resendAccessCode(String username) {
+		 AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+	                .withRegion(Regions.fromName(REGION))
+	                .build();
+	        try {
+	        ResendConfirmationCodeRequest resendConfirmationCodeRequest
+	        	= new ResendConfirmationCodeRequest();
+	        resendConfirmationCodeRequest.setUsername(username);
+	        resendConfirmationCodeRequest.setClientId(CLIENTAPP_ID);
+	        cognitoIdentityProvider.resendConfirmationCode(resendConfirmationCodeRequest);
+	        } catch (Exception exp) {
+	        	 System.out.println(exp);
+	        	 return false;
+	        }
+		 return true;
+	 }
 	
 	
 	 /**

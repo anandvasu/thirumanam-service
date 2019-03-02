@@ -1,13 +1,19 @@
 package com.thirumanam.aws;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.AnonymousAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
-import com.amazonaws.services.cognitoidp.model.*;
-import com.amazonaws.util.Base64;
-import com.amazonaws.util.StringUtils;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.SimpleTimeZone;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -16,13 +22,20 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.AnonymousAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
+import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
+import com.amazonaws.services.cognitoidp.model.AuthFlowType;
+import com.amazonaws.services.cognitoidp.model.ChallengeNameType;
+import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
+import com.amazonaws.services.cognitoidp.model.InitiateAuthResult;
+import com.amazonaws.services.cognitoidp.model.RespondToAuthChallengeRequest;
+import com.amazonaws.services.cognitoidp.model.RespondToAuthChallengeResult;
+import com.amazonaws.services.cognitoidp.model.UserNotConfirmedException;
+import com.amazonaws.util.Base64;
+import com.amazonaws.util.StringUtils;
 
 /**
  * Private class for SRP client side math.
@@ -147,7 +160,6 @@ class AuthenticationHelper {
      * @return the JWT token if the request is successful else null.
      */
     AWSLoginResponse PerformSRPAuthentication(String username, String password) {
-        String authresult = null;
         AWSLoginResponse awsLoginResponse = new AWSLoginResponse();
         InitiateAuthRequest initiateAuthRequest = initiateUserSrpAuthRequest(username);
         try {
@@ -165,9 +177,12 @@ class AuthenticationHelper {
                 JSONObject jsonObject=  CognitoJWTParser.getPayload(result.getAuthenticationResult().getIdToken());
                 awsLoginResponse.setExternalId(jsonObject.getString("cognito:username"));
                 awsLoginResponse.setIdToken(result.getAuthenticationResult().getIdToken());
-                awsLoginResponse.setRefreshToken(result.getAuthenticationResult().getRefreshToken());                
-                authresult = result.getAuthenticationResult().getIdToken();
+                awsLoginResponse.setRefreshToken(result.getAuthenticationResult().getRefreshToken());    
+                awsLoginResponse.setUserConfirmed("YES");
             }
+        } catch (final UserNotConfirmedException ex) {
+            System.out.println("Exception" + ex);
+            awsLoginResponse.setUserConfirmed("NO");
         } catch (final Exception ex) {
             System.out.println("Exception" + ex);
 

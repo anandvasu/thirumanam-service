@@ -8,7 +8,22 @@ public class LoginResponse {
 	private String firstName;	
 	private String lastName;
 	private String profileId;
-	private String profilePerCompleted;	
+	private String profilePerCompleted;
+	private boolean isAuthSuccess;	
+	private String userConfirmed;
+	
+	public String getUserConfirmed() {
+		return userConfirmed;
+	}
+	public void setUserConfirmed(String userConfirmed) {
+		this.userConfirmed = userConfirmed;
+	}
+	public boolean isAuthSuccess() {
+		return isAuthSuccess;
+	}
+	public void setAuthSuccess(boolean isAuthSuccess) {
+		this.isAuthSuccess = isAuthSuccess;
+	}		
 	
 	public String getIdToken() {
 		return idToken;
