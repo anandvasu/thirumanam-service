@@ -50,7 +50,7 @@ public class LoadFeaturedProfiles {
 		user.setEducation("BE");
 		user.setEmployment("P");
 		user.setIncome("12354544");
-		user.setRegisterBy("S");
+		user.setRegisterdBy("S");
 		user.setFP(true);		
 		return user;
 	}

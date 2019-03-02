@@ -21,7 +21,7 @@ import com.thirumanam.mongodb.repository.UserRepositoryImpl;
 import com.thirumanam.mongodb.repository.VisitedProfileRepository;
 
 @RestController
-@RequestMapping("/thirumanam/visitedprofiles")
+@RequestMapping("/matrimony/visitedprofiles")
 public class VisitedProfileController {
 	
 	@Autowired

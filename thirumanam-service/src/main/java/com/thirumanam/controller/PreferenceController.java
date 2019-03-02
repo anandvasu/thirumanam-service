@@ -19,7 +19,7 @@ import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.util.Util;
 
 @RestController
-@RequestMapping("/thirumanam/preference")
+@RequestMapping("/matrimony/preference")
 public class PreferenceController {
 	
 	@Autowired
@@ -49,7 +49,7 @@ public class PreferenceController {
 	}
 	
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)
-	public ResponseEntity<Preference> getAllContacts(@PathVariable("profileId") String profileId) {		
+	public ResponseEntity<Preference> getAllMatchingProfile(@PathVariable("profileId") String profileId) {		
 		Optional<Preference> prefObj = prefRepository.findById(profileId);
 		Preference preference = new Preference();
 		if(prefObj.isPresent()) {

@@ -52,6 +52,12 @@ dependencies {
   	compile ('org.glassfish.jersey.inject:jersey-hk2:2.26')
   	//To add Multipart data in the client request
   	compile ('org.glassfish.jersey.media:jersey-media-multipart:2.26')
+  	
+  	//Added for AWS SDK
+  	compile 'com.amazonaws:aws-java-sdk-cognitoidp:1.11.508'
+  	compile 'org.json:json:20170516'
+  	
+  	
    
 	
 	//Test Dependencies
@@ -59,4 +65,6 @@ dependencies {
 	testCompile('org.glassfish.jersey.core:jersey-client:2.26')
 	testCompile('org.glassfish.jersey.media:jersey-media-json-jackson:2.26')
 	testCompile('org.glassfish.jersey.media:jersey-media-multipart:2.26')
+	
+
 }

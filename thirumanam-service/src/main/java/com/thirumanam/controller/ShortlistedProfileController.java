@@ -24,7 +24,7 @@ import com.thirumanam.mongodb.repository.ShortlistedProfileRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
 
 @RestController
-@RequestMapping("/thirumanam/shortlisted")
+@RequestMapping("/matrimony/shortlisted")
 public class ShortlistedProfileController {
 
 	@Autowired

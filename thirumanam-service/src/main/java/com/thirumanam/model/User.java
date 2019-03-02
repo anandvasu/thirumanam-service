@@ -12,7 +12,7 @@ public class User {
 	private String email;
 	private String password;
 	private String gender;
-	private String registerBy;
+	private String registerdBy;	
 	private String registerByName;
 	private String dob;
 	private String profileCompPercent;		
@@ -38,17 +38,23 @@ public class User {
 	private String horoscope;	
 	private String education;
 	private String employment;
-	private String income;
-	
+	private String income;	
 	private String mCountryCode;
-	private String mobile;		
-	
+	private String mobile;			
 	private String status;	
 	private String image;
 	private String externalId;	
 	private boolean isFP;	
 	private boolean paymentDone;
-	private String about;
+	private String about;	
+		
+	public String getRegisterdBy() {
+		return registerdBy;
+	}
+
+	public void setRegisterdBy(String registerdBy) {
+		this.registerdBy = registerdBy;
+	}
 		
 	public String getAbout() {
 		return about;
@@ -318,13 +324,7 @@ public class User {
 	}
 	public void setGender(String gender) {
 		this.gender = gender;
-	}
-	public String getRegisterBy() {
-		return registerBy;
-	}
-	public void setRegisterBy(String registerBy) {
-		this.registerBy = registerBy;
-	}
+	}	
 	public String getRegisterByName() {
 		return registerByName;
 	}

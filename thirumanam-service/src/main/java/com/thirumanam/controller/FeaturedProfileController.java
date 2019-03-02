@@ -14,7 +14,7 @@ import com.thirumanam.mongodb.repository.UserRepository;
 import com.thirumanam.util.CacheConstants;
 
 @RestController
-@RequestMapping("/thirumanam/featuredprofiles")
+@RequestMapping("/matrimony/featuredprofiles")
 public class FeaturedProfileController {
 	
 	@Autowired

@@ -3,6 +3,7 @@ mongo "mongodb+srv://cluster0-thph3.mongodb.net/test" --username anand
 db.user.find({"email":"anandakumarv@gmail.com"})
 
 db.user.remove({"email":"anandakumarv@gmail.com"})
+db.user.remove({"email":"adtpushpa@gmail.com"})
 
 
 db.user.find({"email":/ravi/})
@@ -12,3 +13,5 @@ db.user.find({"email":/ravi/})
 DbSetup:
 
 db.sequence.insert({ 'name' : 'ProfileId', sequence : 2000003});
+
+db.user.remove({"email":"nndharbar@gmail.com"})

@@ -24,7 +24,7 @@ import com.thirumanam.mongodb.repository.BlockedProfileRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
 
 @RestController
-@RequestMapping("/thirumanam/blocked")
+@RequestMapping("/matrimony/blocked")
 public class BlockedProfileController {
 
 	@Autowired

@@ -3,8 +3,6 @@ package com.thirumanam.controller;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -13,8 +11,6 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,26 +31,22 @@ import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.ShortListedProfile;
 import com.thirumanam.model.ShortListedProfiles;
 import com.thirumanam.model.Status;
+import com.thirumanam.model.ThirumanamUtil;
 import com.thirumanam.model.User;
 import com.thirumanam.model.VisitedProfiles;
 import com.thirumanam.model.Visitor;
 import com.thirumanam.mongodb.repository.BlockedProfileRepository;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
-import com.thirumanam.mongodb.repository.SequenceRepository;
 import com.thirumanam.mongodb.repository.ShortlistedProfileRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
 import com.thirumanam.mongodb.repository.VisitedProfileRepository;
-import com.thirumanam.util.ThirumanamConstant;
 import com.thirumanam.util.Util;
 
 @RestController
-@RequestMapping("/thirumanam/user")
-public class UserController {
+@RequestMapping("/matrimony/user")
+public class UserSearchController {
 
-	//private Logger logger = LoggerFactory.getLogger(UserController.class);
-	Logger logger = LogManager.getLogger(UserController.class);
-	
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -65,9 +57,6 @@ public class UserController {
 	private UserRepositoryImpl userRepositoryImpl;
 	
 	@Autowired
-	private SequenceRepository sequenceRepository;
-	
-	@Autowired
 	private ShortlistedProfileRepository shortlistedProfileRepository;
 	
 	@Autowired
@@ -76,33 +65,6 @@ public class UserController {
 	@Autowired
 	private VisitedProfileRepository visitedProfileRepository;
 	
-	private void updateProfileCompPercent(User user) {
-		int counter = 0;
-		counter = (user.getFirstName() != null) ? (counter + 1) : counter; //1
-		counter = (user.getLastName() != null) ? (counter + 1) : counter;//2
-		counter = (user.getAge() != 0) ? (counter + 1) : counter; //3
-		counter = (user.getEmail() != null) ? (counter + 1) : counter; //4
-		counter = (user.getGender() != null) ? (counter + 1) : counter; //5
-		counter = (user.getRegisterBy() != null) ? (counter + 1) : counter; //6
-		counter = (user.getCountry() != null) ? (counter + 1) : counter; //7
-		counter = (user.getPstate() != null) ? (counter + 1) : counter; //8
-		counter = (user.getDistrict() != null) ? (counter + 1) : counter; //9
-		counter = (user.getCity() != null) ? (counter + 1) : counter; //10
-		counter = (user.getmStatus() != null) ? (counter + 1) : counter; //11
-		counter = (user.getFamilyType() != null) ? (counter + 1) : counter; //12
-		counter = (user.getFamilyValue() != null) ? (counter + 1) : counter; //13
-		counter = (user.getFoodHabit() != null) ? (counter + 1) : counter; //14
-		counter = (user.getBodyType() != null) ? (counter + 1) : counter; //15
-		counter = ((user.getHeightCm() != 0) || (user.getHeightInch() != 0 )) ? (counter + 1) : counter; //16
-		counter = (user.getEducation() != null) ? (counter + 1) : counter; //17
-		counter = (user.getEmployment() != null) ? (counter + 1) : counter; //18
-		counter = (user.getIncome() != null) ? (counter + 1) : counter; //19
-		counter = (user.getImage() != null) ? (counter + 1) : counter; //20
-		
-		double percent = (counter * 100) / 20;
-		int percentCeil = (int) Math.ceil(percent);
-		user.setProfileCompPercent(Integer.toString(percentCeil));
-	}
 	
 	public static String getRandomNumberString() {
 	    // It will generate 6 digit random Number.
@@ -118,7 +80,7 @@ public class UserController {
 	public ResponseEntity<User> getUserByExternalId(@PathVariable("externalId") String externalId) {
 		List<User> userObj = userRepository.findByExternalId(externalId);
 		User user = userObj.get(0);
-		updateProfileCompPercent(user);
+		ThirumanamUtil.updateProfileCompPercent(user);
 		return ResponseEntity.ok().body(user);
 	}
 	
@@ -165,44 +127,7 @@ public class UserController {
 		
 		return ResponseEntity.ok().body(user);
 	}
-		
-	@PostMapping("/register")
-	public ResponseEntity<Status> registerUser(@RequestBody User user) throws URISyntaxException {
-		
-		Status status = validateUserRegistration(user);
-		if (status != null) {
-			return ResponseEntity.badRequest().body(status);
-		}
-		
-		List<User> users = userRepository.findByEmail(user.getEmail());
-		if (!users.isEmpty()) {
-			logger.info("{}", users.size());
-			logger.info("{}{}", "foo", "bar");
-			return ResponseEntity.badRequest().body( Util.populateStatus("t-500", "Email already exists."));
-		}				
-		
-		//Split Day, Month, Year. Calculate age. Update all of these into User object.
-		String[] data = user.getDob().split("/");
-		LocalDate birthday = LocalDate.of(Integer.parseInt(data[2]), Integer.parseInt(data[1]), Integer.parseInt(data[0]));
-		user.setbDay(Integer.parseInt(data[0]));
-		user.setbMonth(Integer.parseInt(data[1]));
-		user.setbYear(Integer.parseInt(data[2]));
-		user.setAge(Period.between(birthday, LocalDate.now()).getYears());
-		String profileId = ThirumanamConstant.PROFILE_ID_PREFIX + sequenceRepository.getNextProfileId();
-		user.setId(profileId);
-		
-		userRepository.save(user);		
-		
-		Preference preference = new Preference();
-		preference.setId(profileId);
-		preference.setGender(
-				(user.getGender().equals(ThirumanamConstant.GENDER_M) ? ThirumanamConstant.GENDER_F: ThirumanamConstant.GENDER_M));
-		prefRepository.save(preference);
-		
-		logger.info("User Registration Successfull");
-		return ResponseEntity.created(new URI("/user")).header("PROFILEID", profileId).body(
-				Util.populateStatus(profileId, "User registered successfully."));	
-	}
+	
 	
 	private SearchCriteria buildSearchCriteria(Preference preference) {
 		SearchCriteria searchCriteria = new SearchCriteria();
@@ -254,9 +179,7 @@ public class UserController {
 			if(totalUsers == 0) {
 				totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	
 			}			
-			usersList = userRepositoryImpl.searchUserData(searchCriteria, 0, 3);	
-					
-			logger.info("User Size in new class" + usersList.size());	
+			usersList = userRepositoryImpl.searchUserData(searchCriteria, 0, 3);						
 		}
 		return ResponseEntity.ok()
 							 .header("X-TOTAL-DOCS", Long.toString(totalUsers))
@@ -410,15 +333,14 @@ public class UserController {
 		int numberOfDocs = (skipnumber +10 < totalUsers) ? 10 : (int)(totalUsers-skipnumber);		
 		
 		List<User> usersList = userRepositoryImpl.searchUserData(searchCriteria, skipnumber, numberOfDocs);	
-				
-		logger.info("User Size in new class" + usersList.size());				   
+						   
 		return ResponseEntity.ok()
 							 .header("X-TOTAL-DOCS", Long.toString(totalUsers))
 							 .body(usersList);
 	}
 	
 	@PostMapping("/image")
-	public ResponseEntity uploadProfileImage(@RequestParam("imageFile") MultipartFile imageFile, 
+	public ResponseEntity<String> uploadProfileImage(@RequestParam("imageFile") MultipartFile imageFile, 
 			@RequestParam("profileId") String profileId) {
 		try {
 			
@@ -437,7 +359,7 @@ public class UserController {
 	
 	
 	@PostMapping("/horoscope")
-	public ResponseEntity uploadHoroscopeImage(@RequestParam("horoscopeImage") MultipartFile horoscopeImage, 
+	public ResponseEntity<Status> uploadHoroscopeImage(@RequestParam("horoscopeImage") MultipartFile horoscopeImage, 
 			@RequestParam("profileId") String profileId) {
 		try {
 			
@@ -456,47 +378,5 @@ public class UserController {
 			exp.printStackTrace();
 		}
 		return ResponseEntity.ok().build();
-	}
-	
-	private Status validateUserRegistration(User user) {
-		Status status = null;
-		if(user.getFirstName() == null || user.getFirstName().isEmpty()) {
-			status = Util.populateStatus("t-400", "First Name is required.");
-			return status;
-		}
-		if(user.getLastName() == null || user.getLastName().isEmpty()) {
-			status = Util.populateStatus("t-401", "Last Name is required.");
-			return status;
-		}
-		if(user.getDob() == null || user.getDob().isEmpty()) {
-			status = Util.populateStatus("t-402", "Dob is required.");
-			return status;
-		}
-		if(user.getEmail() == null || user.getEmail().isEmpty()) {
-			status = Util.populateStatus("t-403", "Email is required.");
-			return status;
-		}
-		/*if(user.getCountry() == null || user.getCountry().isEmpty()) {
-			status = Util.populateStatus("t-404", "Country is required.");
-		}
-		if(user.getState() == null || user.getState().isEmpty()) {
-			status = Util.populateStatus("t-405", "State is required.");
-		}
-		if(user.getCity() == null || user.getCity().isEmpty()) {
-			status = Util.populateStatus("t-406", "City is required.");
-		}*/
-		if(user.getMobile() == null || user.getMobile().isEmpty()) {
-			status = Util.populateStatus("t-407", "Mobile is required.");
-			return status;
-		}
-		if(user.getGender() == null || user.getGender().isEmpty()) {
-			status = Util.populateStatus("t-408", "Gender is required.");
-			return status;
-		}
-		if(user.getRegisterBy() == null || user.getRegisterBy().isEmpty()) {
-			status = Util.populateStatus("t-409", "Registered By is required.");
-			return status;
-		}
-		return status;
 	}	
 }

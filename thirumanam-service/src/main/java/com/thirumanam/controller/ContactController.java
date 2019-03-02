@@ -17,7 +17,7 @@ import com.thirumanam.mongodb.repository.ContactRepository;
 import com.thirumanam.util.Util;
 
 @RestController
-@RequestMapping("/thirumanam/contact")
+@RequestMapping("/matrimony/contact")
 public class ContactController {
 	
 	@Autowired
