@@ -114,7 +114,7 @@ public class UserSecurityController {
 				loginResponse.setProfilePerCompleted(ThirumanamUtil.updateProfileCompPercent(user));
 				loginResponse.setGender(user.getGender());
 			}
-			loginResponse.setIdToken(awsLoginResponse.getIdToken());
+			loginResponse.setIdToken("Bearer " + awsLoginResponse.getIdToken());
 			if(awsLoginResponse.getRefreshToken() != null) {
 				loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
 			}

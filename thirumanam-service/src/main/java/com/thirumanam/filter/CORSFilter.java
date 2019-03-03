@@ -13,7 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,6 +21,9 @@ public class CORSFilter implements Filter {
 	private Set<String> validOrigins = new HashSet<String>();
 
 	private String allowedOrigins;
+	
+	@Autowired
+	AwsCognitoIdTokenProcessor idTokenProcessor;
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
@@ -56,7 +59,7 @@ public class CORSFilter implements Filter {
 			
 			response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
 			response.addHeader("Access-Control-Allow-Headers",
-					"Content-Type, accept, X-TOTAL-DOCS");
+					"Content-Type, accept, X-TOTAL-DOCS, Authorization");
 			response.addHeader("Access-Control-Allow-Credentials", "true");
 			response.addHeader("Access-Control-Max-Age", "1209600");
 			response.addHeader("Access-Control-Expose-Headers", "X-TOTAL-DOCS");
@@ -65,11 +68,13 @@ public class CORSFilter implements Filter {
 		System.out.println(" Check the Method before Returning - "+request.getMethod());
 				
 		
-		 if (request.getMethod().equals( "OPTIONS" ) ) {
+		if (request.getMethod().equals( "OPTIONS" ) ) {
 				System.out.println(" Not Going to Authentication Returning Options ");
 			 return;
-		    }
-		System.out.println(" Going to Authentication - "+request.getMethod());
+		}
+		System.out.println("request URI:" + request.getRequestURI());
+	
+		idTokenProcessor.processIdToken(request);
 		
 		chain.doFilter(servletRequest, servletResponse);
 	}

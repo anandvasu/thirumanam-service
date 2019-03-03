@@ -1,9 +1,12 @@
 package com.thirumanam.aws;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -23,6 +26,16 @@ import com.amazonaws.services.cognitoidp.model.LimitExceededException;
 import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpResult;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
+import com.nimbusds.jose.proc.JWSKeySelector;
+import com.nimbusds.jose.proc.JWSVerificationKeySelector;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jose.util.DefaultResourceRetriever;
+import com.nimbusds.jose.util.ResourceRetriever;
+import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 
 @Component
 public class CognitoHelper {
@@ -35,6 +48,27 @@ public class CognitoHelper {
       
     @Value("${aws.region}")
     private String REGION;
+    
+    private String getJwkURL() {
+    	return "https://cognito-idp."+REGION+".amazonaws.com/"+POOL_ID+"/.well-known/jwks.json";
+    }
+        
+    @Bean
+    public ConfigurableJWTProcessor<SecurityContext> configurableJWTProcessor() throws MalformedURLException {
+         ResourceRetriever resourceRetriever = 
+              new DefaultResourceRetriever(2000,//jwtConfiguration.getConnectionTimeout()
+                   2000);//jwtConfiguration.getReadTimeout());
+         //https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json.
+         URL jwkSetURL= new URL(getJwkURL());
+         //Creates the JSON Web Key (JWK)
+         JWKSource<SecurityContext> keySource= new RemoteJWKSet<SecurityContext>(jwkSetURL, resourceRetriever);
+         ConfigurableJWTProcessor<SecurityContext> jwtProcessor= new DefaultJWTProcessor<SecurityContext>();
+         //RSASSA-PKCS-v1_5 using SHA-256 hash algorithm
+         JWSKeySelector<SecurityContext> keySelector = 
+        		 new JWSVerificationKeySelector<SecurityContext>(JWSAlgorithm.RS256, keySource);
+         jwtProcessor.setJWSKeySelector(keySelector);
+         return jwtProcessor;
+     }
 		
     private AttributeType createAttributeType(String name, 
     		String value ) {
@@ -171,5 +205,16 @@ public class CognitoHelper {
     public AWSLoginResponse validateUserWithRefToken(String refreshToken) {
         AuthenticationHelper helper = new AuthenticationHelper(POOL_ID, CLIENTAPP_ID, "", REGION);
         return helper.performRefreshTokenAuthentication(refreshToken);
+    }
+    
+    public boolean validateIdToken() {
+    	AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+                .withRegion(Regions.fromName(REGION))
+                .build();
+    		
+    	return false;
     }
 }
