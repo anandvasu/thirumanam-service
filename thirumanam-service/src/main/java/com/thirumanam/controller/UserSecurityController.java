@@ -20,6 +20,7 @@ import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.LimitExceededException;
 import com.amazonaws.services.cognitoidp.model.NotAuthorizedException;
+import com.amazonaws.services.cognitoidp.model.UserNotConfirmedException;
 import com.thirumanam.aws.AWSLoginResponse;
 import com.thirumanam.aws.CognitoHelper;
 import com.thirumanam.model.AccessCode;
@@ -124,18 +125,27 @@ public class UserSecurityController {
 			if(awsLoginResponse.getRefreshToken() != null) {
 				loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
 			}
-			loginResponse.setAuthSuccess(true);
+			loginResponse.setSuccess(true);
 		} else {
-			loginResponse.setAuthSuccess(false);			
+			loginResponse.setSuccess(false);			
 		}
 		return loginResponse;
 	}
 	
 	
 	@PostMapping("/login")
-	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest login) throws URISyntaxException {		
-		AWSLoginResponse awsLoginResponse = cognitoHelper.ValidateUser(login.getUsername(), login.getPassword());	
-		LoginResponse loginResponse = populateUserDetail(awsLoginResponse);			
+	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest login) throws URISyntaxException {
+		LoginResponse loginResponse = null;
+		try {
+			AWSLoginResponse awsLoginResponse = cognitoHelper.validateUser(login.getUsername(), login.getPassword());	
+			loginResponse = populateUserDetail(awsLoginResponse);	
+		} catch (final UserNotConfirmedException exp) {
+			loginResponse = new LoginResponse();
+			loginResponse.setUserConfirmed("NO");
+		} catch (final NotAuthorizedException exp) {
+			loginResponse = new LoginResponse();
+			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
+		}
 		return ResponseEntity.ok().body(loginResponse);
 	}
 	

@@ -199,7 +199,7 @@ public class CognitoHelper {
      * @param password represents the password in the cognito user pool
      * @return returns the AWSLoginResponse after the validation
      */
-    public AWSLoginResponse ValidateUser(String username, String password) {
+    public AWSLoginResponse validateUser(String username, String password) {
         AuthenticationHelper helper = new AuthenticationHelper(POOL_ID, CLIENTAPP_ID, "", REGION);
         return helper.performSRPAuthentication(username, password);
     }

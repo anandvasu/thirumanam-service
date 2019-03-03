@@ -185,10 +185,7 @@ class AuthenticationHelper {
         } catch (final UserNotConfirmedException ex) {
             System.out.println("Exception" + ex);
             awsLoginResponse.setUserConfirmed("NO");
-        } catch (final Exception ex) {
-            System.out.println("Exception" + ex);
-
-        }
+        } 
         return awsLoginResponse;
     }
     
