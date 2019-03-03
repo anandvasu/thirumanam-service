@@ -3,7 +3,7 @@ package com.thirumanam.model;
 public class LoginResponse {
 	
 	private String idToken;	
-	private String refrehToken;
+	private String refreshToken;	
 	private String gender;
 	private String firstName;	
 	private String lastName;
@@ -31,12 +31,7 @@ public class LoginResponse {
 	public void setIdToken(String idToken) {
 		this.idToken = idToken;
 	}
-	public String getRefrehToken() {
-		return refrehToken;
-	}
-	public void setRefrehToken(String refrehToken) {
-		this.refrehToken = refrehToken;
-	}
+	
 	public String getGender() {
 		return gender;
 	}
@@ -66,5 +61,11 @@ public class LoginResponse {
 	}
 	public void setProfilePerCompleted(String profilePerCompleted) {
 		this.profilePerCompleted = profilePerCompleted;
+	}
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 }

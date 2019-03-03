@@ -165,6 +165,11 @@ public class CognitoHelper {
      */
     public AWSLoginResponse ValidateUser(String username, String password) {
         AuthenticationHelper helper = new AuthenticationHelper(POOL_ID, CLIENTAPP_ID, "", REGION);
-        return helper.PerformSRPAuthentication(username, password);
+        return helper.performSRPAuthentication(username, password);
+    }
+    
+    public AWSLoginResponse validateUserWithRefToken(String refreshToken) {
+        AuthenticationHelper helper = new AuthenticationHelper(POOL_ID, CLIENTAPP_ID, "", REGION);
+        return helper.performRefreshTokenAuthentication(refreshToken);
     }
 }

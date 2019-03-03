@@ -101,11 +101,9 @@ public class UserSecurityController {
 				Util.populateStatus(profileId, "User registered successfully."));	
 	}
 	
-	
-	@PostMapping("/login")
-	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest login) throws URISyntaxException {		
+	private LoginResponse populateUserDetail(AWSLoginResponse awsLoginResponse) {
 		LoginResponse loginResponse = new LoginResponse();
-		AWSLoginResponse awsLoginResponse = cognitoHelper.ValidateUser(login.getUsername(), login.getPassword());	
+		loginResponse.setUserConfirmed(awsLoginResponse.getUserConfirmed());
 		if(awsLoginResponse.getExternalId() != null) {
 			List<User> userObj = userRepository.findByExternalId(awsLoginResponse.getExternalId());
 			if(!userObj.isEmpty()) {
@@ -114,14 +112,31 @@ public class UserSecurityController {
 				loginResponse.setFirstName(user.getFirstName());
 				loginResponse.setLastName(user.getLastName());
 				loginResponse.setProfilePerCompleted(ThirumanamUtil.updateProfileCompPercent(user));
+				loginResponse.setGender(user.getGender());
 			}
 			loginResponse.setIdToken(awsLoginResponse.getIdToken());
-			loginResponse.setRefrehToken(awsLoginResponse.getRefreshToken());
+			if(awsLoginResponse.getRefreshToken() != null) {
+				loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
+			}
 			loginResponse.setAuthSuccess(true);
 		} else {
-			loginResponse.setAuthSuccess(false);
-			loginResponse.setUserConfirmed(awsLoginResponse.getUserConfirmed());
-		}		
+			loginResponse.setAuthSuccess(false);			
+		}
+		return loginResponse;
+	}
+	
+	
+	@PostMapping("/login")
+	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest login) throws URISyntaxException {		
+		AWSLoginResponse awsLoginResponse = cognitoHelper.ValidateUser(login.getUsername(), login.getPassword());	
+		LoginResponse loginResponse = populateUserDetail(awsLoginResponse);			
+		return ResponseEntity.ok().body(loginResponse);
+	}
+	
+	@PostMapping("/login/refreshtoken")
+	public ResponseEntity<LoginResponse> refreshTokenLogin (@RequestBody LoginRequest login) throws URISyntaxException {		
+		AWSLoginResponse awsLoginResponse = cognitoHelper.validateUserWithRefToken(login.getRefreshToken());	
+		LoginResponse loginResponse = populateUserDetail(awsLoginResponse);			
 		return ResponseEntity.ok().body(loginResponse);
 	}
 	
@@ -151,8 +166,11 @@ public class UserSecurityController {
 								accessCode.getPassword(),
 								accessCode.getAccessCode());				
 			resetPwdResponse.setSuccess(true);
+			resetPwdResponse.setCodeMatched(true);
 		} catch (LimitExceededException exp) {
 			resetPwdResponse.setLimitExceed(true);
+			exp.printStackTrace();
+		} catch (CodeMismatchException exp) {
 			exp.printStackTrace();
 		}
 		return ResponseEntity.ok().body(resetPwdResponse);

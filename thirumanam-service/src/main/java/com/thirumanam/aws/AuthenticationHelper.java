@@ -28,7 +28,9 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.AuthFlowType;
+import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
 import com.amazonaws.services.cognitoidp.model.ChallengeNameType;
+import com.amazonaws.services.cognitoidp.model.ForgetDeviceRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthResult;
 import com.amazonaws.services.cognitoidp.model.RespondToAuthChallengeRequest;
@@ -36,6 +38,7 @@ import com.amazonaws.services.cognitoidp.model.RespondToAuthChallengeResult;
 import com.amazonaws.services.cognitoidp.model.UserNotConfirmedException;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.StringUtils;
+import com.thirumanam.util.ThirumanamConstant;
 
 /**
  * Private class for SRP client side math.
@@ -159,7 +162,7 @@ class AuthenticationHelper {
      * @param password Password for the SRP request
      * @return the JWT token if the request is successful else null.
      */
-    AWSLoginResponse PerformSRPAuthentication(String username, String password) {
+    AWSLoginResponse performSRPAuthentication(String username, String password) {
         AWSLoginResponse awsLoginResponse = new AWSLoginResponse();
         InitiateAuthRequest initiateAuthRequest = initiateUserSrpAuthRequest(username);
         try {
@@ -173,7 +176,6 @@ class AuthenticationHelper {
             if (ChallengeNameType.PASSWORD_VERIFIER.toString().equals(initiateAuthResult.getChallengeName())) {
                 RespondToAuthChallengeRequest challengeRequest = userSrpAuthRequest(initiateAuthResult, password);
                 RespondToAuthChallengeResult result = cognitoIdentityProvider.respondToAuthChallenge(challengeRequest);
-                //System.out.println(result);
                 JSONObject jsonObject=  CognitoJWTParser.getPayload(result.getAuthenticationResult().getIdToken());
                 awsLoginResponse.setExternalId(jsonObject.getString("cognito:username"));
                 awsLoginResponse.setIdToken(result.getAuthenticationResult().getIdToken());
@@ -189,7 +191,25 @@ class AuthenticationHelper {
         }
         return awsLoginResponse;
     }
-
+    
+    public AWSLoginResponse performRefreshTokenAuthentication(String refreshToken) {
+	   	 AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+	   	 AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+	                .withRegion(Regions.fromName(this.region))
+	                .build();
+	   	InitiateAuthRequest initiateAuthRequest = initiateRefreshTokenAuth(refreshToken);
+	   	InitiateAuthResult initiateAuthResult = cognitoIdentityProvider.initiateAuth(initiateAuthRequest);
+	   	AuthenticationResultType authResultType = initiateAuthResult.getAuthenticationResult();
+	   	AWSLoginResponse awsLoginResponse = new AWSLoginResponse();
+	    JSONObject jsonObject=  CognitoJWTParser.getPayload(authResultType.getIdToken());
+        awsLoginResponse.setExternalId(jsonObject.getString("cognito:username"));
+        awsLoginResponse.setIdToken(authResultType.getIdToken());   
+        awsLoginResponse.setUserConfirmed(ThirumanamConstant.YES);
+	   	return awsLoginResponse;
+   }
+    
     /**
      * Initialize the authentication request for the first time.
      *
@@ -204,6 +224,24 @@ class AuthenticationHelper {
         //Only to be used if the pool contains the secret key.
         //initiateAuthRequest.addAuthParametersEntry("SECRET_HASH", this.calculateSecretHash(this.clientId,this.secretKey,username));
         initiateAuthRequest.addAuthParametersEntry("USERNAME", username);
+        initiateAuthRequest.addAuthParametersEntry("SRP_A", this.getA().toString(16));
+        return initiateAuthRequest;
+    }
+    
+    /**
+     * Initialize the authentication request for the first time.
+     *
+     * @param username The user for which the authentication request is created.
+     * @return the Authentication request.
+     */
+    private InitiateAuthRequest initiateRefreshTokenAuth(String refreshToken) {
+
+        InitiateAuthRequest initiateAuthRequest = new InitiateAuthRequest();
+        initiateAuthRequest.setAuthFlow(AuthFlowType.REFRESH_TOKEN_AUTH);
+        initiateAuthRequest.setClientId(this.clientId);
+        //Only to be used if the pool contains the secret key.
+        //initiateAuthRequest.addAuthParametersEntry("SECRET_HASH", this.calculateSecretHash(this.clientId,this.secretKey,username));
+        initiateAuthRequest.addAuthParametersEntry("REFRESH_TOKEN", refreshToken);
         initiateAuthRequest.addAuthParametersEntry("SRP_A", this.getA().toString(16));
         return initiateAuthRequest;
     }
