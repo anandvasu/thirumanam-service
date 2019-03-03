@@ -4,8 +4,16 @@ public class AWSLoginResponse {
 
 	private String idToken;
 	private String refreshToken;
+	private String accessToken;
 	private String externalId;
 	private String userConfirmed;
+	
+	public String getAccessToken() {
+		return accessToken;
+	}
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
 	
 	public String getUserConfirmed() {
 		return userConfirmed;

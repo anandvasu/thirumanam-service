@@ -3,7 +3,8 @@ package com.thirumanam.model;
 public class LoginResponse {
 	
 	private String idToken;	
-	private String refreshToken;	
+	private String refreshToken;
+	private String accessToken;		
 	private String gender;
 	private String firstName;	
 	private String lastName;
@@ -67,5 +68,11 @@ public class LoginResponse {
 	}
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
+	}
+	public String getAccessToken() {
+		return accessToken;
+	}
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 }

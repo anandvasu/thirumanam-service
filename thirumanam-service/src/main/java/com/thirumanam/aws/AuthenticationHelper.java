@@ -179,6 +179,7 @@ class AuthenticationHelper {
                 awsLoginResponse.setExternalId(jsonObject.getString("cognito:username"));
                 awsLoginResponse.setIdToken(result.getAuthenticationResult().getIdToken());
                 awsLoginResponse.setRefreshToken(result.getAuthenticationResult().getRefreshToken());    
+                awsLoginResponse.setAccessToken(result.getAuthenticationResult().getAccessToken());
                 awsLoginResponse.setUserConfirmed("YES");
             }
         } catch (final UserNotConfirmedException ex) {

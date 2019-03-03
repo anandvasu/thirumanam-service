@@ -15,6 +15,8 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
+import com.amazonaws.services.cognitoidp.model.ChangePasswordRequest;
+import com.amazonaws.services.cognitoidp.model.ChangePasswordResult;
 import com.amazonaws.services.cognitoidp.model.CodeMismatchException;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
@@ -205,16 +207,19 @@ public class CognitoHelper {
     public AWSLoginResponse validateUserWithRefToken(String refreshToken) {
         AuthenticationHelper helper = new AuthenticationHelper(POOL_ID, CLIENTAPP_ID, "", REGION);
         return helper.performRefreshTokenAuthentication(refreshToken);
-    }
-    
-    public boolean validateIdToken() {
+    }    
+       
+    public ChangePasswordResult changePassword(String accessToken, String currentPassword, String newPassword) {
     	AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
-        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
-                .standard()
-                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                .withRegion(Regions.fromName(REGION))
-                .build();
-    		
-    	return false;
+    	AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+	                .withRegion(Regions.fromName(REGION))
+	                .build();
+    	ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+    	changePasswordRequest.setPreviousPassword(currentPassword);
+    	changePasswordRequest.setProposedPassword(newPassword);
+    	changePasswordRequest.setAccessToken(accessToken);
+    	return cognitoIdentityProvider.changePassword(changePasswordRequest);
     }
 }

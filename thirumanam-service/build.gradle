@@ -57,8 +57,8 @@ dependencies {
   	compile 'com.amazonaws:aws-java-sdk-cognitoidp:1.11.508'
   	compile 'org.json:json:20170516'
   	
-  	
-   
+  	//To Validate AWS Tokens
+    compile 'com.nimbusds:nimbus-jose-jwt:7.0.1'
 	
 	//Test Dependencies
 	testCompile('org.springframework.boot:spring-boot-starter-test') // For TEST

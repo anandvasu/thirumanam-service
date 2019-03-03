@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amazonaws.services.cognitoidp.model.ChangePasswordResult;
 import com.amazonaws.services.cognitoidp.model.CodeMismatchException;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.LimitExceededException;
+import com.amazonaws.services.cognitoidp.model.NotAuthorizedException;
 import com.thirumanam.aws.AWSLoginResponse;
 import com.thirumanam.aws.CognitoHelper;
 import com.thirumanam.model.AccessCode;
@@ -27,12 +29,15 @@ import com.thirumanam.model.LoginResponse;
 import com.thirumanam.model.Preference;
 import com.thirumanam.model.RegisterUser;
 import com.thirumanam.model.ResetPasswordResponse;
+import com.thirumanam.model.Response;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.ThirumanamUtil;
+import com.thirumanam.model.UpdatePasswordRequest;
 import com.thirumanam.model.User;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.SequenceRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
+import com.thirumanam.util.ErrorMessageConstants;
 import com.thirumanam.util.ThirumanamConstant;
 import com.thirumanam.util.Util;
 
@@ -115,6 +120,7 @@ public class UserSecurityController {
 				loginResponse.setGender(user.getGender());
 			}
 			loginResponse.setIdToken("Bearer " + awsLoginResponse.getIdToken());
+			loginResponse.setAccessToken(awsLoginResponse.getAccessToken());
 			if(awsLoginResponse.getRefreshToken() != null) {
 				loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
 			}
@@ -182,6 +188,28 @@ public class UserSecurityController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}		
 		return ResponseEntity.ok().build();
+	}
+	
+	@PostMapping("/password/change")
+	public ResponseEntity<Response> changePassword(@RequestBody UpdatePasswordRequest updaterPwdRequest)
+			throws URISyntaxException {		
+		Response reponse = new Response();
+		try {
+			ChangePasswordResult changePasswordResult = cognitoHelper.changePassword(
+					updaterPwdRequest.getAccessToken(),
+					updaterPwdRequest.getCurrentPassword(), 
+					updaterPwdRequest.getNewPassword());				
+			if(changePasswordResult.getSdkHttpMetadata().getHttpStatusCode() == 200) {
+				reponse.setSuccess(true);
+			} else {
+				reponse.setErrorMessage(ErrorMessageConstants.SERVER_ERROR);
+			}
+		} catch (NotAuthorizedException exp) {
+			reponse.setErrorMessage(ErrorMessageConstants.INVALID_CURRENT_PASSWORD);
+			exp.printStackTrace();
+		}
+		
+		return ResponseEntity.ok().body(reponse);
 	}
 	
 	@PostMapping("/accesscode/verify")
