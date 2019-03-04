@@ -4,6 +4,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +30,7 @@ import com.amazonaws.services.cognitoidp.model.LimitExceededException;
 import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpResult;
+import com.amazonaws.services.cognitoidp.model.UpdateUserAttributesRequest;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
@@ -190,9 +193,34 @@ public class CognitoHelper {
 	        confirmPasswordRequest.setClientId(CLIENTAPP_ID);
 	        return cognitoIdentityProvider.confirmForgotPassword(confirmPasswordRequest);	        
 	    }
-	
-	
+	 
 	 /**
+	     * Helper method to update user attributes
+	     *
+	     * @param username represents the username in the cognito user pool
+	     * @param password represents the password in the cognito user pool
+	     * @return returns the AWSLoginResponse after the validation
+	     */
+	   public void updateAttributes(Map<String, String> attributes, String accessToken) {
+		   AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+	                .withRegion(Regions.fromName(REGION))
+	                .build();
+	        UpdateUserAttributesRequest updateAttrRequest = new UpdateUserAttributesRequest();
+	        updateAttrRequest.setAccessToken(accessToken);
+	        Set<String> keys = attributes.keySet();
+	        List<AttributeType> attributeTypeList = new ArrayList<AttributeType>();
+	        for(String key : keys) {
+	        	attributeTypeList.add(createAttributeType(key, attributes.get(key)));
+	        }
+	        updateAttrRequest.setUserAttributes(attributeTypeList);
+	        cognitoIdentityProvider.updateUserAttributes(updateAttrRequest);
+	   }
+	
+	
+	/**
      * Helper method to validate the user
      *
      * @param username represents the username in the cognito user pool

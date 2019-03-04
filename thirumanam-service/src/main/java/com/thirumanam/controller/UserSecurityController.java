@@ -4,16 +4,20 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amazonaws.services.cognitoidp.model.AliasExistsException;
 import com.amazonaws.services.cognitoidp.model.ChangePasswordResult;
 import com.amazonaws.services.cognitoidp.model.CodeMismatchException;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
@@ -35,6 +39,7 @@ import com.thirumanam.model.Status;
 import com.thirumanam.model.ThirumanamUtil;
 import com.thirumanam.model.UpdatePasswordRequest;
 import com.thirumanam.model.User;
+import com.thirumanam.model.UserAccount;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.SequenceRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
@@ -58,6 +63,7 @@ public class UserSecurityController {
 	@Autowired
 	private CognitoHelper cognitoHelper;
 	
+		
 	@PostMapping("/register")
 	public ResponseEntity<Status> registerUser(@RequestBody RegisterUser inputUser) throws URISyntaxException {
 		
@@ -106,6 +112,24 @@ public class UserSecurityController {
 		return ResponseEntity.created(new URI("/user")).header("PROFILEID", profileId).body(
 				Util.populateStatus(profileId, "User registered successfully."));	
 	}
+	
+	@PutMapping("/account")
+	public ResponseEntity<Response> updateAccountDetail(@RequestBody UserAccount userAccount) throws URISyntaxException {	
+		Response response = new Response();
+		try {
+			Map<String,String> attributes = new HashMap<String,String>();
+			attributes.put("email", userAccount.getEmail());
+			attributes.put("phone_number", userAccount.getPhoneNumber());
+			cognitoHelper.updateAttributes(attributes, userAccount.getAccessToken());
+			response.setSuccess(true);
+		} catch (AliasExistsException exp) {
+			exp.printStackTrace();
+			response.setErrorMessage(ErrorMessageConstants.EMAIL_ALREADY_EXISTS);
+		}
+		return ResponseEntity.ok().body(response);
+	}
+	
+	
 	
 	private LoginResponse populateUserDetail(AWSLoginResponse awsLoginResponse) {
 		LoginResponse loginResponse = new LoginResponse();
