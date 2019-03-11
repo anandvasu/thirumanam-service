@@ -25,6 +25,7 @@ import com.amazonaws.services.cognitoidp.model.ForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.LimitExceededException;
 import com.amazonaws.services.cognitoidp.model.NotAuthorizedException;
 import com.amazonaws.services.cognitoidp.model.UserNotConfirmedException;
+import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
 import com.thirumanam.aws.AWSLoginResponse;
 import com.thirumanam.aws.CognitoHelper;
 import com.thirumanam.model.AccessCode;
@@ -97,6 +98,7 @@ public class UserSecurityController {
 		user.setId(profileId);
 		user.setFirstName(inputUser.getFirstName());
 		user.setLastName(inputUser.getLastName());
+		user.setEmail(inputUser.getEmail());
 		user.setExternalId(externalId);
 		user.setGender(inputUser.getGender());
 		user.setRegisterdBy(inputUser.getRegisteredBy());
@@ -120,7 +122,8 @@ public class UserSecurityController {
 			Map<String,String> attributes = new HashMap<String,String>();
 			attributes.put("email", userAccount.getEmail());
 			attributes.put("phone_number", userAccount.getPhoneNumber());
-			cognitoHelper.updateAttributes(attributes, userAccount.getAccessToken());
+			//cognitoHelper.updateAttributes(attributes, userAccount.getAccessToken());
+			cognitoHelper.updateEmailandPhoneNumber(userAccount.getEmail(), userAccount.getPhoneNumber());
 			response.setSuccess(true);
 		} catch (AliasExistsException exp) {
 			exp.printStackTrace();
@@ -133,21 +136,23 @@ public class UserSecurityController {
 	
 	private LoginResponse populateUserDetail(AWSLoginResponse awsLoginResponse) {
 		LoginResponse loginResponse = new LoginResponse();
-		loginResponse.setUserConfirmed(awsLoginResponse.getUserConfirmed());
+		loginResponse.setUserConfirmed(awsLoginResponse.isUserConfirmed());
 		if(awsLoginResponse.getExternalId() != null) {
-			List<User> userObj = userRepository.findByExternalId(awsLoginResponse.getExternalId());
-			if(!userObj.isEmpty()) {
-				User user = userObj.get(0);
-				loginResponse.setProfileId(user.getId());
-				loginResponse.setFirstName(user.getFirstName());
-				loginResponse.setLastName(user.getLastName());
-				loginResponse.setProfilePerCompleted(ThirumanamUtil.updateProfileCompPercent(user));
-				loginResponse.setGender(user.getGender());
-			}
-			loginResponse.setIdToken("Bearer " + awsLoginResponse.getIdToken());
-			loginResponse.setAccessToken(awsLoginResponse.getAccessToken());
-			if(awsLoginResponse.getRefreshToken() != null) {
-				loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
+			if(awsLoginResponse.isUserConfirmed()) {
+				List<User> userObj = userRepository.findByExternalId(awsLoginResponse.getExternalId());
+				if(!userObj.isEmpty()) {
+					User user = userObj.get(0);
+					loginResponse.setProfileId(user.getId());
+					loginResponse.setFirstName(user.getFirstName());
+					loginResponse.setLastName(user.getLastName());
+					loginResponse.setProfilePerCompleted(ThirumanamUtil.updateProfileCompPercent(user));
+					loginResponse.setGender(user.getGender());
+				}
+				loginResponse.setIdToken(awsLoginResponse.getIdToken());
+				loginResponse.setAccessToken(awsLoginResponse.getAccessToken());
+				if(awsLoginResponse.getRefreshToken() != null) {
+					loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
+				}
 			}
 			loginResponse.setSuccess(true);
 		} else {
@@ -165,8 +170,11 @@ public class UserSecurityController {
 			loginResponse = populateUserDetail(awsLoginResponse);	
 		} catch (final UserNotConfirmedException exp) {
 			loginResponse = new LoginResponse();
-			loginResponse.setUserConfirmed("NO");
+			loginResponse.setSuccess(true);
 		} catch (final NotAuthorizedException exp) {
+			loginResponse = new LoginResponse();
+			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
+		} catch (UserNotFoundException exp) {
 			loginResponse = new LoginResponse();
 			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
 		}
@@ -174,9 +182,21 @@ public class UserSecurityController {
 	}
 	
 	@PostMapping("/login/refreshtoken")
-	public ResponseEntity<LoginResponse> refreshTokenLogin (@RequestBody LoginRequest login) throws URISyntaxException {		
-		AWSLoginResponse awsLoginResponse = cognitoHelper.validateUserWithRefToken(login.getRefreshToken());	
-		LoginResponse loginResponse = populateUserDetail(awsLoginResponse);			
+	public ResponseEntity<LoginResponse> refreshTokenLogin (@RequestBody LoginRequest login) throws URISyntaxException {
+		LoginResponse loginResponse = null;
+		try {
+			AWSLoginResponse awsLoginResponse = cognitoHelper.validateUserWithRefToken(login.getRefreshToken());	
+			loginResponse = populateUserDetail(awsLoginResponse);	
+		} catch (final UserNotConfirmedException exp) {
+			loginResponse = new LoginResponse();
+			loginResponse.setSuccess(true);
+		} catch (final NotAuthorizedException exp) {
+			loginResponse = new LoginResponse();
+			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
+		} catch (UserNotFoundException exp) {
+			loginResponse = new LoginResponse();
+			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
+		}
 		return ResponseEntity.ok().body(loginResponse);
 	}
 	

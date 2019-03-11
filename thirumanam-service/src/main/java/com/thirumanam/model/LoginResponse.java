@@ -10,15 +10,14 @@ public class LoginResponse extends Response {
 	private String lastName;
 	private String profileId;
 	private String profilePerCompleted;	
-	private String userConfirmed;
+	private boolean userConfirmed;		
 	
-	public String getUserConfirmed() {
+	public boolean isUserConfirmed() {
 		return userConfirmed;
 	}
-	public void setUserConfirmed(String userConfirmed) {
+	public void setUserConfirmed(boolean userConfirmed) {
 		this.userConfirmed = userConfirmed;
-	}		
-	
+	}
 	public String getIdToken() {
 		return idToken;
 	}

@@ -7,15 +7,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
+import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest;
+import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesResult;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.ChangePasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ChangePasswordResult;
@@ -31,6 +35,7 @@ import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpResult;
 import com.amazonaws.services.cognitoidp.model.UpdateUserAttributesRequest;
+import com.amazonaws.services.cognitoidp.model.UpdateUserAttributesResult;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
@@ -45,26 +50,18 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 @Component
 public class CognitoHelper {
 	
-	@Value("${aws.poolId}")
-	private String POOL_ID;
-	
-	@Value("${aws.clientAppId}")
-    private String CLIENTAPP_ID;
-      
-    @Value("${aws.region}")
-    private String REGION;
+   
+    @Autowired
+    private JWTConfiguration jwtConfiguration;
     
-    private String getJwkURL() {
-    	return "https://cognito-idp."+REGION+".amazonaws.com/"+POOL_ID+"/.well-known/jwks.json";
-    }
-        
+           
     @Bean
     public ConfigurableJWTProcessor<SecurityContext> configurableJWTProcessor() throws MalformedURLException {
          ResourceRetriever resourceRetriever = 
               new DefaultResourceRetriever(2000,//jwtConfiguration.getConnectionTimeout()
                    2000);//jwtConfiguration.getReadTimeout());
          //https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json.
-         URL jwkSetURL= new URL(getJwkURL());
+         URL jwkSetURL= new URL(jwtConfiguration.getCognitoIdentityPoolUrl());
          //Creates the JSON Web Key (JWK)
          JWKSource<SecurityContext> keySource= new RemoteJWKSet<SecurityContext>(jwkSetURL, resourceRetriever);
          ConfigurableJWTProcessor<SecurityContext> jwtProcessor= new DefaultJWTProcessor<SecurityContext>();
@@ -98,11 +95,11 @@ public class CognitoHelper {
         AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
                 .standard()
                 .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                .withRegion(Regions.fromName(REGION))
+                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
                 .build();
 
         SignUpRequest signUpRequest = new SignUpRequest();
-        signUpRequest.setClientId(CLIENTAPP_ID);
+        signUpRequest.setClientId(jwtConfiguration.getCLIENTAPP_ID());
         signUpRequest.setUsername(username);
         signUpRequest.setPassword(password);
         
@@ -129,14 +126,14 @@ public class CognitoHelper {
 	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 	                .standard()
 	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-	                .withRegion(Regions.fromName(REGION))
-	                .build();	        
+	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
+	                .build();	     	        
 	        		        
 	        ConfirmSignUpRequest confirmSignUpRequest = new ConfirmSignUpRequest();
 	        confirmSignUpRequest.setUsername(username);
 	        confirmSignUpRequest.setConfirmationCode(code);
-	        confirmSignUpRequest.setClientId(CLIENTAPP_ID);
-	
+	        confirmSignUpRequest.setClientId(jwtConfiguration.getCLIENTAPP_ID());
+
             ConfirmSignUpResult confirmSignUpResult = cognitoIdentityProvider.confirmSignUp(confirmSignUpRequest);
             System.out.println("confirmSignupResult=" + confirmSignUpResult.toString());
 	        
@@ -148,13 +145,13 @@ public class CognitoHelper {
 	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 	                .standard()
 	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-	                .withRegion(Regions.fromName(REGION))
+	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
 	                .build();
 	        try {
 	        ResendConfirmationCodeRequest resendConfirmationCodeRequest
 	        	= new ResendConfirmationCodeRequest();
 	        resendConfirmationCodeRequest.setUsername(username);
-	        resendConfirmationCodeRequest.setClientId(CLIENTAPP_ID);
+	        resendConfirmationCodeRequest.setClientId(jwtConfiguration.getCLIENTAPP_ID());
 	        cognitoIdentityProvider.resendConfirmationCode(resendConfirmationCodeRequest);
 	        } catch (Exception exp) {
 	        	 System.out.println(exp);
@@ -168,12 +165,12 @@ public class CognitoHelper {
 	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 	                .standard()
 	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-	                .withRegion(Regions.fromName(REGION))
+	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
 	                .build();
 
 	        ForgotPasswordRequest forgotPasswordRequest = new ForgotPasswordRequest();
 	        forgotPasswordRequest.setUsername(username);
-	        forgotPasswordRequest.setClientId(CLIENTAPP_ID);
+	        forgotPasswordRequest.setClientId(jwtConfiguration.getCLIENTAPP_ID());
 	        return cognitoIdentityProvider.forgotPassword(forgotPasswordRequest);	       
 	  }
 	 
@@ -183,16 +180,39 @@ public class CognitoHelper {
 	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 	                .standard()
 	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-	                .withRegion(Regions.fromName(REGION))
+	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
 	                .build();
 
 	        ConfirmForgotPasswordRequest confirmPasswordRequest = new ConfirmForgotPasswordRequest();
 	        confirmPasswordRequest.setUsername(username);
 	        confirmPasswordRequest.setPassword(newpw);
 	        confirmPasswordRequest.setConfirmationCode(code);
-	        confirmPasswordRequest.setClientId(CLIENTAPP_ID);
+	        confirmPasswordRequest.setClientId(jwtConfiguration.getCLIENTAPP_ID());
 	        return cognitoIdentityProvider.confirmForgotPassword(confirmPasswordRequest);	        
 	    }
+	 
+	 public void updateEmailandPhoneNumber(String email, String phoneNumber) {
+			BasicAWSCredentials basicCredentials = new BasicAWSCredentials("AKIAJEQ3H7TRM24K6ZVQ", "Uw+Z16iq1IHKsc+yho04cDKfSdOmPwC1nZL66Qos");
+	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(basicCredentials))
+	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
+	                .build();
+	        AdminUpdateUserAttributesRequest attrRequest = new AdminUpdateUserAttributesRequest();
+	        List<AttributeType> attributeTypeList = new ArrayList<AttributeType>();
+	        if(email != null) {
+	        	attributeTypeList.add(createAttributeType("email", email));
+	        	attributeTypeList.add(createAttributeType("email_verified", "true"));
+	        }
+	        if(phoneNumber != null) {
+	        	//attributeTypeList.add(createAttributeType("phone_number", phoneNumber));
+	        }
+	       
+	        attrRequest.setUserPoolId(jwtConfiguration.getPOOL_ID());
+	        attrRequest.setUsername("0c18e370-d3f7-463e-a743-a8cedcf7216e");
+	        attrRequest.setUserAttributes(attributeTypeList);
+	        AdminUpdateUserAttributesResult result = cognitoIdentityProvider.adminUpdateUserAttributes(attrRequest);
+	 }
 	 
 	 /**
 	     * Helper method to update user attributes
@@ -206,7 +226,7 @@ public class CognitoHelper {
 	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 	                .standard()
 	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-	                .withRegion(Regions.fromName(REGION))
+	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
 	                .build();
 	        UpdateUserAttributesRequest updateAttrRequest = new UpdateUserAttributesRequest();
 	        updateAttrRequest.setAccessToken(accessToken);
@@ -214,9 +234,12 @@ public class CognitoHelper {
 	        List<AttributeType> attributeTypeList = new ArrayList<AttributeType>();
 	        for(String key : keys) {
 	        	attributeTypeList.add(createAttributeType(key, attributes.get(key)));
+	        	if(key.equals("email" )) {
+	        		attributeTypeList.add(createAttributeType("email_verified", "true"));
+	        	}
 	        }
 	        updateAttrRequest.setUserAttributes(attributeTypeList);
-	        cognitoIdentityProvider.updateUserAttributes(updateAttrRequest);
+	        UpdateUserAttributesResult result = cognitoIdentityProvider.updateUserAttributes(updateAttrRequest);
 	   }
 	
 	
@@ -228,12 +251,17 @@ public class CognitoHelper {
      * @return returns the AWSLoginResponse after the validation
      */
     public AWSLoginResponse validateUser(String username, String password) {
-        AuthenticationHelper helper = new AuthenticationHelper(POOL_ID, CLIENTAPP_ID, "", REGION);
+        AuthenticationHelper helper = new AuthenticationHelper(jwtConfiguration.getPOOL_ID(), 
+        		jwtConfiguration.getCLIENTAPP_ID(), "", jwtConfiguration.getREGION());
         return helper.performSRPAuthentication(username, password);
     }
     
     public AWSLoginResponse validateUserWithRefToken(String refreshToken) {
-        AuthenticationHelper helper = new AuthenticationHelper(POOL_ID, CLIENTAPP_ID, "", REGION);
+        AuthenticationHelper helper = new AuthenticationHelper(
+        		jwtConfiguration.getPOOL_ID(), 
+        		jwtConfiguration.getCLIENTAPP_ID(), 
+        		"", 
+        		jwtConfiguration.getREGION());
         return helper.performRefreshTokenAuthentication(refreshToken);
     }    
        
@@ -242,7 +270,7 @@ public class CognitoHelper {
     	AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 	                .standard()
 	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-	                .withRegion(Regions.fromName(REGION))
+	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
 	                .build();
     	ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
     	changePasswordRequest.setPreviousPassword(currentPassword);

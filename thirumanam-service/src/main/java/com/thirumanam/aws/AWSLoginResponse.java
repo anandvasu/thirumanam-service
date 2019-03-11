@@ -6,21 +6,21 @@ public class AWSLoginResponse {
 	private String refreshToken;
 	private String accessToken;
 	private String externalId;
-	private String userConfirmed;
+	private boolean userConfirmed;
 	
+	public boolean isUserConfirmed() {
+		return userConfirmed;
+	}
+	public void setUserConfirmed(boolean userConfirmed) {
+		this.userConfirmed = userConfirmed;
+	}
 	public String getAccessToken() {
 		return accessToken;
 	}
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
-	}
+	}	
 	
-	public String getUserConfirmed() {
-		return userConfirmed;
-	}
-	public void setUserConfirmed(String userConfirmed) {
-		this.userConfirmed = userConfirmed;
-	}
 	public String getIdToken() {
 		return idToken;
 	}

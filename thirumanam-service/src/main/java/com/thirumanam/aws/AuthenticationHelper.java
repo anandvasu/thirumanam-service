@@ -164,28 +164,23 @@ class AuthenticationHelper {
     AWSLoginResponse performSRPAuthentication(String username, String password) {
         AWSLoginResponse awsLoginResponse = new AWSLoginResponse();
         InitiateAuthRequest initiateAuthRequest = initiateUserSrpAuthRequest(username);
-        try {
-            AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
-            AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
-                    .standard()
-                    .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                    .withRegion(Regions.fromName(this.region))
-                    .build();
-            InitiateAuthResult initiateAuthResult = cognitoIdentityProvider.initiateAuth(initiateAuthRequest);
-            if (ChallengeNameType.PASSWORD_VERIFIER.toString().equals(initiateAuthResult.getChallengeName())) {
-                RespondToAuthChallengeRequest challengeRequest = userSrpAuthRequest(initiateAuthResult, password);
-                RespondToAuthChallengeResult result = cognitoIdentityProvider.respondToAuthChallenge(challengeRequest);
-                JSONObject jsonObject=  CognitoJWTParser.getPayload(result.getAuthenticationResult().getIdToken());
-                awsLoginResponse.setExternalId(jsonObject.getString("cognito:username"));
-                awsLoginResponse.setIdToken(result.getAuthenticationResult().getIdToken());
-                awsLoginResponse.setRefreshToken(result.getAuthenticationResult().getRefreshToken());    
-                awsLoginResponse.setAccessToken(result.getAuthenticationResult().getAccessToken());
-                awsLoginResponse.setUserConfirmed("YES");
-            }
-        } catch (final UserNotConfirmedException ex) {
-            System.out.println("Exception" + ex);
-            awsLoginResponse.setUserConfirmed("NO");
-        } 
+        AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+                .withRegion(Regions.fromName(this.region))
+                .build();
+        InitiateAuthResult initiateAuthResult = cognitoIdentityProvider.initiateAuth(initiateAuthRequest);
+        if (ChallengeNameType.PASSWORD_VERIFIER.toString().equals(initiateAuthResult.getChallengeName())) {
+            RespondToAuthChallengeRequest challengeRequest = userSrpAuthRequest(initiateAuthResult, password);
+            RespondToAuthChallengeResult result = cognitoIdentityProvider.respondToAuthChallenge(challengeRequest);
+            JSONObject jsonObject=  CognitoJWTParser.getPayload(result.getAuthenticationResult().getIdToken());
+            awsLoginResponse.setExternalId(jsonObject.getString("cognito:username"));
+            awsLoginResponse.setIdToken(result.getAuthenticationResult().getIdToken());
+            awsLoginResponse.setRefreshToken(result.getAuthenticationResult().getRefreshToken());    
+            awsLoginResponse.setAccessToken(result.getAuthenticationResult().getAccessToken());
+           	awsLoginResponse.setUserConfirmed(true);
+        }      
         return awsLoginResponse;
     }
     
@@ -203,7 +198,9 @@ class AuthenticationHelper {
 	    JSONObject jsonObject=  CognitoJWTParser.getPayload(authResultType.getIdToken());
         awsLoginResponse.setExternalId(jsonObject.getString("cognito:username"));
         awsLoginResponse.setIdToken(authResultType.getIdToken());   
-        awsLoginResponse.setUserConfirmed(ThirumanamConstant.YES);
+        if(((Boolean)jsonObject.get("email_verified")).booleanValue() == true) {
+        	awsLoginResponse.setUserConfirmed(true);
+        }
 	   	return awsLoginResponse;
    }
     

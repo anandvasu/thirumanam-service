@@ -1,7 +1,9 @@
 package com.thirumanam.filter;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.Filter;
@@ -14,10 +16,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.thirumanam.exception.ThirumanamException;
 
 @Component
 public class CORSFilter implements Filter {
+	
+	@Value("${unauthapis}")
+	private String unAuthApis;
+	
+	private Map<String,String> NoAuthURLs = new HashMap<String,String>();
+	
 	private Set<String> validOrigins = new HashSet<String>();
 
 	private String allowedOrigins;
@@ -32,6 +43,14 @@ public class CORSFilter implements Filter {
 			String[] origins = allowedOrigins.split(",");
 			for (String origin : origins) {
 				validOrigins.add(origin);
+			}
+		}
+		
+		if(unAuthApis != null) {
+			String [] uris = unAuthApis.split(",");
+			for(int i=0;i<uris.length;i++) {
+				String [] urnEntry = uris[i].split(":");
+				NoAuthURLs.put(urnEntry[0], urnEntry[1]);
 			}
 		}
 	}
@@ -73,9 +92,14 @@ public class CORSFilter implements Filter {
 			 return;
 		}
 		System.out.println("request URI:" + request.getRequestURI());
-	
-		idTokenProcessor.processIdToken(request);
 		
-		chain.doFilter(servletRequest, servletResponse);
+		try {	
+			idTokenProcessor.processIdToken(request, NoAuthURLs);	
+			chain.doFilter(servletRequest, servletResponse);
+		} catch (ThirumanamException exp) { 
+			response.setStatus(401);
+		} catch (Exception exp) {
+			exp.printStackTrace();
+		}
 	}
 }   
