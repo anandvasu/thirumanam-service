@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.thirumanam.aws.JWTConfiguration;
 import com.thirumanam.exception.ThirumanamException;
@@ -41,7 +42,10 @@ public class AwsCognitoIdTokenProcessor {
             	throw new ThirumanamException(
             			ErrorMessageConstants.CODE_INVALID_JWT_ISSUER, 
             			ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
-            }            
+            }          
+            throw new ThirumanamException(
+        			ErrorMessageConstants.CODE_EXPIRED_JWT, 
+        			ErrorMessageConstants.MESSAGE_EXPIRED_JWT);
         } else {
         	 String requestURI = request.getRequestURI();
         	 String requestMethod = request.getMethod();
@@ -52,6 +56,12 @@ public class AwsCognitoIdTokenProcessor {
         		 throw new ThirumanamException(ErrorMessageConstants.CODE_INVALID_JWT_ISSUER, ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
         	 }
         }
+		} catch (BadJWTException exp) {
+			if(ErrorMessageConstants.MESSAGE_EXPIRED_JWT.equals(exp.getCause().getMessage())) {
+				throw new ThirumanamException(
+	        			ErrorMessageConstants.CODE_EXPIRED_JWT, 
+	        			ErrorMessageConstants.MESSAGE_EXPIRED_JWT);
+			}
 		} catch (Exception exp) {
 			throw new ThirumanamException(
         			ErrorMessageConstants.CODE_INVALID_JWT_ISSUER, 

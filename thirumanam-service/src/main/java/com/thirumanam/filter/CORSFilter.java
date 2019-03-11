@@ -1,6 +1,7 @@
 package com.thirumanam.filter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -97,7 +98,20 @@ public class CORSFilter implements Filter {
 			idTokenProcessor.processIdToken(request, NoAuthURLs);	
 			chain.doFilter(servletRequest, servletResponse);
 		} catch (ThirumanamException exp) { 
+			StringBuilder sb = new StringBuilder();
+			sb.append("{")
+			.append("code=\"")
+			.append(exp.getCode())
+			.append("\",")
+			.append("message=\"")
+			.append(exp.getMessage())
+			.append("\"}");
 			response.setStatus(401);
+			response.setContentType("application/json");
+			PrintWriter out = response.getWriter();
+			out.println(sb.toString());
+			out.flush();
+			out.close();
 		} catch (Exception exp) {
 			exp.printStackTrace();
 		}
