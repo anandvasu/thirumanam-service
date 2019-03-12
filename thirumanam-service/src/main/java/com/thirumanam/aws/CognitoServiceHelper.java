@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +47,7 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 
 @Component
-public class CognitoHelper {
+public class CognitoServiceHelper {
 	
    
     @Autowired
@@ -191,8 +190,9 @@ public class CognitoHelper {
 	        return cognitoIdentityProvider.confirmForgotPassword(confirmPasswordRequest);	        
 	    }
 	 
-	 public void updateEmailandPhoneNumber(String email, String phoneNumber) {
-			BasicAWSCredentials basicCredentials = new BasicAWSCredentials("AKIAJEQ3H7TRM24K6ZVQ", "Uw+Z16iq1IHKsc+yho04cDKfSdOmPwC1nZL66Qos");
+	 public void updateEmailandPhoneNumber(String email, String phoneNumber, String userName) {
+			BasicAWSCredentials basicCredentials = new BasicAWSCredentials(jwtConfiguration.getSecurityKey(),
+					jwtConfiguration.getAccessKey());
 	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 	                .standard()
 	                .withCredentials(new AWSStaticCredentialsProvider(basicCredentials))
@@ -209,7 +209,7 @@ public class CognitoHelper {
 	        }
 	       
 	        attrRequest.setUserPoolId(jwtConfiguration.getPOOL_ID());
-	        attrRequest.setUsername("0c18e370-d3f7-463e-a743-a8cedcf7216e");
+	        attrRequest.setUsername(userName);
 	        attrRequest.setUserAttributes(attributeTypeList);
 	        AdminUpdateUserAttributesResult result = cognitoIdentityProvider.adminUpdateUserAttributes(attrRequest);
 	 }

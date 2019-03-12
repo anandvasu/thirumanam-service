@@ -27,7 +27,7 @@ import com.amazonaws.services.cognitoidp.model.NotAuthorizedException;
 import com.amazonaws.services.cognitoidp.model.UserNotConfirmedException;
 import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
 import com.thirumanam.aws.AWSLoginResponse;
-import com.thirumanam.aws.CognitoHelper;
+import com.thirumanam.aws.CognitoServiceHelper;
 import com.thirumanam.model.AccessCode;
 import com.thirumanam.model.ForgotPasswordResponse;
 import com.thirumanam.model.LoginRequest;
@@ -62,7 +62,7 @@ public class UserSecurityController {
 	PreferenceRepository prefRepository;	
 	
 	@Autowired
-	private CognitoHelper cognitoHelper;
+	private CognitoServiceHelper cognitoHelper;
 	
 		
 	@PostMapping("/register")
@@ -123,7 +123,7 @@ public class UserSecurityController {
 			attributes.put("email", userAccount.getEmail());
 			attributes.put("phone_number", userAccount.getPhoneNumber());
 			//cognitoHelper.updateAttributes(attributes, userAccount.getAccessToken());
-			cognitoHelper.updateEmailandPhoneNumber(userAccount.getEmail(), userAccount.getPhoneNumber());
+			cognitoHelper.updateEmailandPhoneNumber(userAccount.getEmail(), userAccount.getPhoneNumber(), null);
 			response.setSuccess(true);
 		} catch (AliasExistsException exp) {
 			exp.printStackTrace();

@@ -4,6 +4,8 @@ public interface ErrorMessageConstants {
 	
 	String CODE_INVALID_JWT_ISSUER = "100";
 	String MESSAGE_INVALID__JWT_ISSUER = "Unautorized User. Please contact customer support.";
+	String CODE_EXPIRED_JWT = "9000";
+	String MESSAGE_EXPIRED_JWT = "Expired JWT";
 	
 	String INVALID_CURRENT_PASSWORD = "Current Password is invalid.";
 	String SERVER_ERROR = "Server Error. Please try again later.";

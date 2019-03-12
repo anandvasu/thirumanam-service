@@ -22,6 +22,28 @@ public class JWTConfiguration {
       
     @Value("${aws.region}")
     private String REGION;
+    
+    @Value("${aws.securityKey}")
+    private String securityKey;
+    
+    public String getSecurityKey() {
+		return securityKey;
+	}
+
+	public void setSecurityKey(String securityKey) {
+		this.securityKey = securityKey;
+	}
+
+	public String getAccessKey() {
+		return accessKey;
+	}
+
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
+	}
+
+	@Value("${aws.accessKey}")
+    private String accessKey;
 	
 	public String getPOOL_ID() {
 		return POOL_ID;
