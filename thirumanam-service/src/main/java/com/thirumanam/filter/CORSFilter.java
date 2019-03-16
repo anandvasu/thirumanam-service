@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.thirumanam.exception.ThirumanamException;
+import com.thirumanam.util.ThirumanamConstant;
 
 @Component
 public class CORSFilter implements Filter {
@@ -28,7 +29,7 @@ public class CORSFilter implements Filter {
 	@Value("${unauthapis}")
 	private String unAuthApis;
 	
-	private Map<String,String> NoAuthURLs = new HashMap<String,String>();
+	private Map<String,String> unAuthUrlMap = new HashMap<String,String>();
 	
 	private Set<String> validOrigins = new HashSet<String>();
 
@@ -51,7 +52,7 @@ public class CORSFilter implements Filter {
 			String [] uris = unAuthApis.split(",");
 			for(int i=0;i<uris.length;i++) {
 				String [] urnEntry = uris[i].split(":");
-				NoAuthURLs.put(urnEntry[0], urnEntry[1]);
+				unAuthUrlMap.put(urnEntry[0], urnEntry[1]);
 			}
 		}
 	}
@@ -95,23 +96,29 @@ public class CORSFilter implements Filter {
 		System.out.println("request URI:" + request.getRequestURI());
 		
 		try {	
-			idTokenProcessor.processIdToken(request, NoAuthURLs);	
+			String requestURI = request.getRequestURI();
+	   	 	String requestMethod = request.getMethod();
+	   	 	if(unAuthUrlMap.get(requestURI) == null || !requestMethod.equals(unAuthUrlMap.get(requestURI))) {
+	   	 		boolean isTokenValid = idTokenProcessor.processIdToken(request);
+	   	 		request.setAttribute(ThirumanamConstant.USER_AUTHORIZED, isTokenValid);
+	   	 	}
 			chain.doFilter(servletRequest, servletResponse);
 		} catch (ThirumanamException exp) { 
 			StringBuilder sb = new StringBuilder();
 			sb.append("{")
-			.append("code=\"")
+			.append("\"code\":\"")
 			.append(exp.getCode())
 			.append("\",")
-			.append("message=\"")
+			.append("\"message\":\"")
 			.append(exp.getMessage())
 			.append("\"}");
-			response.setStatus(401);
+			response.setStatus(401);			
 			response.setContentType("application/json");
 			PrintWriter out = response.getWriter();
 			out.println(sb.toString());
 			out.flush();
 			out.close();
+			return;
 		} catch (Exception exp) {
 			exp.printStackTrace();
 		}

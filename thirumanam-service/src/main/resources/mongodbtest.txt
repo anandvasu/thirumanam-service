@@ -5,6 +5,8 @@ db.user.find({"email":"nndharbar@gmail.com"})
 
 db.user.remove({"email":"anandakumarv@gmail.com"})
 db.user.remove({"email":"adtpushpa@gmail.com"})
+db.user.remove({"email":"nndharbar@gmail.com"})
+
 
 
 db.user.find({"email":/ravi/})

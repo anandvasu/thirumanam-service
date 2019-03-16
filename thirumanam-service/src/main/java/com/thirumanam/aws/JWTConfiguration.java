@@ -23,7 +23,7 @@ public class JWTConfiguration {
     @Value("${aws.region}")
     private String REGION;
     
-    @Value("${aws.securityKey}")
+    //@Value("${aws.securityKey}")
     private String securityKey;
     
     public String getSecurityKey() {
@@ -42,7 +42,7 @@ public class JWTConfiguration {
 		this.accessKey = accessKey;
 	}
 
-	@Value("${aws.accessKey}")
+	//@Value("${aws.accessKey}")
     private String accessKey;
 	
 	public String getPOOL_ID() {

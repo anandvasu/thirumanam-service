@@ -1,5 +1,7 @@
 package com.thirumanam.model;
 
+import java.util.Date;
+
 public class User {
 	
 	private String id;	
@@ -43,11 +45,38 @@ public class User {
 	private String mobile;			
 	private String status;	
 	private String image;
+	private String thumbImage;	
 	private String externalId;	
 	private boolean isFP;	
 	private boolean paymentDone;
 	private String about;	
+	private Date createdDate;
+	private boolean confirmed;	
+	
+	public boolean isConfirmed() {
+		return confirmed;
+	}
+
+	public void setConfirmed(boolean confirmed) {
+		this.confirmed = confirmed;
+	}
+
+	public String getThumbImage() {
+		return thumbImage;
+	}
+
+	public void setThumbImage(String thumbImage) {
+		this.thumbImage = thumbImage;
+	}
 		
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
 	public String getRegisterdBy() {
 		return registerdBy;
 	}

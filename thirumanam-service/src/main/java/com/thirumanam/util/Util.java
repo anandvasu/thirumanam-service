@@ -13,7 +13,7 @@ public class Util {
 		return Period.between(birthday, LocalDate.now()).getYears();
 	}	
 	
-	public static Status populateStatus(String code, String message) {
+	public static Status populateStatus(int code, String message) {
 		Status status = new Status();
 		status.setCode(code);
 		status.setMessage(message);

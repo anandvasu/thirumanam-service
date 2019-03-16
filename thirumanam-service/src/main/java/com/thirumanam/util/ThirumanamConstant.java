@@ -7,4 +7,5 @@ public interface ThirumanamConstant {
 	String PROFILE_ID_PREFIX = "CM";
 	String YES = "YES";
 	String NO = "NO";
+	String USER_AUTHORIZED = "USER_AUTHORIZED";
 }

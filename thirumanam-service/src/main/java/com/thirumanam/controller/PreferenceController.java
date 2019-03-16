@@ -45,7 +45,7 @@ public class PreferenceController {
 			preference = inputPreference;
 		}		
 		prefRepository.save(preference);
-		return ResponseEntity.created(new URI("/thirumanam/preference")).body(Util.populateStatus("t-200", "Contact created successfully."));		
+		return ResponseEntity.created(new URI("/thirumanam/preference")).body(Util.populateStatus(200, "Contact created successfully."));		
 	}
 	
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)

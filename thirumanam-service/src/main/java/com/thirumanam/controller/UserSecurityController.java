@@ -28,6 +28,7 @@ import com.amazonaws.services.cognitoidp.model.UserNotConfirmedException;
 import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
 import com.thirumanam.aws.AWSLoginResponse;
 import com.thirumanam.aws.CognitoServiceHelper;
+import com.thirumanam.exception.ThirumanamException;
 import com.thirumanam.model.AccessCode;
 import com.thirumanam.model.ForgotPasswordResponse;
 import com.thirumanam.model.LoginRequest;
@@ -75,7 +76,7 @@ public class UserSecurityController {
 		
 		List<User> users = userRepository.findByEmail(inputUser.getEmail());
 		if (!users.isEmpty()) {
-			return ResponseEntity.badRequest().body( Util.populateStatus("t-500", "Email already exists."));
+			return ResponseEntity.badRequest().body( Util.populateStatus(400, "Email already exists."));
 		}		
 				
 		String externalId = cognitoHelper.SignUpUser(
@@ -112,7 +113,7 @@ public class UserSecurityController {
 		prefRepository.save(preference);
 		
 		return ResponseEntity.created(new URI("/user")).header("PROFILEID", profileId).body(
-				Util.populateStatus(profileId, "User registered successfully."));	
+				Util.populateStatus(200, "User registered successfully."));	
 	}
 	
 	@PutMapping("/account")
@@ -134,7 +135,8 @@ public class UserSecurityController {
 	
 	
 	
-	private LoginResponse populateUserDetail(AWSLoginResponse awsLoginResponse) {
+	private LoginResponse populateUserDetail(
+			AWSLoginResponse awsLoginResponse) throws ThirumanamException {
 		LoginResponse loginResponse = new LoginResponse();
 		loginResponse.setUserConfirmed(awsLoginResponse.isUserConfirmed());
 		if(awsLoginResponse.getExternalId() != null) {
@@ -147,16 +149,22 @@ public class UserSecurityController {
 					loginResponse.setLastName(user.getLastName());
 					loginResponse.setProfilePerCompleted(ThirumanamUtil.updateProfileCompPercent(user));
 					loginResponse.setGender(user.getGender());
+					loginResponse.setIdToken(awsLoginResponse.getIdToken());
+					loginResponse.setAccessToken(awsLoginResponse.getAccessToken());
+					if(awsLoginResponse.getRefreshToken() != null) {
+						loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
+					}
+					loginResponse.setSuccess(true);
+				} else {
+					throw new ThirumanamException(
+							ErrorMessageConstants.CODE_INVALID_USER_PASSWORD,
+						ErrorMessageConstants.INVALID_USER_PASSWORD);
 				}
-				loginResponse.setIdToken(awsLoginResponse.getIdToken());
-				loginResponse.setAccessToken(awsLoginResponse.getAccessToken());
-				if(awsLoginResponse.getRefreshToken() != null) {
-					loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
-				}
-			}
-			loginResponse.setSuccess(true);
+			}			
 		} else {
-			loginResponse.setSuccess(false);			
+			throw new ThirumanamException(
+					ErrorMessageConstants.CODE_INVALID_USER_PASSWORD,
+				ErrorMessageConstants.INVALID_USER_PASSWORD);			
 		}
 		return loginResponse;
 	}
@@ -177,6 +185,9 @@ public class UserSecurityController {
 		} catch (UserNotFoundException exp) {
 			loginResponse = new LoginResponse();
 			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
+		} catch (ThirumanamException exp) {
+			loginResponse = new LoginResponse();
+			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
 		}
 		return ResponseEntity.ok().body(loginResponse);
 	}
@@ -194,6 +205,9 @@ public class UserSecurityController {
 			loginResponse = new LoginResponse();
 			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
 		} catch (UserNotFoundException exp) {
+			loginResponse = new LoginResponse();
+			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
+		} catch (ThirumanamException exp) {
 			loginResponse = new LoginResponse();
 			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
 		}
@@ -274,28 +288,28 @@ public class UserSecurityController {
 			}
 		} catch (CodeMismatchException exp) {
 			return ResponseEntity.ok().body(
-					Util.populateStatus("400", "Invalid Code entered. Please try again."));	
+					Util.populateStatus(400, "Invalid Code entered. Please try again."));	
 		}
 		return ResponseEntity.ok().body(
-				Util.populateStatus("200", "User registered successfully."));	
+				Util.populateStatus(200, "User registered successfully."));	
 	}
 	
 	private Status validateUserRegistration(RegisterUser user) {
 		Status status = null;
 		if(user.getFirstName() == null || user.getFirstName().isEmpty()) {
-			status = Util.populateStatus("t-400", "First Name is required.");
+			status = Util.populateStatus(400, "First Name is required.");
 			return status;
 		}
 		if(user.getLastName() == null || user.getLastName().isEmpty()) {
-			status = Util.populateStatus("t-401", "Last Name is required.");
+			status = Util.populateStatus(400, "Last Name is required.");
 			return status;
 		}
 		if(user.getDob() == null || user.getDob().isEmpty()) {
-			status = Util.populateStatus("t-402", "Dob is required.");
+			status = Util.populateStatus(400, "Dob is required.");
 			return status;
 		}
 		if(user.getEmail() == null || user.getEmail().isEmpty()) {
-			status = Util.populateStatus("t-403", "Email is required.");
+			status = Util.populateStatus(400, "Email is required.");
 			return status;
 		}
 		/*if(user.getCountry() == null || user.getCountry().isEmpty()) {
@@ -308,11 +322,11 @@ public class UserSecurityController {
 			status = Util.populateStatus("t-406", "City is required.");
 		}*/
 		if(user.getMobile() == null || user.getMobile().isEmpty()) {
-			status = Util.populateStatus("t-407", "Mobile is required.");
+			status = Util.populateStatus(400, "Mobile is required.");
 			return status;
 		}
 		if(user.getGender() == null || user.getGender().isEmpty()) {
-			status = Util.populateStatus("t-408", "Gender is required.");
+			status = Util.populateStatus(400, "Gender is required.");
 			return status;
 		}
 		/*if(user.getRegisteredBy() == null || user.getRegisteredBy().isEmpty()) {

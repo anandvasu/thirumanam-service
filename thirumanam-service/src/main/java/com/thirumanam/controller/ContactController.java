@@ -26,7 +26,7 @@ public class ContactController {
 	@PostMapping("/register")
 	public ResponseEntity<Status> createContact(@RequestBody Contact contact) throws URISyntaxException {
 		contactRepository.save(contact);
-		return ResponseEntity.created(new URI("/thirumanam/contact")).body(Util.populateStatus("t-200", "Contact created successfully."));		
+		return ResponseEntity.created(new URI("/thirumanam/contact")).body(Util.populateStatus(200, "Contact created successfully."));		
 	}
 	
 	@RequestMapping("/list")

@@ -1,7 +1,5 @@
 package com.thirumanam.filter;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,40 +22,30 @@ public class AwsCognitoIdTokenProcessor {
     @Autowired
     private JWTConfiguration jwtConfiguration;
    
-	public void processIdToken(HttpServletRequest request, Map<String,String> unAuthApis) throws ThirumanamException {
+	public boolean processIdToken(HttpServletRequest request) throws ThirumanamException {
+		boolean isTokenValid = false;
 		try {
-		String idToken = request.getHeader(JWTConfiguration.HEADER);
-		if (idToken != null) {
-
-            JWTClaimsSet claimsSet  = configurableJWTProcessor.process(stripBearerToken(idToken), null);           
-
-            if (!isIssuedCorrectly(claimsSet)) {
-            	throw new ThirumanamException(
-            			ErrorMessageConstants.CODE_INVALID_JWT_ISSUER, 
-            			ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
-            	//TODO:Log proper message;
-            }
-
-            if (!isIdToken(claimsSet)) {
-            	throw new ThirumanamException(
-            			ErrorMessageConstants.CODE_INVALID_JWT_ISSUER, 
-            			ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
-            }          
-            throw new ThirumanamException(
-        			ErrorMessageConstants.CODE_EXPIRED_JWT, 
-        			ErrorMessageConstants.MESSAGE_EXPIRED_JWT);
-        } else {
-        	 String requestURI = request.getRequestURI();
-        	 String requestMethod = request.getMethod();
-        	 System.out.println(unAuthApis.get(requestURI));
-        	 System.out.println(unAuthApis.get(requestURI));
-        	 
-        	 if(unAuthApis.get(requestURI) == null || !requestMethod.equals(unAuthApis.get(requestURI))) {
-        		 throw new ThirumanamException(ErrorMessageConstants.CODE_INVALID_JWT_ISSUER, ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
-        	 }
-        }
+			 String idToken = request.getHeader(JWTConfiguration.HEADER);			 
+			if (idToken != null) {
+	            JWTClaimsSet claimsSet  = configurableJWTProcessor.process(stripBearerToken(idToken), null);           
+	
+	            if (!isIssuedCorrectly(claimsSet)) {
+	            	throw new ThirumanamException(
+	            			ErrorMessageConstants.CODE_INVALID_JWT_ISSUER, 
+	            			ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
+	            	//TODO:Log proper message;
+	            }
+	
+	            if (!isIdToken(claimsSet)) {
+	            	throw new ThirumanamException(
+	            			ErrorMessageConstants.CODE_INVALID_JWT_ISSUER, 
+	            			ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
+	            } 
+	            isTokenValid = true;
+			}
 		} catch (BadJWTException exp) {
-			if(ErrorMessageConstants.MESSAGE_EXPIRED_JWT.equals(exp.getCause().getMessage())) {
+			System.out.println(exp.getMessage());
+			if(ErrorMessageConstants.MESSAGE_EXPIRED_JWT.equals(exp.getMessage())) {
 				throw new ThirumanamException(
 	        			ErrorMessageConstants.CODE_EXPIRED_JWT, 
 	        			ErrorMessageConstants.MESSAGE_EXPIRED_JWT);
@@ -67,6 +55,7 @@ public class AwsCognitoIdTokenProcessor {
         			ErrorMessageConstants.CODE_INVALID_JWT_ISSUER, 
         			ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
 		}
+		return isTokenValid;
 	}
 	
 	private String stripBearerToken(String token) {
@@ -75,9 +64,6 @@ public class AwsCognitoIdTokenProcessor {
 	}
 
 	private boolean isIssuedCorrectly(JWTClaimsSet claimsSet) {	    
-		System.out.println("Claim Set:" + claimsSet.getIssuer());
-		System.out.println("jwtConfiguration:" + jwtConfiguration.getJwkUrl());
-		//return true;
 		return claimsSet.getIssuer().equals(jwtConfiguration.getJwkUrl());
 	}
 	
