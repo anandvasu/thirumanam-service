@@ -83,7 +83,7 @@ public class CORSFilter implements Filter {
 					"Content-Type, accept, X-TOTAL-DOCS, Authorization");
 			response.addHeader("Access-Control-Allow-Credentials", "true");
 			response.addHeader("Access-Control-Max-Age", "1209600");
-			response.addHeader("Access-Control-Expose-Headers", "X-TOTAL-DOCS");
+			response.addHeader("Access-Control-Expose-Headers", "x-total-docs,profileid");
 		//}
 		
 		System.out.println(" Check the Method before Returning - "+request.getMethod());

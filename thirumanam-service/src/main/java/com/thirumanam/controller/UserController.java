@@ -30,7 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
+import com.thirumanam.model.UserAdditionalDetial;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
+import com.thirumanam.mongodb.repository.UserAdditionalDetailRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
 import com.thirumanam.util.ErrorMessageConstants;
@@ -46,6 +48,9 @@ public class UserController {
 	
 	@Autowired
 	PreferenceRepository prefRepository;
+	
+	@Autowired
+	private UserAdditionalDetailRepository userAdditionalDetailRepository;
 	
 	@Autowired
 	private UserRepositoryImpl userRepositoryImpl;
@@ -224,46 +229,58 @@ public class UserController {
 		
 		return ResponseEntity.noContent().build();	
 	}
-	
-	@PostMapping("/list")
-	public ResponseEntity<List<User>> searchUser(@RequestBody SearchCriteria searchCriteria) {
-		long totalUsers = searchCriteria.getTotalDocs();
-		if(totalUsers == 0) {
-			totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	
-		}
-		
-		int skipnumber = (searchCriteria.getPageNumber() == 1) ? 0 : ((searchCriteria.getPageNumber()-1) * 10);
-		int numberOfDocs = (skipnumber +10 < totalUsers) ? 10 : (int)(totalUsers-skipnumber);		
-		
-		List<User> usersList = userRepositoryImpl.searchUserData(searchCriteria, skipnumber, numberOfDocs);	
-						   
-		return ResponseEntity.ok()
-							 .header("X-TOTAL-DOCS", Long.toString(totalUsers))
-							 .body(usersList);
-	}
-	
+			
 	@PostMapping("/image")
-	public ResponseEntity<String> uploadProfileImage(@RequestParam("imageFile") MultipartFile imageFile, 
+	public ResponseEntity<Status> uploadProfileImage(@RequestParam("imageFile") MultipartFile imageFile, 
 			@RequestParam("profileId") String profileId) {
+		
 		try {
 			
 			Optional<User> userObj = userRepository.findById(profileId);
-			User user = userObj.get();
-			InputStream inStream = imageFile.getInputStream();	
-			byte[] imageArray = IOUtils.toByteArray(inStream);
-			user.setImage(Base64.getEncoder().encodeToString(imageArray));
-			
-			//compressImage
-			BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageArray));
-			BufferedImage compressedImage = resize(image, 200, 200);
-			File outputFile = new File(user.getId()+".png");
-			ImageIO.write(compressedImage, "png", outputFile);
-			user.setThumbImage(Base64.getEncoder().encodeToString(IOUtils.toByteArray(new FileInputStream(outputFile))));
-			userRepository.save(user);			
-			inStream.close();
+			if (userObj.isPresent()) {
+				User user = userObj.get();				
+				InputStream inStream = imageFile.getInputStream();	
+				byte[] imageArray = IOUtils.toByteArray(inStream);
+				
+				//save big image into user additional detail.
+				Optional<UserAdditionalDetial> userAddDetailObj = userAdditionalDetailRepository.findById(profileId);
+				UserAdditionalDetial userAddDetail = null;
+				if(userAddDetailObj.isPresent()) {
+					userAddDetail = userAddDetailObj.get();
+					userAddDetail.setImage(Base64.getEncoder().encodeToString(imageArray));
+					userAdditionalDetailRepository.save(userAddDetail);
+				} else {
+					userAddDetail = new UserAdditionalDetial();
+					userAddDetail.setId(profileId);
+				}
+				
+				userAddDetail.setImage(Base64.getEncoder().encodeToString(imageArray));
+				userAdditionalDetailRepository.save(userAddDetail);
+				
+				//compressImage
+				ByteArrayInputStream byteArrInputStream = new ByteArrayInputStream(imageArray);
+				BufferedImage image = ImageIO.read(byteArrInputStream);
+				BufferedImage compressedImage = resize(image, 200, 200);
+				File outputFile = new File(user.getId()+ThirumanamConstant.IMAGE_PNG_WITH_DOT);
+				ImageIO.write(compressedImage, ThirumanamConstant.IMAGE_PNG, outputFile);
+				InputStream compImageInputStream = new FileInputStream(outputFile);
+				user.setThumbImage(Base64.getEncoder().encodeToString(IOUtils.toByteArray(compImageInputStream)));
+				userRepository.save(user);		
+				compImageInputStream.close();
+				byteArrInputStream.close();
+				inStream.close();
+			} else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						Util.populateStatus(ErrorMessageConstants.CODE_BAD_REQUEST,
+								ErrorMessageConstants.BAD_REQUEST_ID_NOT_EXIST));
+			}
 			
 		} catch (Exception exp) {
 			exp.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					Util.populateStatus(ErrorMessageConstants.CODE_SERVER_ERROR,
+							ErrorMessageConstants.MESSAGE_SERVER_ERROR));
+			
 		}
 		return ResponseEntity.ok().build();
 	}

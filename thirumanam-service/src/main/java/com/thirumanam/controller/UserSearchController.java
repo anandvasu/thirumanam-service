@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,6 +60,23 @@ public class UserSearchController {
 	@Autowired
 	private VisitedProfileRepository visitedProfileRepository;
 	
+	
+	@PostMapping("/")
+	public ResponseEntity<List<User>> searchUser(@RequestBody SearchCriteria searchCriteria) {
+		long totalUsers = searchCriteria.getTotalDocs();
+		if(totalUsers == 0) {
+			totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	
+		}
+		
+		int skipnumber = (searchCriteria.getPageNumber() == 1) ? 0 : ((searchCriteria.getPageNumber()-1) * 10);
+		int numberOfDocs = (skipnumber +10 < totalUsers) ? 10 : (int)(totalUsers-skipnumber);		
+		
+		List<User> usersList = userRepositoryImpl.searchUserData(searchCriteria, skipnumber, numberOfDocs);	
+						   
+		return ResponseEntity.ok()
+							 .header(ThirumanamConstant.HEADER_TOTAL_DOCS, Long.toString(totalUsers))
+							 .body(usersList);
+	}
 	
 	public static String getRandomNumberString() {
 	    // It will generate 6 digit random Number.

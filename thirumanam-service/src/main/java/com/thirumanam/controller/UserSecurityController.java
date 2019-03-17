@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ import com.thirumanam.util.Util;
 public class UserSecurityController {
 	
 	@Autowired
-	private UserRepository userRepository;
+	private UserRepository userRepository;	
 	
 	@Autowired
 	private SequenceRepository sequenceRepository;
@@ -103,8 +104,9 @@ public class UserSecurityController {
 		user.setExternalId(externalId);
 		user.setGender(inputUser.getGender());
 		user.setRegisterdBy(inputUser.getRegisteredBy());
+		user.setCreatedDate(new Date());
 		
-		userRepository.save(user);		
+		userRepository.save(user);
 		
 		Preference preference = new Preference();
 		preference.setId(profileId);
@@ -112,7 +114,7 @@ public class UserSecurityController {
 				(user.getGender().equals(ThirumanamConstant.GENDER_M) ? ThirumanamConstant.GENDER_F: ThirumanamConstant.GENDER_M));
 		prefRepository.save(preference);
 		
-		return ResponseEntity.created(new URI("/user")).header("PROFILEID", profileId).body(
+		return ResponseEntity.created(new URI("/user")).header(ThirumanamConstant.PROFILEID, profileId).body(
 				Util.populateStatus(200, "User registered successfully."));	
 	}
 	
@@ -270,7 +272,7 @@ public class UserSecurityController {
 			if(changePasswordResult.getSdkHttpMetadata().getHttpStatusCode() == 200) {
 				reponse.setSuccess(true);
 			} else {
-				reponse.setErrorMessage(ErrorMessageConstants.SERVER_ERROR);
+				reponse.setErrorMessage(ErrorMessageConstants.MESSAGE_SERVER_ERROR);
 			}
 		} catch (NotAuthorizedException exp) {
 			reponse.setErrorMessage(ErrorMessageConstants.INVALID_CURRENT_PASSWORD);

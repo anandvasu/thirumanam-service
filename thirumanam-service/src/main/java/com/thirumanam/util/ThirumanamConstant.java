@@ -8,4 +8,8 @@ public interface ThirumanamConstant {
 	String YES = "YES";
 	String NO = "NO";
 	String USER_AUTHORIZED = "USER_AUTHORIZED";
+	String PROFILEID = "profileid";
+	String HEADER_TOTAL_DOCS = "x-total-docs";
+	String IMAGE_PNG = "png";
+	String IMAGE_PNG_WITH_DOT = ".png";
 }
