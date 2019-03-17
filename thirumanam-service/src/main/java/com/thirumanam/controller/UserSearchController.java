@@ -2,7 +2,6 @@ package com.thirumanam.controller;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -28,14 +27,11 @@ import com.thirumanam.model.ShortListedProfile;
 import com.thirumanam.model.ShortListedProfiles;
 import com.thirumanam.model.ThirumanamUtil;
 import com.thirumanam.model.User;
-import com.thirumanam.model.VisitedProfiles;
-import com.thirumanam.model.Visitor;
 import com.thirumanam.mongodb.repository.BlockedProfileRepository;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.ShortlistedProfileRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
-import com.thirumanam.mongodb.repository.VisitedProfileRepository;
 import com.thirumanam.util.ThirumanamConstant;
 
 @RestController
@@ -55,11 +51,7 @@ public class UserSearchController {
 	private ShortlistedProfileRepository shortlistedProfileRepository;
 	
 	@Autowired
-	private BlockedProfileRepository blockedProfileRepository;
-	
-	@Autowired
-	private VisitedProfileRepository visitedProfileRepository;
-	
+	private BlockedProfileRepository blockedProfileRepository;	
 	
 	@PostMapping("/")
 	public ResponseEntity<List<User>> searchUser(@RequestBody SearchCriteria searchCriteria) {
@@ -106,42 +98,7 @@ public class UserSearchController {
 		return ResponseEntity.ok().body(user);
 	}
 	
-	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)
-	public ResponseEntity<User> getUser(@PathVariable("profileId") String profileId, @RequestParam("userId") String loggedInUserId) {
-		Optional<User> userObj = userRepository.findById(profileId);
-		User user = userObj.get();
-		Optional<VisitedProfiles> vProfiles = visitedProfileRepository.findById(profileId);
-		VisitedProfiles visitedProfile = null;
-		if(vProfiles.isPresent()) {
-			visitedProfile = vProfiles.get();
-			List<Visitor> vistoryList = visitedProfile.getProfiles();
-			boolean isUserAlreadyExists = false;
-			for(Visitor visitor: vistoryList) {
-				if(visitor.getId().equals(loggedInUserId)) {
-					isUserAlreadyExists = true;
-					break;
-				}
-			}
-			if(!isUserAlreadyExists) {
-				Visitor visitor = new Visitor();
-				visitor.setId(loggedInUserId);
-				visitor.setVisitedDate(new Date());
-				visitedProfile.getProfiles().add(0, visitor);
-				visitedProfileRepository.save(visitedProfile);
-			}
-		} else {
-			visitedProfile = new VisitedProfiles();			
-			visitedProfile.setId(profileId);
-			Visitor visitor = new Visitor();
-			visitor.setId(loggedInUserId);
-			visitor.setVisitedDate(new Date());
-			visitedProfile.getProfiles().add(0, visitor);
-			visitedProfileRepository.save(visitedProfile);
-		}		
-		
-		
-		return ResponseEntity.ok().body(user);
-	}
+	
 	
 	
 	private SearchCriteria buildSearchCriteria(Preference preference) {

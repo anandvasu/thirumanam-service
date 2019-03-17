@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,23 +19,26 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
 import com.thirumanam.model.UserAdditionalDetial;
+import com.thirumanam.model.VisitedProfiles;
+import com.thirumanam.model.Visitor;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.UserAdditionalDetailRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
-import com.thirumanam.mongodb.repository.UserRepositoryImpl;
+import com.thirumanam.mongodb.repository.VisitedProfileRepository;
 import com.thirumanam.util.ErrorMessageConstants;
 import com.thirumanam.util.ThirumanamConstant;
 import com.thirumanam.util.Util;
@@ -50,11 +54,57 @@ public class UserController {
 	PreferenceRepository prefRepository;
 	
 	@Autowired
-	private UserAdditionalDetailRepository userAdditionalDetailRepository;
+	private VisitedProfileRepository visitedProfileRepository;
 	
 	@Autowired
-	private UserRepositoryImpl userRepositoryImpl;
+	private UserAdditionalDetailRepository userAdditionalDetailRepository;
 	
+	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)
+	public ResponseEntity<User> getUser(@PathVariable("profileId") String profileId, @RequestParam("userId") String loggedInUserId) {
+		Optional<User> userObj = userRepository.findById(profileId);
+		User user = null;
+		if(userObj.isPresent()) {
+			user = userObj.get();
+			
+			Optional<UserAdditionalDetial> userAddtionalDetailObj = userAdditionalDetailRepository.findById(profileId);
+			if(userAddtionalDetailObj.isPresent()) {
+				UserAdditionalDetial userAdditional = userAddtionalDetailObj.get();
+				user.setImage(userAdditional.getImage());
+			}
+			
+			Optional<VisitedProfiles> vProfiles = visitedProfileRepository.findById(profileId);
+			VisitedProfiles visitedProfile = null;
+			if(vProfiles.isPresent()) {
+				visitedProfile = vProfiles.get();
+				List<Visitor> vistoryList = visitedProfile.getProfiles();
+				boolean isUserAlreadyExists = false;
+				for(Visitor visitor: vistoryList) {
+					if(visitor.getId().equals(loggedInUserId)) {
+						isUserAlreadyExists = true;
+						break;
+					}
+				}
+				if(!isUserAlreadyExists) {
+					Visitor visitor = new Visitor();
+					visitor.setId(loggedInUserId);
+					visitor.setVisitedDate(new Date());
+					visitedProfile.getProfiles().add(0, visitor);
+					visitedProfileRepository.save(visitedProfile);
+				}
+			} else {
+				visitedProfile = new VisitedProfiles();			
+				visitedProfile.setId(profileId);
+				Visitor visitor = new Visitor();
+				visitor.setId(loggedInUserId);
+				visitor.setVisitedDate(new Date());
+				visitedProfile.getProfiles().add(0, visitor);
+				visitedProfileRepository.save(visitedProfile);
+				
+			}		
+		} 		
+		return ResponseEntity.ok().body(user);
+	}
+
 	@PostMapping("/profile/personal")
 	public ResponseEntity<Status> createPersonalDetail(
 			@RequestBody User inputUser) throws URISyntaxException {
@@ -260,7 +310,7 @@ public class UserController {
 				//compressImage
 				ByteArrayInputStream byteArrInputStream = new ByteArrayInputStream(imageArray);
 				BufferedImage image = ImageIO.read(byteArrInputStream);
-				BufferedImage compressedImage = resize(image, 200, 200);
+				BufferedImage compressedImage = resize(image, 100, 100);
 				File outputFile = new File(user.getId()+ThirumanamConstant.IMAGE_PNG_WITH_DOT);
 				ImageIO.write(compressedImage, ThirumanamConstant.IMAGE_PNG, outputFile);
 				InputStream compImageInputStream = new FileInputStream(outputFile);
