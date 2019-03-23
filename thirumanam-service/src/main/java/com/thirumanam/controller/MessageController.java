@@ -36,10 +36,30 @@ public class MessageController {
 			@PathVariable("userId") String userId) throws URISyntaxException {
 		MessageSummary messageSummary = new MessageSummary();
 		Optional<MessageList> messageListObj = messageRepository.findById(userId);
+		int pendingCount = 0;
+		int awitingReply = 0;
+		int acceptedCount = 0;
 		if(messageListObj.isPresent()) {
-			messageSummary.setInboxCount(messageListObj.get().getInbox().size());
-			messageSummary.setInboxCount(messageListObj.get().getSentItems().size());
+			List<Message> messages = messageListObj.get().getInbox();			
+			for(Message message:messages ) {
+				if(message.getStatus().equals(ThirumanamConstant.MESSAGE_STATUS_PENDING)) {
+					pendingCount = pendingCount + 1;
+				} else if (message.getStatus().equals(ThirumanamConstant.MESSAGE_STATUS_ACCEPTED)) {
+					acceptedCount = acceptedCount + 1;
+				}
+			}
+			messages = messageListObj.get().getSentItems();
+			for(Message message:messages ) {
+				if(message.getStatus().equals(ThirumanamConstant.MESSAGE_STATUS_AWAITING_REPLY)) {
+					awitingReply = awitingReply + 1;
+				} 
+			}
+			messageSummary.setSentItemsCount(messageListObj.get().getSentItems().size());
 		}
+		messageSummary.setAcceptedCount(acceptedCount);
+		messageSummary.setAwitingReplyCount(awitingReply);
+		messageSummary.setPendingCount(pendingCount);
+		
 		return ResponseEntity.ok().body(messageSummary);
 	}
 	
@@ -114,7 +134,7 @@ public class MessageController {
 		message.setPartnerMatrimonyId(fromUserId);
 		message.setDate(new Date());
 		message.setStatus(ThirumanamConstant.MESSAGE_STATUS_PENDING);
-		messageList.getSentItems().add(message);
+		messageList.getInbox().add(message);
 		messageRepository.save(messageList);		
 		
 		return ResponseEntity.noContent().build();	
