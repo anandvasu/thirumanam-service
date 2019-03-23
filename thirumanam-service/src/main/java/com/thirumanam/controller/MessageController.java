@@ -13,13 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thirumanam.model.BlockedProfile;
-import com.thirumanam.model.BlockedProfiles;
 import com.thirumanam.model.Message;
 import com.thirumanam.model.MessageList;
 import com.thirumanam.model.MessageSummary;
@@ -144,7 +142,7 @@ public class MessageController {
 			messageList = new MessageList();
 			messageList.setId(fromUserId);
 		}		
-		message.setDate(new Date());
+		message.setSentDate(new Date());
 		message.setStatus(ThirumanamConstant.MESSAGE_STATUS_AWAITING_REPLY);
 		messageList.getSentItems().add(message);
 		messageRepository.save(messageList);
@@ -158,11 +156,31 @@ public class MessageController {
 			messageList.setId(message.getPartnerMatrimonyId());
 		}
 		message.setPartnerMatrimonyId(fromUserId);
-		message.setDate(new Date());
+		message.setSentDate(new Date());
 		message.setStatus(ThirumanamConstant.MESSAGE_STATUS_PENDING);
 		messageList.getInbox().add(message);
 		messageRepository.save(messageList);		
 		
 		return ResponseEntity.noContent().build();	
 	}	
+	
+	@PutMapping("/{userId}")
+	public ResponseEntity<Status> updateMessageStatus(
+			@RequestBody Message inputMessage, 
+			@PathVariable("userId") String fromUserId) {
+		//Save To Sent Items
+		Optional<MessageList> messageListObj = messageRepository.findById(fromUserId);
+
+		if(messageListObj.isPresent()) {
+			List<Message> messages = messageListObj.get().getInbox();
+			for(Message message:messages) {
+				if(inputMessage.getPartnerMatrimonyId().equals(message.getPartnerMatrimonyId())) {
+					message.setStatus(inputMessage.getStatus());
+					message.setResponseDate(new Date());
+				}
+			}
+			messageRepository.save(messageListObj.get());
+		} 			
+		return ResponseEntity.noContent().build();	
+	}		
 }

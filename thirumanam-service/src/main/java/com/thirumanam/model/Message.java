@@ -5,9 +5,23 @@ import java.util.Date;
 public class Message {
 	
 	private String partnerMatrimonyId;
-	private Date date;
+	private Date sentDate;
+	private Date responseDate;
 	private String status;
 	private String readStatus;
+	
+	public Date getSentDate() {
+		return sentDate;
+	}
+	public void setSentDate(Date sentDate) {
+		this.sentDate = sentDate;
+	}
+	public Date getResponseDate() {
+		return responseDate;
+	}
+	public void setResponseDate(Date responseDate) {
+		this.responseDate = responseDate;
+	}
 	
 	public String getReadStatus() {
 		return readStatus;
@@ -21,12 +35,7 @@ public class Message {
 	public void setPartnerMatrimonyId(String partnerMatrimonyId) {
 		this.partnerMatrimonyId = partnerMatrimonyId;
 	}
-	public Date getDate() {
-		return date;
-	}
-	public void setDate(Date date) {
-		this.date = date;
-	}
+	
 	public String getStatus() {
 		return status;
 	}
