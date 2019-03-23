@@ -12,4 +12,9 @@ public interface ThirumanamConstant {
 	String HEADER_TOTAL_DOCS = "x-total-docs";
 	String IMAGE_PNG = "png";
 	String IMAGE_PNG_WITH_DOT = ".png";
+	
+	String MESSAGE_STATUS_PENDING = "P";
+	String MESSAGE_STATUS_DECLINED = "D";
+	String MESSAGE_STATUS_ACCEPTED = "A";
+	String MESSAGE_STATUS_AWAITING_REPLY = "R";
 }

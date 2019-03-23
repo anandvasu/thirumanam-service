@@ -42,7 +42,7 @@ public class AwsCognitoIdTokenProcessor {
 	            			ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
 	            } 
 	            isTokenValid = true;
-			}
+			}			
 		} catch (BadJWTException exp) {
 			System.out.println(exp.getMessage());
 			if(ErrorMessageConstants.MESSAGE_EXPIRED_JWT.equals(exp.getMessage())) {

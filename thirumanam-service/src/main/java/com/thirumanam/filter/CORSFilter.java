@@ -112,7 +112,11 @@ public class CORSFilter implements Filter {
 			.append("\"message\":\"")
 			.append(exp.getMessage())
 			.append("\"}");
-			response.setStatus(401);			
+			if(exp.getCode() == 9000) {
+				response.setStatus(403);
+			} else {
+				response.setStatus(401);	
+			}
 			response.setContentType("application/json");
 			PrintWriter out = response.getWriter();
 			out.println(sb.toString());
