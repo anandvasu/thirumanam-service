@@ -56,7 +56,7 @@ public class BlockedProfileController {
 			int skipCount = (pageNo-1) * 10;
 			
 			if(!profileIds.isEmpty()) {
-				shortListedProfilesList = userRepositoryImpl.findUsersByd(profileIds, skipCount, 10);
+				shortListedProfilesList = userRepositoryImpl.findUsersById(profileIds, skipCount, 10);
 				blockedCount = profileIds.size();
 			}
 		}

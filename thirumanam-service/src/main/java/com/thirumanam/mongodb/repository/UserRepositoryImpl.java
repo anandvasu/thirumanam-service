@@ -68,7 +68,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	}	
 	
 	@Override
-	public List<User> findUsersByd(List<String> profileIds, long skipNumber, int noOfDocs) {
+	public List<User> findUsersById(List<String> profileIds, long skipNumber, int noOfDocs) {
 		Criteria criteria = Criteria.where("id").in(profileIds);
 		Query query = new Query();
 		query.fields().include(FieldConstants.FIRSTNAME)

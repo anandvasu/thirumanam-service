@@ -77,7 +77,7 @@ public class VisitedProfileController {
 				if(pageNo > 0) {					
 					noOfRecords = 10;
 				}				
-				visitedProfileList = userRepositoryImpl.findUsersByd(profileIds, 0, noOfRecords);
+				visitedProfileList = userRepositoryImpl.findUsersById(profileIds, 0, noOfRecords);
 			}
 		}
 		return ResponseEntity.ok()

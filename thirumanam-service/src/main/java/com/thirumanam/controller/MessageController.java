@@ -15,13 +15,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.thirumanam.model.BlockedProfile;
+import com.thirumanam.model.BlockedProfiles;
 import com.thirumanam.model.Message;
 import com.thirumanam.model.MessageList;
 import com.thirumanam.model.MessageSummary;
 import com.thirumanam.model.Status;
+import com.thirumanam.model.User;
 import com.thirumanam.mongodb.repository.MessageRepository;
+import com.thirumanam.mongodb.repository.UserRepositoryImpl;
 import com.thirumanam.util.ThirumanamConstant;
 
 @RestController
@@ -30,6 +35,9 @@ public class MessageController {
 	
 	@Autowired
 	private MessageRepository messageRepository;	
+	
+	@Autowired
+	private UserRepositoryImpl userRepositoryImpl;
 	
 	@GetMapping("/{userId}/summary")
 	public ResponseEntity<MessageSummary> getMessageSummary(
@@ -64,24 +72,42 @@ public class MessageController {
 	}
 	
 	@GetMapping("/{userId}/inbox")
-	public ResponseEntity<List<Message>> getInboxMessages(
+	public ResponseEntity<List<User>> getInboxMessages(
 			@PathVariable("userId") String userId,
-			@QueryParam("status") String status) throws URISyntaxException {
+			@QueryParam("status") String status,
+			@QueryParam("pageNo") int pageNo) throws URISyntaxException {
+
+		int profileCount = 0;
 		List<Message> messagesList = new ArrayList<Message>();
+		List<User> messageProfiles = new ArrayList<User>();
 		Optional<MessageList> messageListObj = messageRepository.findById(userId);
 		if(messageListObj.isPresent()) {
 			List<Message> messages = messageListObj.get().getInbox();
+			List<String> profileIds = new ArrayList<String>();
 			if(status == null) {
-				messagesList = messages;
+				for(Message message:messages) {
+					profileIds.add(message.getPartnerMatrimonyId());
+				}
 			} else {
 				for(Message message:messages) {
 					if(message.getStatus().equals(status)) {
 						messagesList.add(message);
+						profileIds.add(message.getPartnerMatrimonyId());
 					}
 				}
 			}
+			
+			int skipCount = (pageNo-1) * 10;
+			
+			if(!profileIds.isEmpty()) {
+				messageProfiles = userRepositoryImpl.findUsersById(profileIds, skipCount, 10);
+				profileCount = profileIds.size();
+			}
 		}
-		return ResponseEntity.ok().body(messagesList);
+			
+		return ResponseEntity.ok()
+				 .header("X-TOTAL-DOCS", Integer.toString(profileCount))
+				 .body(messageProfiles);
 	}
 	
 	@GetMapping("/{userId}/sentItems")

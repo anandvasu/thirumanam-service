@@ -57,7 +57,7 @@ public class ShortlistedProfileController {
 			int skipCount = (pageNo-1) * 10;
 			
 			if(!profileIds.isEmpty()) {
-				shortListedProfilesList = userRepositoryImpl.findUsersByd(profileIds, skipCount , 10);
+				shortListedProfilesList = userRepositoryImpl.findUsersById(profileIds, skipCount , 10);
 				shortListedCount = profileIds.size();
 			}
 		}
