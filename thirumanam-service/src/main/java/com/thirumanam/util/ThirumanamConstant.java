@@ -17,4 +17,5 @@ public interface ThirumanamConstant {
 	String MESSAGE_STATUS_DECLINED = "D";
 	String MESSAGE_STATUS_ACCEPTED = "A";
 	String MESSAGE_STATUS_AWAITING_REPLY = "R";
+	String MESSAGE_STATUS_ALL = "L";
 }

@@ -109,24 +109,40 @@ public class MessageController {
 	}
 	
 	@GetMapping("/{userId}/sentItems")
-	public ResponseEntity<List<Message>> getSentItems(
+	public ResponseEntity<List<User>> getSentItems(
 			@PathVariable("userId") String userId,
-			@QueryParam("status") String status) throws URISyntaxException {
+			@QueryParam("status") String status,
+			@QueryParam("pageNo") int pageNo) throws URISyntaxException {
+		int profileCount = 0;
 		List<Message> messagesList = new ArrayList<Message>();
+		List<User> messageProfiles = new ArrayList<User>();
 		Optional<MessageList> messageListObj = messageRepository.findById(userId);
 		if(messageListObj.isPresent()) {
-			List<Message> messages = messageListObj.get().getInbox();
-			if(status == null) {
-				messagesList = messages;
+			List<Message> messages = messageListObj.get().getSentItems();	
+			List<String> profileIds = new ArrayList<String>();
+			if(ThirumanamConstant.MESSAGE_STATUS_ALL.equals(status)) {
+				for(Message message:messages) {
+					profileIds.add(message.getPartnerMatrimonyId());
+				}
 			} else {
 				for(Message message:messages) {
 					if(message.getStatus().equals(status)) {
 						messagesList.add(message);
+						profileIds.add(message.getPartnerMatrimonyId());
 					}
 				}
 			}
+			
+			int skipCount = (pageNo-1) * 10;
+			
+			if(!profileIds.isEmpty()) {
+				messageProfiles = userRepositoryImpl.findUsersById(profileIds, skipCount, 10);
+				profileCount = profileIds.size();
+			}
 		}
-		return ResponseEntity.ok().body(messagesList);		
+		return ResponseEntity.ok()
+				 .header("X-TOTAL-DOCS", Integer.toString(profileCount))
+				 .body(messageProfiles);		
 	}
 	
 	@PostMapping("/{userId}")
@@ -168,7 +184,7 @@ public class MessageController {
 	public ResponseEntity<Status> updateMessageStatus(
 			@RequestBody Message inputMessage, 
 			@PathVariable("userId") String fromUserId) {
-		//Save To Sent Items
+		//Save To Inbox
 		Optional<MessageList> messageListObj = messageRepository.findById(fromUserId);
 
 		if(messageListObj.isPresent()) {
@@ -177,10 +193,26 @@ public class MessageController {
 				if(inputMessage.getPartnerMatrimonyId().equals(message.getPartnerMatrimonyId())) {
 					message.setStatus(inputMessage.getStatus());
 					message.setResponseDate(new Date());
+					break;
 				}
 			}
 			messageRepository.save(messageListObj.get());
-		} 			
+		} 		
+		
+		//Save To Inbox
+		messageListObj = messageRepository.findById(inputMessage.getPartnerMatrimonyId());
+
+		if(messageListObj.isPresent()) {
+			List<Message> messages = messageListObj.get().getSentItems();
+			for(Message message:messages) {
+				if(message.getPartnerMatrimonyId().equals(fromUserId)) {
+					message.setStatus(inputMessage.getStatus());
+					message.setResponseDate(new Date());
+					break;
+				}
+			}
+			messageRepository.save(messageListObj.get());
+		} 		
 		return ResponseEntity.noContent().build();	
 	}		
 }
