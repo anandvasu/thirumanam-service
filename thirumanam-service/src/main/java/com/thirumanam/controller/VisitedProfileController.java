@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.thirumanam.model.ProfileSummary;
 import com.thirumanam.model.User;
 import com.thirumanam.model.VisitedProfiles;
 import com.thirumanam.model.Visitor;
@@ -78,6 +79,23 @@ public class VisitedProfileController {
 					noOfRecords = 10;
 				}				
 				visitedProfileList = userRepositoryImpl.findUsersById(profileIds, 0, noOfRecords);
+				/*if(!profilesList.isEmpty()) {
+					for(User user:profilesList) {
+						ProfileSummary profSummary = new ProfileSummary();
+						profSummary.setId(user.getId());
+						profSummary.setFirstName(user.getFirstName());
+						profSummary.setLastName(user.getLastName());
+						profSummary.setCity(user.getCity());
+						profSummary.setEducation(user.getEducation());
+						profSummary.setAge(user.getAge());
+						profSummary.setbDay(user.getbDay());
+						profSummary.setbMonth(user.getbMonth());
+						profSummary.setbYear(user.getbYear());
+						profSummary.setGender(user.getGender());
+						profSummary.setThumbImage(user.getThumbImage());
+						visitedProfileList.add(profSummary);
+					}					
+				}*/
 			}
 		}
 		return ResponseEntity.ok()

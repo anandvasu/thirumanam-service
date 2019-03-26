@@ -52,7 +52,34 @@ public class User {
 	private String about;	
 	private Date createdDate;
 	private boolean confirmed;	
+	private boolean isInterestSent;
+	private boolean isShortlisted;
+	private boolean isBlocked;
 	
+	public boolean isInterestSent() {
+		return isInterestSent;
+	}
+
+	public void setInterestSent(boolean isInterestSent) {
+		this.isInterestSent = isInterestSent;
+	}
+
+	public boolean isShortlisted() {
+		return isShortlisted;
+	}
+
+	public void setShortlisted(boolean isShortlisted) {
+		this.isShortlisted = isShortlisted;
+	}
+
+	public boolean isBlocked() {
+		return isBlocked;
+	}
+
+	public void setBlocked(boolean isBlocked) {
+		this.isBlocked = isBlocked;
+	}
+		
 	public boolean isConfirmed() {
 		return confirmed;
 	}

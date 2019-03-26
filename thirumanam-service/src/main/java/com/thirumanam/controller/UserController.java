@@ -30,11 +30,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.thirumanam.model.Message;
+import com.thirumanam.model.MessageList;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
 import com.thirumanam.model.UserAdditionalDetial;
 import com.thirumanam.model.VisitedProfiles;
 import com.thirumanam.model.Visitor;
+import com.thirumanam.mongodb.repository.MessageRepository;
 import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.UserAdditionalDetailRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
@@ -46,6 +49,9 @@ import com.thirumanam.util.Util;
 @RestController
 @RequestMapping("/matrimony/user")
 public class UserController {
+	
+	@Autowired
+	private MessageRepository messageRepository;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -101,6 +107,19 @@ public class UserController {
 				visitedProfileRepository.save(visitedProfile);
 				
 			}		
+			
+			//Check Interest Sent already or not
+			Optional<MessageList> messageListObj = messageRepository.findById(loggedInUserId);
+			if(messageListObj.isPresent()) {
+				MessageList messageList = messageListObj.get();
+				List<Message> messages = messageList.getSentItems();
+				for(Message message: messages) {
+					if(profileId.equals(message.getPartnerMatrimonyId())) {
+						user.setInterestSent(true);
+						break;
+					}
+				}
+			}
 		} 		
 		return ResponseEntity.ok().body(user);
 	}
