@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.ws.rs.QueryParam;
 
@@ -149,6 +150,9 @@ public class MessageController {
 	public ResponseEntity<Status> sendMessage(
 			@RequestBody Message message, 
 			@PathVariable("userId") String fromUserId) {
+		
+		String id = UUID.randomUUID().toString();
+		message.setId(id);
 		//Save To Sent Items
 		Optional<MessageList> messageListObj = messageRepository.findById(fromUserId);
 		MessageList messageList = null;
@@ -156,10 +160,10 @@ public class MessageController {
 			messageList = messageListObj.get();
 		} else {
 			messageList = new MessageList();
-			messageList.setId(fromUserId);
+			messageList.setId(fromUserId);			
 		}		
 		message.setSentDate(new Date());
-		message.setStatus(ThirumanamConstant.MESSAGE_STATUS_AWAITING_REPLY);
+		message.setStatus(ThirumanamConstant.MESSAGE_STATUS_AWAITING_REPLY);		
 		messageList.getSentItems().add(message);
 		messageRepository.save(messageList);
 		
