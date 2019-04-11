@@ -5,14 +5,14 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.amazonaws.services.cognitoidp.model.AliasExistsException;
 import com.amazonaws.services.cognitoidp.model.ChangePasswordResult;
 import com.amazonaws.services.cognitoidp.model.CodeMismatchException;
-import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.LimitExceededException;
 import com.amazonaws.services.cognitoidp.model.NotAuthorizedException;
@@ -31,7 +30,6 @@ import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
 import com.thirumanam.aws.AWSLoginResponse;
 import com.thirumanam.aws.CognitoServiceHelper;
 import com.thirumanam.exception.ThirumanamException;
-import com.thirumanam.model.AWSConstants;
 import com.thirumanam.model.AccessCode;
 import com.thirumanam.model.ForgotPasswordResponse;
 import com.thirumanam.model.LoginRequest;
@@ -144,6 +142,24 @@ public class UserSecurityController {
 		} catch (AliasExistsException exp) {
 			exp.printStackTrace();
 			response.setErrorMessage(ErrorMessageConstants.EMAIL_ALREADY_EXISTS);
+		}
+		return ResponseEntity.ok().body(response);
+	}
+	
+	@GetMapping("/{profileId}/email")
+	public ResponseEntity<UserAccount> getEmail(@PathVariable("profileId") String profileId) throws URISyntaxException {	
+		UserAccount response = new UserAccount();
+		try {
+			Status status = validateProfileId(profileId);
+			if(status == null) {
+				Optional<User> userObj = userRepository.findById(profileId);
+				if(userObj.isPresent()) {						
+					User user = userObj.get();
+					response.setEmail(user.getEmail().replaceAll("(^[^@]{3}|(?!^)\\G)[^@]", "$1*"));					
+				} 
+			}
+		} catch (AliasExistsException exp) {
+			exp.printStackTrace();
 		}
 		return ResponseEntity.ok().body(response);
 	}
@@ -334,6 +350,16 @@ public class UserSecurityController {
 		}
 		return ResponseEntity.ok().body(
 				Util.populateStatus(200, "User registered successfully."));	
+	}
+	
+	
+	
+	private Status validateProfileId(String profileId) {
+		Status status = null;
+		if(profileId == null || profileId.isEmpty()) {
+			status = Util.populateStatus(400, "ProfileID is required.");
+		}
+		return status;
 	}
 	
 	private Status validateEmail(String email) {
