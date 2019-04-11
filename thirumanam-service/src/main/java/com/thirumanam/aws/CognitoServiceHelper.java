@@ -18,7 +18,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesRequest;
-import com.amazonaws.services.cognitoidp.model.AdminUpdateUserAttributesResult;
 import com.amazonaws.services.cognitoidp.model.AttributeType;
 import com.amazonaws.services.cognitoidp.model.ChangePasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ChangePasswordResult;
@@ -34,7 +33,6 @@ import com.amazonaws.services.cognitoidp.model.ResendConfirmationCodeRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.amazonaws.services.cognitoidp.model.SignUpResult;
 import com.amazonaws.services.cognitoidp.model.UpdateUserAttributesRequest;
-import com.amazonaws.services.cognitoidp.model.UpdateUserAttributesResult;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
@@ -45,6 +43,7 @@ import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import com.thirumanam.model.AWSConstants;
 
 @Component
 public class CognitoServiceHelper {
@@ -190,9 +189,9 @@ public class CognitoServiceHelper {
 	        return cognitoIdentityProvider.confirmForgotPassword(confirmPasswordRequest);	        
 	    }
 	 
-	 public void updateEmailandPhoneNumber(String email, String phoneNumber, String userName) {
-			BasicAWSCredentials basicCredentials = new BasicAWSCredentials(jwtConfiguration.getSecurityKey(),
-					jwtConfiguration.getAccessKey());
+	 public void updateEmail(String email, String userName) {
+			BasicAWSCredentials basicCredentials = new BasicAWSCredentials(
+					jwtConfiguration.getAccessKey(), jwtConfiguration.getSecretKey());
 	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
 	                .standard()
 	                .withCredentials(new AWSStaticCredentialsProvider(basicCredentials))
@@ -200,18 +199,29 @@ public class CognitoServiceHelper {
 	                .build();
 	        AdminUpdateUserAttributesRequest attrRequest = new AdminUpdateUserAttributesRequest();
 	        List<AttributeType> attributeTypeList = new ArrayList<AttributeType>();
-	        if(email != null) {
-	        	attributeTypeList.add(createAttributeType("email", email));
-	        	attributeTypeList.add(createAttributeType("email_verified", "true"));
-	        }
-	        if(phoneNumber != null) {
-	        	//attributeTypeList.add(createAttributeType("phone_number", phoneNumber));
-	        }
-	       
+	        	attributeTypeList.add(createAttributeType(AWSConstants.ATRBT_EMAIL, email));
+	        	attributeTypeList.add(createAttributeType(AWSConstants.ATRBT_EMAIL_VERIFIED, AWSConstants.STRING_TRUE));	       
 	        attrRequest.setUserPoolId(jwtConfiguration.getPOOL_ID());
 	        attrRequest.setUsername(userName);
 	        attrRequest.setUserAttributes(attributeTypeList);
-	        AdminUpdateUserAttributesResult result = cognitoIdentityProvider.adminUpdateUserAttributes(attrRequest);
+	        cognitoIdentityProvider.adminUpdateUserAttributes(attrRequest);
+	 }
+	 
+	 public void updatePhoneNumber(String phoneNumber, String userName) {
+		 BasicAWSCredentials basicCredentials = new BasicAWSCredentials(
+					jwtConfiguration.getAccessKey(), jwtConfiguration.getSecretKey());
+	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(basicCredentials))
+	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
+	                .build();
+	        AdminUpdateUserAttributesRequest attrRequest = new AdminUpdateUserAttributesRequest();
+	        List<AttributeType> attributeTypeList = new ArrayList<AttributeType>();
+	        attributeTypeList.add(createAttributeType(AWSConstants.ATRBT_EMAIL, phoneNumber));	     	       
+	        attrRequest.setUserPoolId(jwtConfiguration.getPOOL_ID());
+	        attrRequest.setUsername(userName);
+	        attrRequest.setUserAttributes(attributeTypeList);
+	        cognitoIdentityProvider.adminUpdateUserAttributes(attrRequest);
 	 }
 	 
 	 /**
@@ -233,13 +243,10 @@ public class CognitoServiceHelper {
 	        Set<String> keys = attributes.keySet();
 	        List<AttributeType> attributeTypeList = new ArrayList<AttributeType>();
 	        for(String key : keys) {
-	        	attributeTypeList.add(createAttributeType(key, attributes.get(key)));
-	        	if(key.equals("email" )) {
-	        		attributeTypeList.add(createAttributeType("email_verified", "true"));
-	        	}
+	        	attributeTypeList.add(createAttributeType(key, attributes.get(key)));	        	
 	        }
 	        updateAttrRequest.setUserAttributes(attributeTypeList);
-	        UpdateUserAttributesResult result = cognitoIdentityProvider.updateUserAttributes(updateAttrRequest);
+	        cognitoIdentityProvider.updateUserAttributes(updateAttrRequest);
 	   }
 	
 	

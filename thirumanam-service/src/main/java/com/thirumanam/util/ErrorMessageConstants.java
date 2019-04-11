@@ -21,4 +21,6 @@ public interface ErrorMessageConstants {
 	int CODE_INVALID_USER_PASSWORD = 10000;
 	String INVALID_USER_PASSWORD = "Invalid Username or Password.";
 	String EMAIL_ALREADY_EXISTS = "Email already exists.";
+	String PHONENUMBER_ALREADY_EXISTS = "Phone number already exists.";
+	String INVALID_USER = "Invalid User.";
 }

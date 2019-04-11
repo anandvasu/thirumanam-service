@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
 import com.thirumanam.aws.AWSLoginResponse;
 import com.thirumanam.aws.CognitoServiceHelper;
 import com.thirumanam.exception.ThirumanamException;
+import com.thirumanam.model.AWSConstants;
 import com.thirumanam.model.AccessCode;
 import com.thirumanam.model.ForgotPasswordResponse;
 import com.thirumanam.model.LoginRequest;
@@ -118,19 +120,58 @@ public class UserSecurityController {
 				Util.populateStatus(200, "User registered successfully."));	
 	}
 	
-	@PutMapping("/account")
-	public ResponseEntity<Response> updateAccountDetail(@RequestBody UserAccount userAccount) throws URISyntaxException {	
+	@PutMapping("/email")
+	public ResponseEntity<Response> updateEmail(@RequestBody UserAccount userAccount) throws URISyntaxException {	
 		Response response = new Response();
 		try {
-			Map<String,String> attributes = new HashMap<String,String>();
-			attributes.put("email", userAccount.getEmail());
-			attributes.put("phone_number", userAccount.getPhoneNumber());
-			//cognitoHelper.updateAttributes(attributes, userAccount.getAccessToken());
-			cognitoHelper.updateEmailandPhoneNumber(userAccount.getEmail(), userAccount.getPhoneNumber(), null);
-			response.setSuccess(true);
+			Status status = validateEmail(userAccount.getEmail());
+			if(status == null) {
+				Optional<User> userObj = userRepository.findById(userAccount.getProfileId());
+				if(userObj.isPresent()) {						
+					User user = userObj.get();
+					user.setEmail(userAccount.getEmail());
+					userRepository.save(user);
+					cognitoHelper.updateEmail(userAccount.getEmail(), user.getExternalId());
+					response.setSuccess(true);
+				} else {
+					response.setSuccess(false);
+					response.setErrorMessage(ErrorMessageConstants.INVALID_USER);
+				}
+			} else {
+				response.setSuccess(false);
+				response.setErrorMessage(status.getMessage());
+			}
 		} catch (AliasExistsException exp) {
 			exp.printStackTrace();
 			response.setErrorMessage(ErrorMessageConstants.EMAIL_ALREADY_EXISTS);
+		}
+		return ResponseEntity.ok().body(response);
+	}
+	
+	@PutMapping("/phonenumber")
+	public ResponseEntity<Response> updateMobileNumber(@RequestBody UserAccount userAccount) throws URISyntaxException {	
+		Response response = new Response();
+		try {
+			Status status = validatePhone(userAccount.getPhoneNumber());
+			if(status == null) {
+				Optional<User> userObj = userRepository.findById(userAccount.getProfileId());
+				if(userObj.isPresent()) {		
+					User user = userObj.get();
+					user.setMobile(userAccount.getPhoneNumber());
+					userRepository.save(user);
+					cognitoHelper.updatePhoneNumber(userAccount.getPhoneNumber(), user.getExternalId());
+					response.setSuccess(true);
+				}else {
+					response.setSuccess(false);
+					response.setErrorMessage(ErrorMessageConstants.INVALID_USER);
+				}
+			} else {
+				response.setSuccess(false);
+				response.setErrorMessage(status.getMessage());
+			}			
+		} catch (AliasExistsException exp) {
+			exp.printStackTrace();
+			response.setErrorMessage(ErrorMessageConstants.PHONENUMBER_ALREADY_EXISTS);
 		}
 		return ResponseEntity.ok().body(response);
 	}
@@ -235,12 +276,11 @@ public class UserSecurityController {
 	public ResponseEntity<ResetPasswordResponse> 
 		resetPassword(@RequestBody AccessCode accessCode) throws URISyntaxException {	
 		ResetPasswordResponse resetPwdResponse = new ResetPasswordResponse();
-		try {
-			ConfirmForgotPasswordResult updatePasswordResult =
-					cognitoHelper.updatePassword(
-								accessCode.getUsername(), 
-								accessCode.getPassword(),
-								accessCode.getAccessCode());				
+		try {			
+			cognitoHelper.updatePassword(
+						accessCode.getUsername(), 
+						accessCode.getPassword(),
+						accessCode.getAccessCode());				
 			resetPwdResponse.setSuccess(true);
 			resetPwdResponse.setCodeMatched(true);
 		} catch (LimitExceededException exp) {
@@ -294,6 +334,22 @@ public class UserSecurityController {
 		}
 		return ResponseEntity.ok().body(
 				Util.populateStatus(200, "User registered successfully."));	
+	}
+	
+	private Status validateEmail(String email) {
+		Status status = null;
+		if(email == null || email.isEmpty()) {
+			status = Util.populateStatus(400, "Email is required.");
+		}
+		return status;
+	}
+	
+	private Status validatePhone(String phoneNumber) {
+		Status status = null;
+		if(phoneNumber == null || phoneNumber.isEmpty()) {
+			status = Util.populateStatus(400, "Phone number is required.");
+		}
+		return status;
 	}
 	
 	private Status validateUserRegistration(RegisterUser user) {

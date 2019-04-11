@@ -5,7 +5,14 @@ public class UserAccount {
 	private String accessToken;
 	private String phoneNumber;
 	private String email;
+	private String profileId;
 	
+	public String getProfileId() {
+		return profileId;
+	}
+	public void setProfileId(String profileId) {
+		this.profileId = profileId;
+	}
 	public String getAccessToken() {
 		return accessToken;
 	}
