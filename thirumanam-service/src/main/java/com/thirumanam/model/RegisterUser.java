@@ -14,7 +14,21 @@ public class RegisterUser {
 	private int bMonth;
 	private int bYear;
 	private String dob;
+	private String phCountryCode;
+	private String phonenumber;
 	
+	public String getPhCountryCode() {
+		return phCountryCode;
+	}
+	public void setPhCountryCode(String phCountryCode) {
+		this.phCountryCode = phCountryCode;
+	}
+	public String getPhonenumber() {
+		return phonenumber;
+	}
+	public void setPhonenumber(String phonenumber) {
+		this.phonenumber = phonenumber;
+	}
 	public String getDob() {
 		return dob;
 	}

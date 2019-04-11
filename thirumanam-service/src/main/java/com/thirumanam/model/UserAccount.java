@@ -4,8 +4,16 @@ public class UserAccount {
 	
 	private String accessToken;
 	private String phoneNumber;
+	private String phCountryCode;	
 	private String email;
 	private String profileId;
+	
+	public String getPhCountryCode() {
+		return phCountryCode;
+	}
+	public void setPhCountryCode(String phCountryCode) {
+		this.phCountryCode = phCountryCode;
+	}
 	
 	public String getProfileId() {
 		return profileId;

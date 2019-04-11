@@ -84,7 +84,7 @@ public class UserSecurityController {
 				inputUser.getUsername(), 
 				inputUser.getPassword(), 
 				inputUser.getEmail(), 
-				inputUser.getMobile(), 
+				inputUser.getPhCountryCode()+inputUser.getPhonenumber(), 
 				inputUser.getLastName(), 
 				inputUser.getFirstName());
 		
@@ -101,6 +101,8 @@ public class UserSecurityController {
 		user.setFirstName(inputUser.getFirstName());
 		user.setLastName(inputUser.getLastName());
 		user.setEmail(inputUser.getEmail());
+		user.setPhCountryCode(inputUser.getPhCountryCode());
+		user.setPhonenumber(inputUser.getPhonenumber());
 		user.setExternalId(externalId);
 		user.setGender(inputUser.getGender());
 		user.setRegisterdBy(inputUser.getRegisteredBy());
@@ -164,18 +166,38 @@ public class UserSecurityController {
 		return ResponseEntity.ok().body(response);
 	}
 	
-	@PutMapping("/phonenumber")
+	@GetMapping("/{profileId}/phonenumber")
+	public ResponseEntity<UserAccount> getPhoneNumber(@PathVariable("profileId") String profileId) throws URISyntaxException {	
+		UserAccount response = new UserAccount();
+		try {
+			Status status = validateProfileId(profileId);
+			if(status == null) {
+				Optional<User> userObj = userRepository.findById(profileId);
+				if(userObj.isPresent()) {						
+					User user = userObj.get();
+					response.setPhCountryCode(user.getPhCountryCode());
+					response.setPhoneNumber(user.getPhonenumber().replaceAll(".(?=.{4})", "*"));					
+				} 
+			}
+		} catch (AliasExistsException exp) {
+			exp.printStackTrace();
+		}
+		return ResponseEntity.ok().body(response);
+	}
+	
+	@PutMapping("/{profileId}/phonenumber")
 	public ResponseEntity<Response> updateMobileNumber(@RequestBody UserAccount userAccount) throws URISyntaxException {	
 		Response response = new Response();
 		try {
-			Status status = validatePhone(userAccount.getPhoneNumber());
+			Status status = validatePhone(userAccount.getPhCountryCode(), userAccount.getPhoneNumber());
 			if(status == null) {
 				Optional<User> userObj = userRepository.findById(userAccount.getProfileId());
 				if(userObj.isPresent()) {		
 					User user = userObj.get();
-					user.setMobile(userAccount.getPhoneNumber());
+					user.setPhCountryCode(userAccount.getPhCountryCode());
+					user.setPhonenumber(userAccount.getPhoneNumber());
 					userRepository.save(user);
-					cognitoHelper.updatePhoneNumber(userAccount.getPhoneNumber(), user.getExternalId());
+					cognitoHelper.updatePhoneNumber(userAccount.getPhCountryCode(), userAccount.getPhoneNumber(), user.getExternalId());
 					response.setSuccess(true);
 				}else {
 					response.setSuccess(false);
@@ -370,11 +392,16 @@ public class UserSecurityController {
 		return status;
 	}
 	
-	private Status validatePhone(String phoneNumber) {
+	private Status validatePhone(String countryCode, String phoneNumber) {
 		Status status = null;
+		if(countryCode == null || countryCode.isEmpty()) {
+			status = Util.populateStatus(400, "Phone number Country Code is required.");
+		}
+		
 		if(phoneNumber == null || phoneNumber.isEmpty()) {
 			status = Util.populateStatus(400, "Phone number is required.");
 		}
+		
 		return status;
 	}
 	
@@ -405,7 +432,7 @@ public class UserSecurityController {
 		if(user.getCity() == null || user.getCity().isEmpty()) {
 			status = Util.populateStatus("t-406", "City is required.");
 		}*/
-		if(user.getMobile() == null || user.getMobile().isEmpty()) {
+		if(user.getPhonenumber() == null || user.getPhonenumber().isEmpty()) {
 			status = Util.populateStatus(400, "Mobile is required.");
 			return status;
 		}

@@ -55,7 +55,25 @@ public class User {
 	private boolean isInterestSent;
 	private boolean isShortlisted;
 	private boolean isBlocked;
+	private String phCountryCode;
+	private String phonenumber;
 	
+	public String getPhCountryCode() {
+		return phCountryCode;
+	}
+
+	public void setPhCountryCode(String phCountryCode) {
+		this.phCountryCode = phCountryCode;
+	}
+
+	public String getPhonenumber() {
+		return phonenumber;
+	}
+
+	public void setPhonenumber(String phonenumber) {
+		this.phonenumber = phonenumber;
+	}
+		
 	public boolean isInterestSent() {
 		return isInterestSent;
 	}

@@ -207,7 +207,7 @@ public class CognitoServiceHelper {
 	        cognitoIdentityProvider.adminUpdateUserAttributes(attrRequest);
 	 }
 	 
-	 public void updatePhoneNumber(String phoneNumber, String userName) {
+	 public void updatePhoneNumber(String countryCode, String phoneNumber, String userName) {
 		 BasicAWSCredentials basicCredentials = new BasicAWSCredentials(
 					jwtConfiguration.getAccessKey(), jwtConfiguration.getSecretKey());
 	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
@@ -217,7 +217,10 @@ public class CognitoServiceHelper {
 	                .build();
 	        AdminUpdateUserAttributesRequest attrRequest = new AdminUpdateUserAttributesRequest();
 	        List<AttributeType> attributeTypeList = new ArrayList<AttributeType>();
-	        attributeTypeList.add(createAttributeType(AWSConstants.ATRBT_EMAIL, phoneNumber));	     	       
+	        if(countryCode.equals("+1U")) {
+	        	countryCode = "+1";
+	        }
+	        attributeTypeList.add(createAttributeType(AWSConstants.ATRBT_PHONE_NUMBER, countryCode+phoneNumber));	     	       
 	        attrRequest.setUserPoolId(jwtConfiguration.getPOOL_ID());
 	        attrRequest.setUsername(userName);
 	        attrRequest.setUserAttributes(attributeTypeList);
