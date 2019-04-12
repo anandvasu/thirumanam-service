@@ -26,6 +26,8 @@ import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpRequest;
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpResult;
+import com.amazonaws.services.cognitoidp.model.DeleteUserRequest;
+import com.amazonaws.services.cognitoidp.model.DeleteUserResult;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordRequest;
 import com.amazonaws.services.cognitoidp.model.ForgotPasswordResult;
 import com.amazonaws.services.cognitoidp.model.LimitExceededException;
@@ -158,6 +160,19 @@ public class CognitoServiceHelper {
 		 return true;
 	 }
 	 
+	 public DeleteUserResult deleteUser(String accessToken) {
+		 BasicAWSCredentials basicCredentials = new BasicAWSCredentials(
+					jwtConfiguration.getAccessKey(), jwtConfiguration.getSecretKey());
+	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+	                .standard()
+	                .withCredentials(new AWSStaticCredentialsProvider(basicCredentials))
+	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
+	                .build();
+	        DeleteUserRequest deleteUserRequest = new DeleteUserRequest();
+	        deleteUserRequest.setAccessToken(accessToken);
+	        return cognitoIdentityProvider.deleteUser(deleteUserRequest);	       
+	  }
+	 
 	 public ForgotPasswordResult resetPassword(String username) throws LimitExceededException{
 	        AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
 	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
@@ -228,29 +243,29 @@ public class CognitoServiceHelper {
 	 }
 	 
 	 /**
-	     * Helper method to update user attributes
-	     *
-	     * @param username represents the username in the cognito user pool
-	     * @param password represents the password in the cognito user pool
-	     * @return returns the AWSLoginResponse after the validation
-	     */
-	   public void updateAttributes(Map<String, String> attributes, String accessToken) {
-		   AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
-	        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
-	                .standard()
-	                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-	                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
-	                .build();
-	        UpdateUserAttributesRequest updateAttrRequest = new UpdateUserAttributesRequest();
-	        updateAttrRequest.setAccessToken(accessToken);
-	        Set<String> keys = attributes.keySet();
-	        List<AttributeType> attributeTypeList = new ArrayList<AttributeType>();
-	        for(String key : keys) {
-	        	attributeTypeList.add(createAttributeType(key, attributes.get(key)));	        	
-	        }
-	        updateAttrRequest.setUserAttributes(attributeTypeList);
-	        cognitoIdentityProvider.updateUserAttributes(updateAttrRequest);
-	   }
+      * Helper method to update user attributes
+      *
+      * @param username represents the username in the cognito user pool
+      * @param password represents the password in the cognito user pool
+      * @return returns the AWSLoginResponse after the validation
+      */
+	 public void updateAttributes(Map<String, String> attributes, String accessToken) {
+	   AnonymousAWSCredentials awsCreds = new AnonymousAWSCredentials();
+        AWSCognitoIdentityProvider cognitoIdentityProvider = AWSCognitoIdentityProviderClientBuilder
+                .standard()
+                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+                .withRegion(Regions.fromName(jwtConfiguration.getREGION()))
+                .build();
+        UpdateUserAttributesRequest updateAttrRequest = new UpdateUserAttributesRequest();
+        updateAttrRequest.setAccessToken(accessToken);
+        Set<String> keys = attributes.keySet();
+        List<AttributeType> attributeTypeList = new ArrayList<AttributeType>();
+        for(String key : keys) {
+        	attributeTypeList.add(createAttributeType(key, attributes.get(key)));	        	
+        }
+        updateAttrRequest.setUserAttributes(attributeTypeList);
+        cognitoIdentityProvider.updateUserAttributes(updateAttrRequest);
+	 }
 	
 	
 	/**

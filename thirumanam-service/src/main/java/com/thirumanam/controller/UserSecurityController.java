@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,7 @@ import com.thirumanam.aws.AWSLoginResponse;
 import com.thirumanam.aws.CognitoServiceHelper;
 import com.thirumanam.exception.ThirumanamException;
 import com.thirumanam.model.AccessCode;
+import com.thirumanam.model.DeleteReason;
 import com.thirumanam.model.ForgotPasswordResponse;
 import com.thirumanam.model.LoginRequest;
 import com.thirumanam.model.LoginResponse;
@@ -119,6 +121,22 @@ public class UserSecurityController {
 		return ResponseEntity.created(new URI("/user")).header(ThirumanamConstant.PROFILEID, profileId).body(
 				Util.populateStatus(200, "User registered successfully."));	
 	}
+	
+	@PutMapping("/{profileId}/delete")
+	public ResponseEntity<Status> deleteUserProfile(
+			@PathVariable("profileId") String profileId, @RequestBody DeleteReason deleteReason) throws URISyntaxException {	
+		Status status = validateProfileId(profileId);
+		if(status == null) {
+			Optional<User> userObj = userRepository.findById(profileId);
+			if(userObj.isPresent()) {
+				userRepository.delete(userObj.get());
+			}
+			cognitoHelper.deleteUser(deleteReason.getAccessToken());
+		}
+		
+		return ResponseEntity.ok().body(status);
+	}
+	
 	
 	@PutMapping("/email")
 	public ResponseEntity<Response> updateEmail(@RequestBody UserAccount userAccount) throws URISyntaxException {	
