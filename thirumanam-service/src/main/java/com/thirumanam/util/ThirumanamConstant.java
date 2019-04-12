@@ -18,4 +18,6 @@ public interface ThirumanamConstant {
 	String MESSAGE_STATUS_ACCEPTED = "A";
 	String MESSAGE_STATUS_AWAITING_REPLY = "R";
 	String MESSAGE_STATUS_ALL = "L";
+	String USER_STATUS_ACTIVE = "A";
+	String USER_STATUS_INACTIVE = "I";
 }

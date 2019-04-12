@@ -10,8 +10,15 @@ public class LoginResponse extends Response {
 	private String lastName;
 	private String profileId;
 	private String profilePerCompleted;	
-	private boolean userConfirmed;		
+	private boolean userConfirmed;
+	private String status;		
 	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
 	public boolean isUserConfirmed() {
 		return userConfirmed;
 	}

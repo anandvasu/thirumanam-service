@@ -11,7 +11,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -109,6 +108,7 @@ public class UserSecurityController {
 		user.setGender(inputUser.getGender());
 		user.setRegisterdBy(inputUser.getRegisteredBy());
 		user.setCreatedDate(new Date());
+		user.setStatus(ThirumanamConstant.USER_STATUS_ACTIVE);
 		
 		userRepository.save(user);
 		
@@ -135,6 +135,37 @@ public class UserSecurityController {
 		}
 		
 		return ResponseEntity.ok().body(status);
+	}
+	
+	@PutMapping("/{profileId}/status")
+	public ResponseEntity<Response> updateStatus(@PathVariable("profileId") String profileId, 
+			@RequestBody UserAccount userAccount) throws URISyntaxException {	
+		Response response = new Response();
+		try {
+			Status status = validateStatus(userAccount.getStatus());
+			if(status == null) {
+				Optional<User> userObj = userRepository.findById(profileId);
+				if(userObj.isPresent()) {						
+					User user = userObj.get();
+					if(ThirumanamConstant.USER_STATUS_INACTIVE.equals(userAccount.getStatus())) {
+						user.setActivateDate(Util.calculateDate(userAccount.getInactiveDays()));
+					}
+					user.setStatus(userAccount.getStatus());
+					userRepository.save(user);					
+					response.setSuccess(true);
+				} else {
+					response.setSuccess(false);
+					response.setErrorMessage(ErrorMessageConstants.INVALID_USER);
+				}
+			} else {
+				response.setSuccess(false);
+				response.setErrorMessage(status.getMessage());
+			}
+		} catch (Exception exp) {
+			exp.printStackTrace();
+			response.setErrorMessage(ErrorMessageConstants.INVALID_USER);
+		}
+		return ResponseEntity.ok().body(response);
 	}
 	
 	
@@ -250,6 +281,7 @@ public class UserSecurityController {
 					loginResponse.setGender(user.getGender());
 					loginResponse.setIdToken(awsLoginResponse.getIdToken());
 					loginResponse.setAccessToken(awsLoginResponse.getAccessToken());
+					loginResponse.setStatus(user.getStatus());
 					if(awsLoginResponse.getRefreshToken() != null) {
 						loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
 					}
@@ -391,8 +423,14 @@ public class UserSecurityController {
 		return ResponseEntity.ok().body(
 				Util.populateStatus(200, "User registered successfully."));	
 	}
-	
-	
+			
+	private Status validateStatus(String userStatus) {
+		Status status = null;
+		if(userStatus == null || userStatus.isEmpty()) {
+			status = Util.populateStatus(400, "Status is required.");
+		}
+		return status;
+	}
 	
 	private Status validateProfileId(String profileId) {
 		Status status = null;

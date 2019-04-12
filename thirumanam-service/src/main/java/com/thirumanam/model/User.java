@@ -43,7 +43,8 @@ public class User {
 	private String income;	
 	private String mCountryCode;
 	private String mobile;			
-	private String status;	
+	private String status;
+	private Date activateDate;		
 	private String image;
 	private String thumbImage;	
 	private String externalId;	
@@ -57,6 +58,14 @@ public class User {
 	private boolean isBlocked;
 	private String phCountryCode;
 	private String phonenumber;
+	
+	public Date getActivateDate() {
+		return activateDate;
+	}
+
+	public void setActivateDate(Date activateDate) {
+		this.activateDate = activateDate;
+	}
 	
 	public String getPhCountryCode() {
 		return phCountryCode;

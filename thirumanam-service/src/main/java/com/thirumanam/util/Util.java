@@ -1,7 +1,10 @@
 package com.thirumanam.util;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.ZoneId;
+import java.util.Date;
 
 import com.thirumanam.model.Status;
 
@@ -18,5 +21,12 @@ public class Util {
 		status.setCode(code);
 		status.setMessage(message);
 		return status;
+	}
+	
+	public static Date calculateDate(int days) {
+		Date currentDate = new Date();
+		LocalDateTime localDateTime = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		localDateTime.plusDays(days);
+		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}
 }

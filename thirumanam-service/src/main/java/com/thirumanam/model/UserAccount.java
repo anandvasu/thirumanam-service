@@ -7,7 +7,21 @@ public class UserAccount {
 	private String phCountryCode;	
 	private String email;
 	private String profileId;
+	private String status;
+	private int inactiveDays;
 	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public int getInactiveDays() {
+		return inactiveDays;
+	}
+	public void setInactiveDays(int inactiveDays) {
+		this.inactiveDays = inactiveDays;
+	}
 	public String getPhCountryCode() {
 		return phCountryCode;
 	}
