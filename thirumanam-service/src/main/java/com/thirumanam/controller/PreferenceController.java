@@ -49,10 +49,10 @@ public class PreferenceController {
 	}
 	
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)
-	public ResponseEntity<Preference> getAllMatchingProfile(@PathVariable("profileId") String profileId) {		
+	public ResponseEntity<Preference> getPreferences(@PathVariable("profileId") String profileId) {		
 		Optional<Preference> prefObj = prefRepository.findById(profileId);
 		Preference preference = new Preference();
-		if(prefObj.isPresent()) {
+		if(prefObj.isPresent()) { 
 			preference = prefObj.get();
 		}		
 		return ResponseEntity.ok().body(preference);
