@@ -112,11 +112,12 @@ public class UserSecurityController {
 		
 		userRepository.save(user);
 		
-		Preference preference = new Preference();
+		// Commented as we don't need to create preference by default. Rather display message on ui.
+		/*Preference preference = new Preference();
 		preference.setId(profileId);
 		preference.setGender(
 				(user.getGender().equals(ThirumanamConstant.GENDER_M) ? ThirumanamConstant.GENDER_F: ThirumanamConstant.GENDER_M));
-		prefRepository.save(preference);
+		prefRepository.save(preference);*/
 		
 		return ResponseEntity.created(new URI("/user")).header(ThirumanamConstant.PROFILEID, profileId).body(
 				Util.populateStatus(200, "User registered successfully."));	

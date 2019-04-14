@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.thirumanam.model.BlockedProfile;
 import com.thirumanam.model.BlockedProfiles;
+import com.thirumanam.model.MyMatchResponse;
 import com.thirumanam.model.Preference;
 import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.ShortListedProfile;
@@ -32,6 +33,7 @@ import com.thirumanam.mongodb.repository.PreferenceRepository;
 import com.thirumanam.mongodb.repository.ShortlistedProfileRepository;
 import com.thirumanam.mongodb.repository.UserRepository;
 import com.thirumanam.mongodb.repository.UserRepositoryImpl;
+import com.thirumanam.util.ErrorMessageConstants;
 import com.thirumanam.util.ThirumanamConstant;
 
 @RestController
@@ -116,51 +118,61 @@ public class UserSearchController {
 	}
 	
 	@GetMapping("/{profileId}/preference/matches")
-	public ResponseEntity<List<User>> getMyProfileMatches(
+	public ResponseEntity<MyMatchResponse> getMyProfileMatches(
 			@PathVariable("profileId") String profileId, 
-			@RequestAttribute(ThirumanamConstant.USER_AUTHORIZED) boolean isUserAuthorized) {
-		
-		System.out.print("isUserAuthorized:" + isUserAuthorized);
-		
-		long totalUsers = 0;
-		List<User> usersList = null;
-		
-		
-		//Get Blocked Profiles 
-		List<String> blockedProfileIds = new ArrayList<String>();
-		Optional<BlockedProfiles> bProfiles = blockedProfileRepository.findById(profileId);	
-		if(bProfiles.isPresent()) {
-			BlockedProfiles blockedProfiles = bProfiles.get();
-			List<BlockedProfile> profiles = blockedProfiles.getProfiles();
-			for(BlockedProfile profile: profiles) {
-				blockedProfileIds.add(profile.getId());
-			}			
-		}
-		
-		//Get shortlisted Profiles 
-		Optional<ShortListedProfiles> sProfiles = shortlistedProfileRepository.findById(profileId);	
-		if(sProfiles.isPresent()) {
-			ShortListedProfiles sListedProfiles = sProfiles.get();
-			List<ShortListedProfile> profiles = sListedProfiles.getProfiles();
-			for(ShortListedProfile profile: profiles) {
-				//add shortlisted profiles to blocked list
-				blockedProfileIds.add(profile.getId());
-			}			
-		}
-		
-		Optional<Preference> prefObj  = prefRepository.findById(profileId);
-		if(prefObj.isPresent()) {
-			SearchCriteria searchCriteria = buildSearchCriteria(prefObj.get());
-			searchCriteria.setBlockedProfiles(blockedProfileIds);
-			
-			if(totalUsers == 0) {
-				totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	
-			}			
-			usersList = userRepositoryImpl.searchUserData(searchCriteria, 0, 3);						
+			@RequestAttribute(ThirumanamConstant.USER_AUTHORIZED) boolean isUserAuthorized) {		
+		long totalUsers = 0;		
+		MyMatchResponse myMatchResponse = new MyMatchResponse();		
+		if (isUserAuthorized) {		
+			List<User> usersList = null;					
+			Optional<Preference> prefObj  = prefRepository.findById(profileId);
+			if(prefObj.isPresent()) {
+				SearchCriteria searchCriteria = buildSearchCriteria(prefObj.get());
+				
+				//Get Blocked Profiles 
+				List<String> blockedProfileIds = new ArrayList<String>();
+				Optional<BlockedProfiles> bProfiles = blockedProfileRepository.findById(profileId);	
+				if(bProfiles.isPresent()) {
+					BlockedProfiles blockedProfiles = bProfiles.get();
+					List<BlockedProfile> profiles = blockedProfiles.getProfiles();
+					for(BlockedProfile profile: profiles) {
+						blockedProfileIds.add(profile.getId());
+					}			
+				}
+				
+				//Get shortlisted Profiles 
+				Optional<ShortListedProfiles> sProfiles = shortlistedProfileRepository.findById(profileId);	
+				if(sProfiles.isPresent()) {
+					ShortListedProfiles sListedProfiles = sProfiles.get();
+					List<ShortListedProfile> profiles = sListedProfiles.getProfiles();
+					for(ShortListedProfile profile: profiles) {
+						//add shortlisted profiles to blocked list
+						blockedProfileIds.add(profile.getId());
+					}			
+				}
+				
+				searchCriteria.setBlockedProfiles(blockedProfileIds);
+				
+				if(totalUsers == 0) {
+					totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	
+					if(totalUsers > 0) {
+						usersList = userRepositoryImpl.searchUserData(searchCriteria, 0, 3);							
+					} else {
+						usersList = new ArrayList<User>();
+					}
+					myMatchResponse.setUserList(usersList);
+				}			
+				myMatchResponse.setPrefernceExists(true);
+				myMatchResponse.setSuccess(true);				
+			} else {
+				
+			}
+		} else {
+			myMatchResponse.setErrorMessage(ErrorMessageConstants.MESSAGE_INVALID__JWT_ISSUER);
 		}
 		return ResponseEntity.ok()
 							 .header("X-TOTAL-DOCS", Long.toString(totalUsers))
-							 .body(usersList);
+							 .body(myMatchResponse);
 	}
 	
 	@PutMapping("/profile/summary")
