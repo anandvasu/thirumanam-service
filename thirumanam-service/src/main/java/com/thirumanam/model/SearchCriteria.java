@@ -15,6 +15,7 @@ public class SearchCriteria {
 	private String city;
 	private String state;
 	private String country;
+	private String showProfile;	
 	private List<String> education  = new ArrayList<String>();	
 	private List<String> maritalStatus  = new ArrayList<String>();
 	private List<String> foodHabits = new ArrayList<String>();	
@@ -27,6 +28,13 @@ public class SearchCriteria {
 	private List<String> bodyTypes = new ArrayList<String>();
 	private List<String> employments = new ArrayList<String>();
 	private List<String> blockedProfiles = new ArrayList<String>();
+	
+	public String getShowProfile() {
+		return showProfile;
+	}
+	public void setShowProfile(String showProfile) {
+		this.showProfile = showProfile;
+	}
 	
 	public List<String> getBlockedProfiles() {
 		return blockedProfiles;

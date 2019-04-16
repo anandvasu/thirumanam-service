@@ -20,4 +20,6 @@ public interface ThirumanamConstant {
 	String MESSAGE_STATUS_ALL = "L";
 	String USER_STATUS_ACTIVE = "A";
 	String USER_STATUS_INACTIVE = "I";
+	String SHOW_PROFILE_WITH_PHOTO = "W";
+	String SHOW_PROFILE_WITHOUT_PHOTO = "O";
 }

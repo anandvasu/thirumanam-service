@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.thirumanam.model.SearchCriteria;
 import com.thirumanam.model.User;
 import com.thirumanam.util.FieldConstants;
+import com.thirumanam.util.ThirumanamConstant;
 
 @Component
 public class UserRepositoryImpl implements UserRepositoryCustom {
@@ -159,7 +160,17 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 			
 			if(searchCriteria.getEmployments() != null && !searchCriteria.getEmployments().isEmpty()) {
 				criteria.and(FieldConstants.EMPLOYMENT).in(searchCriteria.getEmployments());				
-			}			
+			}		
+			
+			if(searchCriteria.getShowProfile() != null && 
+					searchCriteria.getShowProfile().equals(ThirumanamConstant.SHOW_PROFILE_WITH_PHOTO)) {
+				criteria.and(FieldConstants.IMAGE).exists(true);
+			}
+			
+			if(searchCriteria.getShowProfile() != null && 
+					searchCriteria.getShowProfile().equals(ThirumanamConstant.SHOW_PROFILE_WITHOUT_PHOTO)) {
+				criteria.and(FieldConstants.IMAGE).exists(false);
+			}
 			
 			return criteria;
 		}
