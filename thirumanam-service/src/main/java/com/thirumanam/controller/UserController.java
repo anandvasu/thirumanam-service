@@ -291,6 +291,7 @@ public class UserController {
 		user.setDistrict(inputUser.getDistrict());
 				
 		user.setEducation(inputUser.getEducation());
+		user.setOccupation(inputUser.getOccupation());
 		user.setEmployment(inputUser.getEmployment());
 		user.setIncome(inputUser.getIncome());		
 				

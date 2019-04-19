@@ -19,13 +19,14 @@ public class User {
 	private String dob;
 	private String profileCompPercent;		
 	private String country;
-	private String pstate;	
-	private String district;		
+	private int pstate;		
+	private int district;		
 	private String city;	
 	private int religion;		
-	private String caste;
+	private int caste;
+	private String otherCaste;	
 	private String subcaste;	
-	private String gothram;		
+	private int gothram;			
 	private String dhosham;
 	private String mStatus;	
 	private String familyType;
@@ -40,6 +41,7 @@ public class User {
 	private String horoscope;	
 	private String education;
 	private String employment;
+	private String occupation;	
 	private String income;	
 	private String mCountryCode;
 	private String mobile;			
@@ -58,6 +60,72 @@ public class User {
 	private boolean isBlocked;
 	private String phCountryCode;
 	private String phonenumber;
+	private String otherState;
+	private String otherDistrict;
+	
+	public String getOccupation() {
+		return occupation;
+	}
+
+	public void setOccupation(String occupation) {
+		this.occupation = occupation;
+	}
+	
+	public int getGothram() {
+		return gothram;
+	}
+
+	public void setGothram(int gothram) {
+		this.gothram = gothram;
+	}
+	
+	public int getPstate() {
+		return pstate;
+	}
+
+	public void setPstate(int pstate) {
+		this.pstate = pstate;
+	}
+
+	public int getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(int district) {
+		this.district = district;
+	}
+
+	public int getCaste() {
+		return caste;
+	}
+
+	public void setCaste(int caste) {
+		this.caste = caste;
+	}
+	
+	public String getOtherDistrict() {
+		return otherDistrict;
+	}
+
+	public void setOtherDistrict(String otherDistrict) {
+		this.otherDistrict = otherDistrict;
+	}
+
+	public String getOtherState() {
+		return otherState;
+	}
+
+	public void setOtherState(String otherState) {
+		this.otherState = otherState;
+	}
+
+	public String getOtherCaste() {
+		return otherCaste;
+	}
+
+	public void setOtherCaste(String otherCaste) {
+		this.otherCaste = otherCaste;
+	}
 	
 	public Date getActivateDate() {
 		return activateDate;
@@ -161,16 +229,8 @@ public class User {
 
 	public void setHoroscope(String horoscope) {
 		this.horoscope = horoscope;
-	}
+	}	
 	
-	public String getGothram() {
-		return gothram;
-	}
-
-	public void setGothram(String gothram) {
-		this.gothram = gothram;
-	}
-
 	public String getDhosham() {
 		return dhosham;
 	}
@@ -218,16 +278,8 @@ public class User {
 
 	public void setReligion(int religion) {
 		this.religion = religion;
-	}
-	
-	public String getCaste() {
-		return caste;
-	}
-
-	public void setCaste(String caste) {
-		this.caste = caste;
-	}
-	
+	}	
+		
 	public void setProfileCompPercent(String profileCompPercent) {			
 		this.profileCompPercent = profileCompPercent;
 	}
@@ -262,14 +314,7 @@ public class User {
 	}
 	public void setExternalId(String externalId) {
 		this.externalId = externalId;
-	}
-	
-	public String getPstate() {
-		return pstate;
-	}
-	public void setPstate(String pstate) {
-		this.pstate = pstate;
-	}
+	}	
 	
 	public String getmStatus() {
 		return mStatus;
@@ -307,14 +352,7 @@ public class User {
 	public void setIncome(String income) {
 		this.income = income;
 	}	
-	
-	public String getDistrict() {
-		return district;
-	}
-	public void setDistrict(String district) {
-		this.district = district;
-	}
-		
+				
 	public String getImage() {
 		return image;
 	}

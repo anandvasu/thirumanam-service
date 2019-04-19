@@ -35,7 +35,6 @@ import com.thirumanam.model.DeleteReason;
 import com.thirumanam.model.ForgotPasswordResponse;
 import com.thirumanam.model.LoginRequest;
 import com.thirumanam.model.LoginResponse;
-import com.thirumanam.model.Preference;
 import com.thirumanam.model.RegisterUser;
 import com.thirumanam.model.ResetPasswordResponse;
 import com.thirumanam.model.Response;
@@ -80,6 +79,8 @@ public class UserSecurityController {
 		if (!users.isEmpty()) {
 			return ResponseEntity.badRequest().body( Util.populateStatus(400, "Email already exists."));
 		}		
+		
+		//String externalId = "test";
 				
 		String externalId = cognitoHelper.SignUpUser(
 				inputUser.getUsername(), 
@@ -101,6 +102,7 @@ public class UserSecurityController {
 		user.setId(profileId);
 		user.setFirstName(inputUser.getFirstName());
 		user.setLastName(inputUser.getLastName());
+		user.setReligion(inputUser.getReligion());
 		user.setEmail(inputUser.getEmail());
 		user.setPhCountryCode(inputUser.getPhCountryCode());
 		user.setPhonenumber(inputUser.getPhonenumber());

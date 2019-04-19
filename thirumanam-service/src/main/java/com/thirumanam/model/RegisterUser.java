@@ -16,7 +16,14 @@ public class RegisterUser {
 	private String dob;
 	private String phCountryCode;
 	private String phonenumber;
+	private int religion;
 	
+	public int getReligion() {
+		return religion;
+	}
+	public void setReligion(int religion) {
+		this.religion = religion;
+	}
 	public String getPhCountryCode() {
 		return phCountryCode;
 	}

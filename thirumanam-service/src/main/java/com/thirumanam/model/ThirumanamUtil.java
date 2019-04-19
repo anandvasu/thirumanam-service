@@ -11,8 +11,8 @@ public class ThirumanamUtil {
 		counter = (user.getGender() != null) ? (counter + 1) : counter; //5
 		counter = (user.getRegisterdBy() != null) ? (counter + 1) : counter; //6
 		counter = (user.getCountry() != null) ? (counter + 1) : counter; //7
-		counter = (user.getPstate() != null) ? (counter + 1) : counter; //8
-		counter = (user.getDistrict() != null) ? (counter + 1) : counter; //9
+		counter = (user.getPstate() != 0) ? (counter + 1) : counter; //8
+		counter = (user.getDistrict() != 0) ? (counter + 1) : counter; //9
 		counter = (user.getCity() != null) ? (counter + 1) : counter; //10
 		counter = (user.getmStatus() != null) ? (counter + 1) : counter; //11
 		counter = (user.getFamilyType() != null) ? (counter + 1) : counter; //12

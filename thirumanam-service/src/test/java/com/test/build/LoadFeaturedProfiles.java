@@ -32,8 +32,8 @@ public class LoadFeaturedProfiles {
 		user.setDob(getDateofBirth(incrNumber));
 		user.setMobile("9376548612");
 		user.setGender((incrNumber % 2 == 0) ? "F" : "M");
-		user.setPstate("TN");
-		user.setDistrict("VP");
+		user.setPstate(58);
+		user.setDistrict(2);
 		user.setCity("Villupuram");
 		user.setmStatus("NM");
 		user.setReligion(11);
