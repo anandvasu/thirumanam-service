@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.thirumanam.model.About;
 import com.thirumanam.model.Message;
 import com.thirumanam.model.MessageList;
 import com.thirumanam.model.Status;
@@ -212,12 +213,28 @@ public class UserController {
 		}
 	}
 	
+	@PutMapping("/profile/about")
+	public ResponseEntity<Status> updateAbout(@RequestBody About about) throws URISyntaxException {		
+		Optional<User> userObj = userRepository.findById(about.getProfileId());
+		User user = userObj.get();			
+		if(!user.isConfirmed() ) {
+			user.setAbout(about.getAbout());								
+			userRepository.save(user);
+			return ResponseEntity.noContent().build();
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+					Util.populateStatus(ErrorMessageConstants.CODE_UNAUTHORIZED,
+							ErrorMessageConstants.MESSAGE_UNAUTHORIZED));
+		}
+	}	
+	
 	@PutMapping("/profile/professional")
 	public ResponseEntity<Status> updateProfessionalDetail(@RequestBody User inputUser) throws URISyntaxException {		
 		Optional<User> userObj = userRepository.findById(inputUser.getId());
 		User user = userObj.get();			
 		if(!user.isConfirmed() ) {
 			user.setEducation(inputUser.getEducation());
+			user.setOccupation(inputUser.getOccupation());
 			user.setEmployment(inputUser.getEmployment());
 			user.setIncome(inputUser.getIncome());						
 			userRepository.save(user);
