@@ -35,7 +35,7 @@ import com.thirumanam.model.Message;
 import com.thirumanam.model.MessageList;
 import com.thirumanam.model.Status;
 import com.thirumanam.model.User;
-import com.thirumanam.model.UserAdditionalDetial;
+import com.thirumanam.model.UserInfo;
 import com.thirumanam.model.VisitedProfiles;
 import com.thirumanam.model.Visitor;
 import com.thirumanam.mongodb.repository.MessageRepository;
@@ -73,9 +73,9 @@ public class UserController {
 		if(userObj.isPresent()) {
 			user = userObj.get();
 			
-			Optional<UserAdditionalDetial> userAddtionalDetailObj = userAdditionalDetailRepository.findById(profileId);
+			Optional<UserInfo> userAddtionalDetailObj = userAdditionalDetailRepository.findById(profileId);
 			if(userAddtionalDetailObj.isPresent()) {
-				UserAdditionalDetial userAdditional = userAddtionalDetailObj.get();
+				UserInfo userAdditional = userAddtionalDetailObj.get();
 				user.setImage(userAdditional.getImage());
 			}
 			
@@ -330,14 +330,14 @@ public class UserController {
 				byte[] imageArray = IOUtils.toByteArray(inStream);
 				
 				//save big image into user additional detail.
-				Optional<UserAdditionalDetial> userAddDetailObj = userAdditionalDetailRepository.findById(profileId);
-				UserAdditionalDetial userAddDetail = null;
+				Optional<UserInfo> userAddDetailObj = userAdditionalDetailRepository.findById(profileId);
+				UserInfo userAddDetail = null;
 				if(userAddDetailObj.isPresent()) {
 					userAddDetail = userAddDetailObj.get();
 					userAddDetail.setImage(Base64.getEncoder().encodeToString(imageArray));
 					userAdditionalDetailRepository.save(userAddDetail);
 				} else {
-					userAddDetail = new UserAdditionalDetial();
+					userAddDetail = new UserInfo();
 					userAddDetail.setId(profileId);
 				}
 				
@@ -347,7 +347,7 @@ public class UserController {
 				//compressImage
 				ByteArrayInputStream byteArrInputStream = new ByteArrayInputStream(imageArray);
 				BufferedImage image = ImageIO.read(byteArrInputStream);
-				BufferedImage compressedImage = resize(image, 100, 100);
+				BufferedImage compressedImage = resize(image, 50, 50);
 				File outputFile = new File(user.getId()+ThirumanamConstant.IMAGE_PNG_WITH_DOT);
 				ImageIO.write(compressedImage, ThirumanamConstant.IMAGE_PNG, outputFile);
 				InputStream compImageInputStream = new FileInputStream(outputFile);

@@ -18,3 +18,6 @@ DbSetup:
 db.sequence.insert({ 'name' : 'ProfileId', sequence : 2000003});
 
 db.user.remove({"email":"nndharbar@gmail.com"})
+
+db.user.drop()
+db.userAdditionalDetial.drop()

@@ -14,51 +14,12 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
-import com.test.Message;
-import com.thirumanam.model.User;
+import com.test.DataUtil;
 
-public class LoadFeaturedProfiles {
-	private String getDateofBirth(int incrNumber) {
-		String dob = "12/12/1990";
-		return dob;
-	}
-	
-	private User getUser(int incrNumber, int imageInt) {
-		User user = new User();
-		user.setFirstName("Test User First Name"+incrNumber);
-		user.setLastName("Test User Last Name"+ incrNumber);
-		user.setEmail("test"+incrNumber+"@gmail.com");
-		user.setCountry("IND");
-		user.setDob(getDateofBirth(incrNumber));
-		user.setMobile("9376548612");
-		user.setGender((incrNumber % 2 == 0) ? "F" : "M");
-		user.setPstate(58);
-		user.setDistrict(2);
-		user.setCity("Villupuram");
-		user.setmStatus("NM");
-		user.setReligion(11);
-		if((incrNumber % 2 == 0)) {
-			user.setHeightCm(175);
-		} else {
-			user.setHeightInch(175);
-		}
-		user.setHeightCm(165);
-		user.setFamilyType("NU");
-		user.setFamilyValue("TL");
-		user.setFoodHabit("V");
-		user.setBodyType("AG");
-		user.setEducation("BE");
-		user.setEmployment("P");
-		user.setIncome("12354544");
-		user.setRegisterdBy("S");
-		user.setFP(true);		
-		return user;
-	}
-	
+public class LoadFeaturedProfiles {		
 	
 	public static void main(String s[]) {
-		LoadFeaturedProfiles loadProfiles = new LoadFeaturedProfiles();
-		//Client client = ClientBuilder.newClient();
+
 		Client client = ClientBuilder.newBuilder().build();
 		WebTarget webTarget 
 		  = client.target("http://localhost:8085/");
@@ -69,7 +30,7 @@ public class LoadFeaturedProfiles {
 			  = multipartClient.target("http://localhost:8085/");
 		
 		WebTarget employeeWebTarget 
-		  = webTarget.path("/thirumanam/user/register");
+		  = webTarget.path("/matrimony/identity/register");
 		Invocation.Builder invocationBuilder 
 		  = employeeWebTarget.request(MediaType.APPLICATION_JSON);
 		
@@ -77,28 +38,40 @@ public class LoadFeaturedProfiles {
 		//PROFILEID
 		for(int i=10340; i<10380; i++) {
 			Response response 
-			  = invocationBuilder.post(Entity.entity(loadProfiles.getUser(i, imageInt), MediaType.APPLICATION_JSON));
-		
-			Message message = response.readEntity(Message.class);
-			
+			  = invocationBuilder.post(Entity.entity(DataUtil.getRegisterUser(i, imageInt), MediaType.APPLICATION_JSON));			
+			String profileID = (String)response.getHeaders().get("profileid").get(0);
+			System.out.println("User Registration Status:" + response.getStatus());
+	
 			try {
-				String fileName = "image"+imageInt+".jpg";
-				File targetFile = new File(fileName);
-				
-				FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("imageFile", targetFile);
-				//FormDataMultiPart multipart = new FormDataMultiPart();
-				//multipart.bodyPart(fileDataBodyPart);
-				FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
-			    final FormDataMultiPart multipart = (FormDataMultiPart) formDataMultiPart.field("profileId", message.getCode()).bodyPart(fileDataBodyPart);
-							   			    
-				WebTarget imageUploadTarget 
-				  = multipartTarget.path("/thirumanam/user/image");
-				Invocation.Builder imageUploadInvocationBuilder 
-				  = imageUploadTarget.request(MediaType.MULTIPART_FORM_DATA_TYPE);
-				
-				Response response1 
-				  = imageUploadInvocationBuilder.post(Entity.entity(multipart, multipart.getMediaType()));
-				System.out.println("Response1 Status" + response1.getStatus());
+				if (response.getStatus() == 201) {
+					//Update Image
+					String fileName = "image"+imageInt+".jpg";
+					File targetFile = new File(fileName);
+					
+					FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("imageFile", targetFile);
+					FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
+				    final FormDataMultiPart multipart = (FormDataMultiPart) formDataMultiPart.field("profileId", profileID).bodyPart(fileDataBodyPart);
+								   			    
+					WebTarget imageUploadTarget 
+					  = multipartTarget.path("/matrimony/user/image");
+					Invocation.Builder imageUploadInvocationBuilder 
+					  = imageUploadTarget.request(MediaType.MULTIPART_FORM_DATA_TYPE);
+					
+					response 
+					  = imageUploadInvocationBuilder.post(Entity.entity(multipart, multipart.getMediaType()));
+					System.out.println("Image Upload Status:" + response.getStatus());
+					formDataMultiPart.close();
+					//Update Personal Information
+					if(response.getStatus() == 200) {						
+						WebTarget persontalDetailTarget 
+						  = webTarget.path("/matrimony/user/profile/personal");
+						Invocation.Builder personalDetInvbuilder 
+						  = persontalDetailTarget.request(MediaType.APPLICATION_JSON);
+						response 
+						  = personalDetInvbuilder.post(Entity.entity(DataUtil.getPersonDetail(i, profileID), MediaType.APPLICATION_JSON));	
+						System.out.println("Personal Detail Update Status:" + response.getStatus());
+					}
+				}
 			} catch (Exception exp) {
 				exp.printStackTrace();
 			}

@@ -23,6 +23,7 @@ public class FieldConstants {
 	public static final String BMONTH = "bMonth";
 	public static final String BYEAR = "bYear";
 	public static final String IMAGE = "image";
+	public static final String THUMB_IMAGE = "thumbImage";
 	public static final String FOODHABIT = "foodHabit";
 	public static final String BODYTYPE = "bodyType";
 	public static final String EMPLOYMENT = "employment";

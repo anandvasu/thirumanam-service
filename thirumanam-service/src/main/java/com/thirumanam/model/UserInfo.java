@@ -1,6 +1,6 @@
 package com.thirumanam.model;
 
-public class UserAdditionalDetial {
+public class UserInfo {
 	
 	private String id;
 	private String image;

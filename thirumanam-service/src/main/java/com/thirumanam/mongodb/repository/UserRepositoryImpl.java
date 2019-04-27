@@ -40,7 +40,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 					  .include(FieldConstants.BYEAR)
 					  .include(FieldConstants.EDUCATION)
 					  .include(FieldConstants.CITY)
-					  .include(FieldConstants.IMAGE)
+					  .include(FieldConstants.THUMB_IMAGE)
 					  .include(FieldConstants.AGE);
 		query.addCriteria(criteria);
 		

@@ -14,29 +14,32 @@ public class LoadProfiles {
 	
 	private String getDateofBirth(int incrNumber) {
 		String dob = "12/12/1990";
+		if(incrNumber % 2 == 0 ) {
+			dob = "02/18/1995";
+		}
 		return dob;
 	}
 	
-	private User getUser(int incrNumber, int reglionValue) {
+	private User getUser(int incrNumber, int imageInt) {
 		User user = new User();
-		user.setFirstName("Test User First Name"+incrNumber);
-		user.setLastName("Test User Last Name"+ incrNumber);
+		user.setFirstName("First Name"+incrNumber);
+		user.setLastName("Last Name"+ incrNumber);
 		user.setEmail("test"+incrNumber+"@gmail.com");
 		user.setCountry("IND");
 		user.setDob(getDateofBirth(incrNumber));
 		user.setMobile("9376548612");
+		user.setmCountryCode("+1");
 		user.setGender((incrNumber % 2 == 0) ? "F" : "M");
 		user.setPstate(58);
-		user.setDistrict(12);
+		user.setDistrict(2);
 		user.setCity("Villupuram");
-		user.setReligion(reglionValue);
-		if((incrNumber % 2 == 0)) {
-			user.setHeightCm(165);
-		} else {
-			user.setHeightInch(165);
-		}
 		user.setmStatus("NM");
-		
+		user.setReligion(1);
+		if((incrNumber % 2 == 0)) {
+			user.setHeightCm(175);
+		} else {
+			user.setHeightInch(163);
+		}
 		user.setFamilyType("NU");
 		user.setFamilyValue("TL");
 		user.setFoodHabit("V");
@@ -44,10 +47,10 @@ public class LoadProfiles {
 		user.setEducation("BE");
 		user.setEmployment("P");
 		user.setIncome("12354544");
-		user.setRegisterdBy("S");		
+		user.setRegisterdBy("S");
+		user.setFP(false);		
 		return user;
 	}
-	
 	
 	public static void main(String s[]) {
 		LoadProfiles loadProfiles = new LoadProfiles();
