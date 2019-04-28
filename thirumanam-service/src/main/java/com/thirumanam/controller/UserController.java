@@ -301,12 +301,25 @@ public class UserController {
 		user.setFoodHabit(inputUser.getFoodHabit());
 		user.setDisabled(inputUser.getDisabled());
 		user.setDisablityInfo(inputUser.getDisablityInfo());
-		user.setBodyType(inputUser.getBodyType());		
+		user.setBodyType(inputUser.getBodyType());	
+		
+		//Update Religion Detail
+		user.setReligion(inputUser.getReligion());
+		user.setCaste(inputUser.getCaste());
+		user.setOtherCaste(inputUser.getOtherCaste());
+		user.setSubcaste(inputUser.getSubcaste());
+		user.setGothram(inputUser.getGothram());
+		user.setDhosham(inputUser.getDhosham());
+		
+		//Update Location Detail
 		user.setCountry(inputUser.getCountry());
 		user.setPstate(inputUser.getPstate());
+		user.setOtherState(inputUser.getOtherState());
 		user.setCity(inputUser.getCity());
 		user.setDistrict(inputUser.getDistrict());
+		user.setOtherDistrict(inputUser.getOtherDistrict());
 				
+		//Update Education Detail
 		user.setEducation(inputUser.getEducation());
 		user.setOccupation(inputUser.getOccupation());
 		user.setEmployment(inputUser.getEmployment());
@@ -347,7 +360,7 @@ public class UserController {
 				//compressImage
 				ByteArrayInputStream byteArrInputStream = new ByteArrayInputStream(imageArray);
 				BufferedImage image = ImageIO.read(byteArrInputStream);
-				BufferedImage compressedImage = resize(image, 50, 50);
+				BufferedImage compressedImage = resize(image, 60, 60);
 				File outputFile = new File(user.getId()+ThirumanamConstant.IMAGE_PNG_WITH_DOT);
 				ImageIO.write(compressedImage, ThirumanamConstant.IMAGE_PNG, outputFile);
 				InputStream compImageInputStream = new FileInputStream(outputFile);

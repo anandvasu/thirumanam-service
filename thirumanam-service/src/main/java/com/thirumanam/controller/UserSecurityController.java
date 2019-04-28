@@ -70,6 +70,8 @@ public class UserSecurityController {
 	@PostMapping("/register")
 	public ResponseEntity<Status> registerUser(@RequestBody RegisterUser inputUser) throws URISyntaxException {
 		
+		String profileId = null;
+		
 		Status status = validateUserRegistration(inputUser);
 		if (status != null) {
 			return ResponseEntity.badRequest().body(status);
@@ -91,35 +93,33 @@ public class UserSecurityController {
 				inputUser.getFirstName());
 		
 		//Split Day, Month, Year. Calculate age. Update all of these into User object.
-		User user = new User();
-		String[] data = inputUser.getDob().split("/");
-		LocalDate birthday = LocalDate.of(Integer.parseInt(data[2]), Integer.parseInt(data[1]), Integer.parseInt(data[0]));
-		user.setbDay(Integer.parseInt(data[0]));
-		user.setbMonth(Integer.parseInt(data[1]));
-		user.setbYear(Integer.parseInt(data[2]));
-		user.setAge(Period.between(birthday, LocalDate.now()).getYears());
-		String profileId = ThirumanamConstant.PROFILE_ID_PREFIX + sequenceRepository.getNextProfileId();
-		user.setId(profileId);
-		user.setFirstName(inputUser.getFirstName());
-		user.setLastName(inputUser.getLastName());
-		user.setReligion(inputUser.getReligion());
-		user.setEmail(inputUser.getEmail());
-		user.setPhCountryCode(inputUser.getPhCountryCode());
-		user.setPhonenumber(inputUser.getPhonenumber());
-		user.setExternalId(externalId);
-		user.setGender(inputUser.getGender());
-		user.setRegisterdBy(inputUser.getRegisteredBy());
-		user.setCreatedDate(new Date());
-		user.setStatus(ThirumanamConstant.USER_STATUS_ACTIVE);
-		
-		userRepository.save(user);
-		
-		// Commented as we don't need to create preference by default. Rather display message on ui.
-		/*Preference preference = new Preference();
-		preference.setId(profileId);
-		preference.setGender(
-				(user.getGender().equals(ThirumanamConstant.GENDER_M) ? ThirumanamConstant.GENDER_F: ThirumanamConstant.GENDER_M));
-		prefRepository.save(preference);*/
+		if (externalId != null) {
+			User user = new User();
+			String[] data = inputUser.getDob().split("/");
+			LocalDate birthday = LocalDate.of(Integer.parseInt(data[2]), Integer.parseInt(data[1]), Integer.parseInt(data[0]));
+			user.setbDay(Integer.parseInt(data[0]));
+			user.setbMonth(Integer.parseInt(data[1]));
+			user.setbYear(Integer.parseInt(data[2]));
+			user.setAge(Period.between(birthday, LocalDate.now()).getYears());
+			profileId = ThirumanamConstant.PROFILE_ID_PREFIX + sequenceRepository.getNextProfileId();
+			user.setId(profileId);
+			user.setFirstName(inputUser.getFirstName());
+			user.setLastName(inputUser.getLastName());
+			user.setReligion(inputUser.getReligion());
+			user.setEmail(inputUser.getEmail());
+			user.setPhCountryCode(inputUser.getPhCountryCode());
+			user.setPhonenumber(inputUser.getPhonenumber());
+			user.setExternalId(externalId);
+			user.setGender(inputUser.getGender());
+			user.setRegisterdBy(inputUser.getRegisteredBy());
+			user.setCreatedDate(new Date());
+			user.setStatus(ThirumanamConstant.USER_STATUS_ACTIVE);
+			
+			userRepository.save(user);
+		} else {		
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					Util.populateStatus(500, ErrorMessageConstants.MESSAGE_SERVER_ERROR));	
+		}
 		
 		return ResponseEntity.created(new URI("/user")).header(ThirumanamConstant.PROFILEID, profileId).body(
 				Util.populateStatus(200, "User registered successfully."));	
@@ -322,6 +322,9 @@ public class UserSecurityController {
 		} catch (ThirumanamException exp) {
 			loginResponse = new LoginResponse();
 			loginResponse.setErrorMessage(ErrorMessageConstants.INVALID_USER_PASSWORD);
+		}  catch (Exception exp) {
+			loginResponse = new LoginResponse();
+			loginResponse.setErrorMessage(ErrorMessageConstants.MESSAGE_SERVER_ERROR);
 		}
 		return ResponseEntity.ok().body(loginResponse);
 	}

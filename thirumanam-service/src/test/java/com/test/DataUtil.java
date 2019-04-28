@@ -27,10 +27,14 @@ public class DataUtil {
 		return user;
 	}
 	
-	public static User getPersonDetail(int incrNumber, String profileId) {
+	public static User getFullUserDetail(int incrNumber, String profileId, boolean featureProfile) {
 		
 		User inputUser = new User();
 		inputUser.setId(profileId);
+		// Personal Detail
+		inputUser.setFirstName("First Name"+incrNumber);
+		inputUser.setLastName("Last Name"+ incrNumber);
+		inputUser.setDob(getDateofBirth(incrNumber));
 		inputUser.setmStatus("NM");
 		inputUser.setWeight(80);
 		inputUser.setHeightCm(165);
@@ -39,6 +43,26 @@ public class DataUtil {
 		inputUser.setBodyType("SM");
 		inputUser.setDisabled("N");
 		inputUser.setFoodHabit("V");
+		
+		// Religion Detail
+		inputUser.setReligion(1);
+		inputUser.setCaste(2);
+		inputUser.setSubcaste("Test Caste");
+		inputUser.setGothram(2);
+		inputUser.setDhosham("R");
+		
+		//Set Location Detail
+		inputUser.setCountry("IN");
+		inputUser.setPstate(58);
+		inputUser.setDistrict(31);
+		inputUser.setCity("Villupuram");
+		
+		//Set Professional Detail
+		inputUser.setEducation("AE");
+		inputUser.setOccupation("P");
+		inputUser.setEmployment("Software Engineer");
+		inputUser.setIncome("100,000");
+		inputUser.setFP(featureProfile);		
 		
 		return inputUser;		
 	}

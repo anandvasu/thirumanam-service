@@ -64,11 +64,11 @@ public class LoadFeaturedProfiles {
 					//Update Personal Information
 					if(response.getStatus() == 200) {						
 						WebTarget persontalDetailTarget 
-						  = webTarget.path("/matrimony/user/profile/personal");
+						  = webTarget.path("/matrimony/user/completeprofile");
 						Invocation.Builder personalDetInvbuilder 
 						  = persontalDetailTarget.request(MediaType.APPLICATION_JSON);
 						response 
-						  = personalDetInvbuilder.post(Entity.entity(DataUtil.getPersonDetail(i, profileID), MediaType.APPLICATION_JSON));	
+						  = personalDetInvbuilder.put(Entity.entity(DataUtil.getFullUserDetail(i, profileID, true), MediaType.APPLICATION_JSON));	
 						System.out.println("Personal Detail Update Status:" + response.getStatus());
 					}
 				}
