@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -287,10 +289,7 @@ public class UserController {
 		Optional<User> userObj = userRepository.findById(inputUser.getId());
 		User user = userObj.get();
 		user.setFirstName(inputUser.getFirstName());
-		user.setLastName(inputUser.getLastName());
-		user.setbDay(inputUser.getbDay());
-		user.setbMonth(inputUser.getbMonth());
-		user.setbYear(inputUser.getbYear());
+		user.setLastName(inputUser.getLastName());		
 		user.setmStatus(inputUser.getmStatus());
 		user.setWeight(inputUser.getWeight());
 		user.setHeightCm(inputUser.getHeightCm());
@@ -302,6 +301,12 @@ public class UserController {
 		user.setDisabled(inputUser.getDisabled());
 		user.setDisablityInfo(inputUser.getDisablityInfo());
 		user.setBodyType(inputUser.getBodyType());	
+		String[] data = inputUser.getDob().split("/");
+		LocalDate birthday = LocalDate.of(Integer.parseInt(data[2]), Integer.parseInt(data[1]), Integer.parseInt(data[0]));
+		user.setbDay(Integer.parseInt(data[0]));
+		user.setbMonth(Integer.parseInt(data[1]));
+		user.setbYear(Integer.parseInt(data[2]));
+		user.setAge(Period.between(birthday, LocalDate.now()).getYears());
 		
 		//Update Religion Detail
 		user.setReligion(inputUser.getReligion());
@@ -324,6 +329,9 @@ public class UserController {
 		user.setOccupation(inputUser.getOccupation());
 		user.setEmployment(inputUser.getEmployment());
 		user.setIncome(inputUser.getIncome());		
+		
+		//about detail
+		user.setAbout(inputUser.getAbout());
 				
 		userRepository.save(user);
 		
