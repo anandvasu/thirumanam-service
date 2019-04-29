@@ -29,5 +29,6 @@ public class FieldConstants {
 	public static final String FOODHABIT = "foodHabit";
 	public static final String BODYTYPE = "bodyType";
 	public static final String EMPLOYMENT = "employment";
+	public static final String OCCUPATION = "occupation";
 	
 }

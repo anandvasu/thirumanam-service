@@ -16,7 +16,6 @@ public class SearchCriteria {
 	
 	private List<String> bodyTypes = new ArrayList<String>();
 	
-	private List<String> education  = new ArrayList<String>();	
 	private List<String> maritalStatus  = new ArrayList<String>();
 	private List<String> foodHabits = new ArrayList<String>();	
 	
@@ -31,8 +30,16 @@ public class SearchCriteria {
 		
 	private List<String> educations = new ArrayList<String>();	
 	private List<String> employments = new ArrayList<String>();
+	private List<String> occupations = new ArrayList<String>();	
 	
 	private List<String> blockedProfiles = new ArrayList<String>();
+	
+	public List<String> getOccupations() {
+		return occupations;
+	}
+	public void setOccupations(List<String> occupations) {
+		this.occupations = occupations;
+	}
 	
 	public List<String> getEducations() {
 		return educations;
@@ -122,12 +129,6 @@ public class SearchCriteria {
 		this.gender = gender;
 	}
 	
-	public List<String> getEducation() {
-		return education;
-	}
-	public void setEducation(List<String> education) {
-		this.education = education;
-	}
 	public List<String> getMaritalStatus() {
 		return maritalStatus;
 	}

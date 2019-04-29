@@ -150,8 +150,8 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 				criteria.and(FieldConstants.MARITAL_STATUS).in(searchCriteria.getMaritalStatus());
 			}
 			
-			if(searchCriteria.getEducation() != null && !searchCriteria.getEducation().isEmpty()) {
-				criteria.and(FieldConstants.EDUCATION).in(searchCriteria.getEducation());				
+			if(searchCriteria.getEducations() != null && !searchCriteria.getEducations().isEmpty()) {
+				criteria.and(FieldConstants.EDUCATION).in(searchCriteria.getEducations());				
 			}
 			
 			if(searchCriteria.getFoodHabits() != null && !searchCriteria.getFoodHabits().isEmpty()) {
@@ -164,7 +164,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 			
 			if(searchCriteria.getEmployments() != null && !searchCriteria.getEmployments().isEmpty()) {
 				criteria.and(FieldConstants.EMPLOYMENT).in(searchCriteria.getEmployments());				
-			}		
+			}	
+			
+			if(!searchCriteria.getOccupations().isEmpty()) {
+				criteria.and(FieldConstants.OCCUPATION).in(searchCriteria.getOccupations());				
+			}	
 			
 			if(searchCriteria.getShowProfile() != null && 
 					searchCriteria.getShowProfile().equals(ThirumanamConstant.SHOW_PROFILE_WITH_PHOTO)) {
