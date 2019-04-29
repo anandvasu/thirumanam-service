@@ -11,23 +11,48 @@ public class SearchCriteria {
 	private int pageNumber;
 	private int ageGreater;
 	private int ageLess;
-	private String gender;	
-	private String city;
-	private String state;
-	private String country;
+	private String gender;		
 	private String showProfile;	
+	
+	private List<String> bodyTypes = new ArrayList<String>();
+	
 	private List<String> education  = new ArrayList<String>();	
 	private List<String> maritalStatus  = new ArrayList<String>();
 	private List<String> foodHabits = new ArrayList<String>();	
+	
 	private List<String> countries  = new ArrayList<String>();
 	private List<String> states = new ArrayList<String>();
+	private List<String> districts = new ArrayList<String>();	
+	
 	private List<Integer> religions = new ArrayList<Integer>();
-	private List<String> castes = new ArrayList<String>();
-	private List<String> gothrams = new ArrayList<String>();
-	private List<String> district = new ArrayList<String>();
-	private List<String> bodyTypes = new ArrayList<String>();
+	private List<Integer> castes = new ArrayList<Integer>();
+	private List<Integer> gothrams = new ArrayList<Integer>();
+	private List<String> dhoshams = new ArrayList<String>();
+		
+	private List<String> educations = new ArrayList<String>();	
 	private List<String> employments = new ArrayList<String>();
+	
 	private List<String> blockedProfiles = new ArrayList<String>();
+	
+	public List<String> getEducations() {
+		return educations;
+	}
+	public void setEducations(List<String> educations) {
+		this.educations = educations;
+	}
+	
+	public List<String> getDistricts() {
+		return districts;
+	}
+	public void setDistricts(List<String> districts) {
+		this.districts = districts;
+	}
+	public List<String> getDhoshams() {
+		return dhoshams;
+	}
+	public void setDhoshams(List<String> dhoshams) {
+		this.dhoshams = dhoshams;
+	}
 	
 	public String getShowProfile() {
 		return showProfile;
@@ -53,13 +78,7 @@ public class SearchCriteria {
 	}
 	public void setBodyTypes(List<String> bodyTypes) {
 		this.bodyTypes = bodyTypes;
-	}
-	public List<String> getDistrict() {
-		return district;
-	}
-	public void setDistrict(List<String> district) {
-		this.district = district;
-	}
+	}	
 	public long getTotalDocs() {
 		return totalDocs;
 	}
@@ -102,24 +121,7 @@ public class SearchCriteria {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	public String getCity() {
-		return city;
-	}
-	public void setCity(String city) {
-		this.city = city;
-	}
-	public String getState() {
-		return state;
-	}
-	public void setState(String state) {
-		this.state = state;
-	}
-	public String getCountry() {
-		return country;
-	}
-	public void setCountry(String country) {
-		this.country = country;
-	}
+	
 	public List<String> getEducation() {
 		return education;
 	}
@@ -156,16 +158,16 @@ public class SearchCriteria {
 	public void setReligions(List<Integer> religions) {
 		this.religions = religions;
 	}
-	public List<String> getCastes() {
+	public List<Integer> getCastes() {
 		return castes;
 	}
-	public void setCastes(List<String> castes) {
+	public void setCastes(List<Integer> castes) {
 		this.castes = castes;
 	}
-	public List<String> getGothrams() {
+	public List<Integer> getGothrams() {
 		return gothrams;
 	}
-	public void setGothrams(List<String> gothrams) {
+	public void setGothrams(List<Integer> gothrams) {
 		this.gothrams = gothrams;
 	}
 }

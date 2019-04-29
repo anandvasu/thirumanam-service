@@ -124,12 +124,12 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 			
 			if(searchCriteria.getStates() != null && !searchCriteria.getStates().isEmpty()) {
 				criteria.and(FieldConstants.STATE).in(searchCriteria.getStates());
-			}
+			}	
 			
-			if(searchCriteria.getCity() != null && !searchCriteria.getCity().isEmpty()) {
-				criteria.and(FieldConstants.CITY).in(searchCriteria.getCity());
+			if(searchCriteria.getDistricts() != null && !searchCriteria.getDistricts().isEmpty()) {
+				criteria.and(FieldConstants.DISTRICT).in(searchCriteria.getStates());
 			}
-			
+					
 			if(!searchCriteria.getReligions().isEmpty()) {
 				criteria.and(FieldConstants.RELIGION).in(searchCriteria.getReligions());
 			}
@@ -140,6 +140,10 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 			
 			if(!searchCriteria.getGothrams().isEmpty()) {
 				criteria.and(FieldConstants.GOTHRAM).in(searchCriteria.getGothrams());
+			}
+			
+			if(!searchCriteria.getDhoshams().isEmpty()) {
+				criteria.and(FieldConstants.DHOSHAM).in(searchCriteria.getDhoshams());
 			}
 			
 			if(searchCriteria.getMaritalStatus() != null && !searchCriteria.getMaritalStatus().isEmpty()) {
