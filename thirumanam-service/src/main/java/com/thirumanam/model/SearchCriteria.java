@@ -21,8 +21,8 @@ public class SearchCriteria {
 	private List<String> foodHabits = new ArrayList<String>();	
 	
 	private List<String> countries  = new ArrayList<String>();
-	private List<String> states = new ArrayList<String>();
-	private List<String> districts = new ArrayList<String>();	
+	private List<Integer> states = new ArrayList<Integer>();
+	private List<Integer> districts = new ArrayList<Integer>();	
 	
 	private List<Integer> religions = new ArrayList<Integer>();
 	private List<Integer> castes = new ArrayList<Integer>();
@@ -41,10 +41,10 @@ public class SearchCriteria {
 		this.educations = educations;
 	}
 	
-	public List<String> getDistricts() {
+	public List<Integer> getDistricts() {
 		return districts;
 	}
-	public void setDistricts(List<String> districts) {
+	public void setDistricts(List<Integer> districts) {
 		this.districts = districts;
 	}
 	public List<String> getDhoshams() {
@@ -146,10 +146,10 @@ public class SearchCriteria {
 	public void setCountries(List<String> countries) {
 		this.countries = countries;
 	}
-	public List<String> getStates() {
+	public List<Integer> getStates() {
 		return states;
 	}
-	public void setStates(List<String> states) {
+	public void setStates(List<Integer> states) {
 		this.states = states;
 	}
 	public List<Integer> getReligions() {

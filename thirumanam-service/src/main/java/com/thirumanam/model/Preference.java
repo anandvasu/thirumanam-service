@@ -14,9 +14,9 @@ public class Preference {
 	private int maxHeight;
 	private List<String> foodHabits = new ArrayList<String>();
 	private List<String> countries  = new ArrayList<String>();
-	private List<String> states = new ArrayList<String>();
+	private List<Integer> states = new ArrayList<Integer>();
 	private List<Integer> religions = new ArrayList<Integer>();
-	private List<String> castes = new ArrayList<String>();
+	private List<Integer> castes = new ArrayList<Integer>();
 	
 	public String getGender() {
 		return gender;
@@ -69,10 +69,10 @@ public class Preference {
 	public void setCountries(List<String> countries) {
 		this.countries = countries;
 	}
-	public List<String> getStates() {
+	public List<Integer> getStates() {
 		return states;
 	}
-	public void setStates(List<String> states) {
+	public void setStates(List<Integer> states) {
 		this.states = states;
 	}	
 	public List<Integer> getReligions() {
@@ -81,10 +81,10 @@ public class Preference {
 	public void setReligions(List<Integer> religions) {
 		this.religions = religions;
 	}
-	public List<String> getCastes() {
+	public List<Integer> getCastes() {
 		return castes;
 	}
-	public void setCastes(List<String> castes) {
+	public void setCastes(List<Integer> castes) {
 		this.castes = castes;
 	}
 	public void setGender(String gender) {

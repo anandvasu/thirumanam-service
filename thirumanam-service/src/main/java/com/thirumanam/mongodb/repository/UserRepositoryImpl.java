@@ -127,7 +127,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 			}	
 			
 			if(searchCriteria.getDistricts() != null && !searchCriteria.getDistricts().isEmpty()) {
-				criteria.and(FieldConstants.DISTRICT).in(searchCriteria.getStates());
+				criteria.and(FieldConstants.DISTRICT).in(searchCriteria.getDistricts());
 			}
 					
 			if(!searchCriteria.getReligions().isEmpty()) {
