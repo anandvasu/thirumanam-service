@@ -197,7 +197,12 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 				} else {
 					criteria.and(FieldConstants.INCOME).gt(Long.parseLong(searchCriteria.getIncome()));	
 				}							
+			}		
+			
+			if(searchCriteria.getMtongues() != null && !searchCriteria.getMtongues().isEmpty()) {
+				criteria.and(FieldConstants.MTONGUE).in(searchCriteria.getMtongues());
 			}			
+			
 			return criteria;
 		}
 	}

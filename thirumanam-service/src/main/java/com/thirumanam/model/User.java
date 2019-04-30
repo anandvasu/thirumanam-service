@@ -64,7 +64,16 @@ public class User {
 	private String phonenumber;
 	private String otherState;
 	private String otherDistrict;
+	private int mtongue;
 	
+	public int getMtongue() {
+		return mtongue;
+	}
+
+	public void setMtongue(int mtongue) {
+		this.mtongue = mtongue;
+	}
+
 	public String getDrinkingHabit() {
 		return drinkingHabit;
 	}

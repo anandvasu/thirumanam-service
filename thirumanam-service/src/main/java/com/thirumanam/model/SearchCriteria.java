@@ -19,6 +19,8 @@ public class SearchCriteria {
 	
 	private List<String> maritalStatus  = new ArrayList<String>();	
 	
+	private List<Integer> mtongues = new ArrayList<Integer>();	
+	
 	private List<String> countries  = new ArrayList<String>();
 	private List<Integer> states = new ArrayList<Integer>();
 	private List<Integer> districts = new ArrayList<Integer>();	
@@ -37,6 +39,13 @@ public class SearchCriteria {
 	private List<String> drinkingHabits = new ArrayList<String>();	
 	
 	private List<String> blockedProfiles = new ArrayList<String>();
+	
+	public List<Integer> getMtongues() {
+		return mtongues;
+	}
+	public void setMtongues(List<Integer> mtongues) {
+		this.mtongues = mtongues;
+	}
 	
 	public List<String> getSmokingHabits() {
 		return smokingHabits;
