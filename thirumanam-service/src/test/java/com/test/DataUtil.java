@@ -61,7 +61,7 @@ public class DataUtil {
 		inputUser.setEducation("AE");
 		inputUser.setOccupation("P");
 		inputUser.setEmployment("Software Engineer");
-		inputUser.setIncome("100,000");
+		inputUser.setIncome(100000000L);
 		inputUser.setFP(featureProfile);		
 		
 		return inputUser;		

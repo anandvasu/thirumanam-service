@@ -34,10 +34,8 @@ import com.amazonaws.services.cognitoidp.model.InitiateAuthRequest;
 import com.amazonaws.services.cognitoidp.model.InitiateAuthResult;
 import com.amazonaws.services.cognitoidp.model.RespondToAuthChallengeRequest;
 import com.amazonaws.services.cognitoidp.model.RespondToAuthChallengeResult;
-import com.amazonaws.services.cognitoidp.model.UserNotConfirmedException;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.StringUtils;
-import com.thirumanam.util.ThirumanamConstant;
 
 /**
  * Private class for SRP client side math.

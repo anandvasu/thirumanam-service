@@ -158,6 +158,14 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 				criteria.and(FieldConstants.FOODHABIT).in(searchCriteria.getFoodHabits());				
 			}
 			
+			if(searchCriteria.getSmokingHabits() != null && !searchCriteria.getSmokingHabits().isEmpty()) {
+				criteria.and(FieldConstants.SMOKINGHABIT).in(searchCriteria.getSmokingHabits());				
+			}
+			
+			if(searchCriteria.getDrinkingHabits() != null && !searchCriteria.getDrinkingHabits().isEmpty()) {
+				criteria.and(FieldConstants.DRINKINGHABIT).in(searchCriteria.getDrinkingHabits());				
+			}
+			
 			if(searchCriteria.getBodyTypes() != null && !searchCriteria.getBodyTypes().isEmpty()) {
 				criteria.and(FieldConstants.BODYTYPE).in(searchCriteria.getBodyTypes());				
 			}
@@ -180,6 +188,16 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 				criteria.and(FieldConstants.IMAGE).exists(false);
 			}
 			
+			if(searchCriteria.getIncome() != null && !searchCriteria.getIncome().isEmpty()) {
+				if(searchCriteria.getIncome().indexOf(ThirumanamConstant.HYPHEN) > 0) {
+					String incomeArr[] = searchCriteria.getIncome().split(ThirumanamConstant.HYPHEN);
+					Long lowValue = Long.parseLong(incomeArr[0].trim());
+					Long highValue = Long.parseLong(incomeArr[1].trim());
+					criteria.and(FieldConstants.INCOME).gt(lowValue).lt(highValue);
+				} else {
+					criteria.and(FieldConstants.INCOME).gt(Long.parseLong(searchCriteria.getIncome()));	
+				}							
+			}			
 			return criteria;
 		}
 	}

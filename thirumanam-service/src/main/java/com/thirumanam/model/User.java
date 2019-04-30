@@ -31,7 +31,9 @@ public class User {
 	private String mStatus;	
 	private String familyType;
 	private String familyValue;
-	private String foodHabit;	
+	private String foodHabit;
+	private String drinkingHabit;
+	private String smokingHabit;	
 	private String disabled;	
 	private String disablityInfo;	
 	private String bodyType;	
@@ -42,7 +44,7 @@ public class User {
 	private String education;
 	private String employment;
 	private String occupation;	
-	private String income;	
+	private Long income;		
 	private String mCountryCode;
 	private String mobile;			
 	private String status;
@@ -62,6 +64,22 @@ public class User {
 	private String phonenumber;
 	private String otherState;
 	private String otherDistrict;
+	
+	public String getDrinkingHabit() {
+		return drinkingHabit;
+	}
+
+	public void setDrinkingHabit(String drinkingHabit) {
+		this.drinkingHabit = drinkingHabit;
+	}
+
+	public String getSmokingHabit() {
+		return smokingHabit;
+	}
+
+	public void setSmokingHabit(String smokingHabit) {
+		this.smokingHabit = smokingHabit;
+	}
 	
 	public String getOccupation() {
 		return occupation;
@@ -346,13 +364,7 @@ public class User {
 	public void setEmployment(String employment) {
 		this.employment = employment;
 	}
-	public String getIncome() {
-		return income;
-	}
-	public void setIncome(String income) {
-		this.income = income;
-	}	
-				
+					
 	public String getImage() {
 		return image;
 	}
@@ -475,5 +487,11 @@ public class User {
 	}
 	public void setbYear(int bYear) {
 		this.bYear = bYear;
+	}
+	public Long getIncome() {
+		return income;
+	}
+	public void setIncome(Long income) {
+		this.income = income;
 	}
 }

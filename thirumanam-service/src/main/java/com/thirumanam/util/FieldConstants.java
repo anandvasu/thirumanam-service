@@ -27,8 +27,11 @@ public class FieldConstants {
 	public static final String IMAGE = "image";
 	public static final String THUMB_IMAGE = "thumbImage";
 	public static final String FOODHABIT = "foodHabit";
+	public static final String SMOKINGHABIT = "smokingHabit";
+	public static final String DRINKINGHABIT = "drinkingHabit";
 	public static final String BODYTYPE = "bodyType";
 	public static final String EMPLOYMENT = "employment";
 	public static final String OCCUPATION = "occupation";
+	public static final String INCOME = "income";
 	
 }

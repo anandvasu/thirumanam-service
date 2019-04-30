@@ -12,12 +12,12 @@ public class SearchCriteria {
 	private int ageGreater;
 	private int ageLess;
 	private String gender;		
-	private String showProfile;	
+	private String showProfile;
+	private String income;	
 	
 	private List<String> bodyTypes = new ArrayList<String>();
 	
-	private List<String> maritalStatus  = new ArrayList<String>();
-	private List<String> foodHabits = new ArrayList<String>();	
+	private List<String> maritalStatus  = new ArrayList<String>();	
 	
 	private List<String> countries  = new ArrayList<String>();
 	private List<Integer> states = new ArrayList<Integer>();
@@ -32,7 +32,31 @@ public class SearchCriteria {
 	private List<String> employments = new ArrayList<String>();
 	private List<String> occupations = new ArrayList<String>();	
 	
+	private List<String> foodHabits = new ArrayList<String>();	
+	private List<String> smokingHabits = new ArrayList<String>();		
+	private List<String> drinkingHabits = new ArrayList<String>();	
+	
 	private List<String> blockedProfiles = new ArrayList<String>();
+	
+	public List<String> getSmokingHabits() {
+		return smokingHabits;
+	}
+	public void setSmokingHabits(List<String> smokingHabits) {
+		this.smokingHabits = smokingHabits;
+	}
+	public List<String> getDrinkingHabits() {
+		return drinkingHabits;
+	}
+	public void setDrinkingHabits(List<String> drinkingHabits) {
+		this.drinkingHabits = drinkingHabits;
+	}
+	
+	public String getIncome() {
+		return income;
+	}
+	public void setIncome(String income) {
+		this.income = income;
+	}
 	
 	public List<String> getOccupations() {
 		return occupations;

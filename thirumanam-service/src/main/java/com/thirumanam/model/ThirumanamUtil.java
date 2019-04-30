@@ -22,7 +22,7 @@ public class ThirumanamUtil {
 		counter = ((user.getHeightCm() != 0) || (user.getHeightInch() != 0 )) ? (counter + 1) : counter; //16
 		counter = (user.getEducation() != null) ? (counter + 1) : counter; //17
 		counter = (user.getEmployment() != null) ? (counter + 1) : counter; //18
-		counter = (user.getIncome() != null) ? (counter + 1) : counter; //19
+		counter = (user.getIncome() != 0) ? (counter + 1) : counter; //19
 		counter = (user.getImage() != null) ? (counter + 1) : counter; //20
 		
 		double percent = (counter * 100) / 20;

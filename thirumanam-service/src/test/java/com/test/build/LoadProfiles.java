@@ -46,7 +46,7 @@ public class LoadProfiles {
 		user.setBodyType("AG");
 		user.setEducation("BE");
 		user.setEmployment("P");
-		user.setIncome("12354544");
+		user.setIncome(23423424334L);
 		user.setRegisterdBy("S");
 		user.setFP(false);		
 		return user;

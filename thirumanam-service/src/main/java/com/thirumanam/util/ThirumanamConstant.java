@@ -22,4 +22,5 @@ public interface ThirumanamConstant {
 	String USER_STATUS_INACTIVE = "I";
 	String SHOW_PROFILE_WITH_PHOTO = "W";
 	String SHOW_PROFILE_WITHOUT_PHOTO = "O";
+	String HYPHEN = "-";
 }
