@@ -106,6 +106,7 @@ public class UserSecurityController {
 			user.setFirstName(inputUser.getFirstName());
 			user.setLastName(inputUser.getLastName());
 			user.setReligion(inputUser.getReligion());
+			user.setMtongue(inputUser.getMtongue());
 			user.setEmail(inputUser.getEmail());
 			user.setPhCountryCode(inputUser.getPhCountryCode());
 			user.setPhonenumber(inputUser.getPhonenumber());

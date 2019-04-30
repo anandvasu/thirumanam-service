@@ -22,6 +22,7 @@ public class DataUtil {
 		user.setMobile("9376548612");
 		user.setGender((incrNumber % 2 == 0) ? "F" : "M");
 		user.setReligion(1);
+		user.setMtongue(250);
 		user.setPhCountryCode("+91");
 		user.setPhonenumber("9376548612");
 		return user;

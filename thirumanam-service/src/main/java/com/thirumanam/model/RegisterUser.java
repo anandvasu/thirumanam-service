@@ -17,7 +17,14 @@ public class RegisterUser {
 	private String phCountryCode;
 	private String phonenumber;
 	private int religion;
+	private int mtongue;
 	
+	public int getMtongue() {
+		return mtongue;
+	}
+	public void setMtongue(int mtongue) {
+		this.mtongue = mtongue;
+	}
 	public int getReligion() {
 		return religion;
 	}
