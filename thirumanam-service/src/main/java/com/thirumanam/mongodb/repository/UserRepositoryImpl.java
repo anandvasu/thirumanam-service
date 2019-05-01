@@ -185,15 +185,25 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 				criteria.and(FieldConstants.OCCUPATION).in(searchCriteria.getOccupations());				
 			}	
 			
-			if(searchCriteria.getShowProfile() != null && 
-					searchCriteria.getShowProfile().equals(ThirumanamConstant.SHOW_PROFILE_WITH_PHOTO)) {
-				criteria.and(FieldConstants.IMAGE).exists(true);
+			if(searchCriteria.getShowProfile().contains(ThirumanamConstant.SHOW_PROFILE_WITH_PHOTO) && 
+					!searchCriteria.getShowProfile().contains(ThirumanamConstant.SHOW_PROFILE_WITHOUT_PHOTO)) {
+				criteria.and(FieldConstants.THUMB_IMAGE).exists(true);
 			}
 			
-			if(searchCriteria.getShowProfile() != null && 
-					searchCriteria.getShowProfile().equals(ThirumanamConstant.SHOW_PROFILE_WITHOUT_PHOTO)) {
-				criteria.and(FieldConstants.IMAGE).exists(false);
+			if(searchCriteria.getShowProfile().contains(ThirumanamConstant.SHOW_PROFILE_WITHOUT_PHOTO) &&
+					!searchCriteria.getShowProfile().contains(ThirumanamConstant.SHOW_PROFILE_WITH_PHOTO)) {
+				criteria.and(FieldConstants.THUMB_IMAGE).exists(false);
 			}
+			
+			if(searchCriteria.getShowProfile().contains(ThirumanamConstant.SHOW_PROFILE_WITH_HOROSCOPE) &&
+					!searchCriteria.getShowProfile().contains(ThirumanamConstant.SHOW_PROFILE_WITHOUT_HOROSCOPE)) {
+				criteria.and(FieldConstants.HOROSCOPE).exists(true);
+			}
+			
+			if(searchCriteria.getShowProfile().contains(ThirumanamConstant.SHOW_PROFILE_WITHOUT_HOROSCOPE) &&
+					!searchCriteria.getShowProfile().contains(ThirumanamConstant.SHOW_PROFILE_WITH_HOROSCOPE)) {
+				criteria.and(FieldConstants.HOROSCOPE).exists(false);
+			}			
 			
 			if(searchCriteria.getIncome() != null && !searchCriteria.getIncome().isEmpty()) {
 				if(searchCriteria.getIncome().indexOf(ThirumanamConstant.HYPHEN) > 0) {

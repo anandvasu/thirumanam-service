@@ -12,10 +12,10 @@ public class SearchCriteria {
 	private int ageGreater;
 	private int ageLess;
 	private String gender;		
-	private String showProfile;
 	private String income;	
 	
 	private List<String> bodyTypes = new ArrayList<String>();
+	private List<String> showProfile = new ArrayList<String>();	
 	
 	private List<String> maritalStatus  = new ArrayList<String>();	
 	
@@ -39,6 +39,13 @@ public class SearchCriteria {
 	private List<String> drinkingHabits = new ArrayList<String>();	
 	
 	private List<String> blockedProfiles = new ArrayList<String>();
+	
+	public List<String> getShowProfile() {
+		return showProfile;
+	}
+	public void setShowProfile(List<String> showProfile) {
+		this.showProfile = showProfile;
+	}
 	
 	public List<Integer> getMtongues() {
 		return mtongues;
@@ -92,15 +99,8 @@ public class SearchCriteria {
 	}
 	public void setDhoshams(List<String> dhoshams) {
 		this.dhoshams = dhoshams;
-	}
-	
-	public String getShowProfile() {
-		return showProfile;
-	}
-	public void setShowProfile(String showProfile) {
-		this.showProfile = showProfile;
-	}
-	
+	}	
+		
 	public List<String> getBlockedProfiles() {
 		return blockedProfiles;
 	}
