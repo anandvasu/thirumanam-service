@@ -69,7 +69,7 @@ public class UserController {
 	private UserAdditionalDetailRepository userAdditionalDetailRepository;
 	
 	@RequestMapping(value = "/{profileId}", method = RequestMethod.GET)
-	public ResponseEntity<User> getUser(@PathVariable("profileId") String profileId, @RequestParam("userId") String loggedInUserId) {
+	public ResponseEntity getUser(@PathVariable("profileId") String profileId, @RequestParam("userId") String loggedInUserId) {
 		Optional<User> userObj = userRepository.findById(profileId);
 		User user = null;
 		if(userObj.isPresent()) {
@@ -123,8 +123,12 @@ public class UserController {
 					}
 				}
 			}
-		} 		
-		return ResponseEntity.ok().body(user);
+			return ResponseEntity.ok().body(user);
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					Util.populateStatus(ErrorMessageConstants.CODE_BAD_REQUEST,
+							ErrorMessageConstants.BAD_REQUEST_ID_NOT_EXIST));
+		}		
 	}
 
 	@PostMapping("/profile/personal")

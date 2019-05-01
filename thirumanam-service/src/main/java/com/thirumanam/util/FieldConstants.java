@@ -34,5 +34,6 @@ public class FieldConstants {
 	public static final String OCCUPATION = "occupation";
 	public static final String INCOME = "income";
 	public static final String MTONGUE = "mtongue";
+	public static final String ISFP = "isFP";
 	
 }

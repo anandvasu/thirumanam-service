@@ -91,7 +91,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	
 	@Override
 	public List<User> getFeaturedProfiles() {
-		Criteria criteria = Criteria.where("isFP").exists(true);
+		Criteria criteria = Criteria.where(FieldConstants.ISFP).exists(true);
 		Query query = new Query();
 		query.fields().include(FieldConstants.FIRSTNAME)
 					  .include(FieldConstants.LASTNAME)
@@ -155,19 +155,26 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 			}
 			
 			if(searchCriteria.getFoodHabits() != null && !searchCriteria.getFoodHabits().isEmpty()) {
-				criteria.and(FieldConstants.FOODHABIT).in(searchCriteria.getFoodHabits());				
+				criteria.and(FieldConstants.FOODHABIT).in(searchCriteria.getFoodHabits());					
 			}
 			
 			if(searchCriteria.getSmokingHabits() != null && !searchCriteria.getSmokingHabits().isEmpty()) {
-				criteria.and(FieldConstants.SMOKINGHABIT).in(searchCriteria.getSmokingHabits());				
+				Criteria smokingCriteria = new Criteria();
+				smokingCriteria.orOperator(Criteria.where(FieldConstants.SMOKINGHABIT).exists(false))
+				.and(FieldConstants.SMOKINGHABIT).in(searchCriteria.getSmokingHabits());
+				
 			}
 			
 			if(searchCriteria.getDrinkingHabits() != null && !searchCriteria.getDrinkingHabits().isEmpty()) {
-				criteria.and(FieldConstants.DRINKINGHABIT).in(searchCriteria.getDrinkingHabits());				
+				Criteria drinkingHabit = new Criteria();
+				drinkingHabit.orOperator(Criteria.where(FieldConstants.DRINKINGHABIT).exists(false))
+				.and(FieldConstants.DRINKINGHABIT).in(searchCriteria.getDrinkingHabits());
 			}
 			
-			if(searchCriteria.getBodyTypes() != null && !searchCriteria.getBodyTypes().isEmpty()) {
-				criteria.and(FieldConstants.BODYTYPE).in(searchCriteria.getBodyTypes());				
+			if(searchCriteria.getBodyTypes() != null && !searchCriteria.getBodyTypes().isEmpty()) {	
+				Criteria bodyType = new Criteria();
+				bodyType.orOperator(Criteria.where(FieldConstants.BODYTYPE).exists(false))
+				.and(FieldConstants.BODYTYPE).in(searchCriteria.getBodyTypes());
 			}
 			
 			if(searchCriteria.getEmployments() != null && !searchCriteria.getEmployments().isEmpty()) {
