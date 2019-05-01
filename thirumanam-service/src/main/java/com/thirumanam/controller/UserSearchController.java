@@ -98,24 +98,8 @@ public class UserSearchController {
 		Optional<User> userObj = userRepository.findById(profileId);
 		User user = userObj.get();		
 		return ResponseEntity.ok().body(user);
-	}
-	
-	
-	
-	
-	private SearchCriteria buildSearchCriteria(Preference preference) {
-		SearchCriteria searchCriteria = new SearchCriteria();
-		searchCriteria.setAgeLess(preference.getAgeTo());
-		searchCriteria.setAgeGreater(preference.getAgeFrom());
-		searchCriteria.setMinHeight(preference.getMinHeight());
-		searchCriteria.setMaxHeight(preference.getMaxHeight());
-		searchCriteria.setGender(preference.getGender());	
-		searchCriteria.setReligions(preference.getReligions());
-		searchCriteria.setCountries(preference.getCountries());
-		searchCriteria.setStates(preference.getStates());
-		searchCriteria.setMaritalStatus(preference.getmStatus());
-		return searchCriteria;
-	}
+	}	
+		
 	
 	@GetMapping("/{profileId}/preference/matches")
 	public ResponseEntity<MyMatchResponse> getMyProfileMatches(
@@ -127,7 +111,7 @@ public class UserSearchController {
 			List<User> usersList = null;					
 			Optional<Preference> prefObj  = prefRepository.findById(profileId);
 			if(prefObj.isPresent()) {
-				SearchCriteria searchCriteria = buildSearchCriteria(prefObj.get());
+				SearchCriteria searchCriteria = prefObj.get().getSearchCriteria();
 				
 				//Get Blocked Profiles 
 				List<String> blockedProfileIds = new ArrayList<String>();

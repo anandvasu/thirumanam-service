@@ -31,16 +31,7 @@ public class PreferenceController {
 		Preference preference = null;
 		if(prefObj.isPresent()) {
 			preference = prefObj.get();
-			preference.setAgeFrom(inputPreference.getAgeFrom());
-			preference.setAgeTo(inputPreference.getAgeTo());
-			preference.setmStatus(inputPreference.getmStatus());
-			preference.setMaxHeight(inputPreference.getMaxHeight());
-			preference.setMinHeight(inputPreference.getMinHeight());
-			preference.setFoodHabits(inputPreference.getFoodHabits());
-			preference.setReligions(inputPreference.getReligions());
-			preference.setCastes(inputPreference.getCastes());
-			preference.setCountries(inputPreference.getCountries());
-			preference.setStates(inputPreference.getStates());
+			preference.setSearchCriteria(inputPreference.getSearchCriteria());
 		} else {
 			preference = inputPreference;
 		}		
