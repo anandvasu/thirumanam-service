@@ -82,15 +82,15 @@ public class UserSecurityController {
 			return ResponseEntity.badRequest().body( Util.populateStatus(400, "Email already exists."));
 		}		
 		
-		//String externalId = "test";
+		String externalId = "test";
 				
-		String externalId = cognitoHelper.SignUpUser(
+		/*String externalId = cognitoHelper.SignUpUser(
 				inputUser.getUsername(), 
 				inputUser.getPassword(), 
 				inputUser.getEmail(), 
 				inputUser.getPhCountryCode()+inputUser.getPhonenumber(), 
 				inputUser.getLastName(), 
-				inputUser.getFirstName());
+				inputUser.getFirstName());*/
 		
 		//Split Day, Month, Year. Calculate age. Update all of these into User object.
 		if (externalId != null) {
