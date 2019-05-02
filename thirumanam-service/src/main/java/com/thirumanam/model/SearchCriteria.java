@@ -13,6 +13,7 @@ public class SearchCriteria {
 	private int ageLess;
 	private String gender;		
 	private String income;	
+	private boolean pageClick;	
 	
 	private List<String> bodyTypes = new ArrayList<String>();
 	private List<String> showProfile = new ArrayList<String>();	
@@ -39,6 +40,13 @@ public class SearchCriteria {
 	private List<String> drinkingHabits = new ArrayList<String>();	
 	
 	private List<String> blockedProfiles = new ArrayList<String>();
+	
+	public boolean isPageClick() {
+		return pageClick;
+	}
+	public void setPageClick(boolean pageClick) {
+		this.pageClick = pageClick;
+	}
 	
 	public List<String> getShowProfile() {
 		return showProfile;

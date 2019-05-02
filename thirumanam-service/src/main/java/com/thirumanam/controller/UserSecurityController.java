@@ -82,15 +82,15 @@ public class UserSecurityController {
 			return ResponseEntity.badRequest().body( Util.populateStatus(400, "Email already exists."));
 		}		
 		
-		String externalId = "test";
+		//String externalId = "test";
 				
-		/*String externalId = cognitoHelper.SignUpUser(
+		String externalId = cognitoHelper.SignUpUser(
 				inputUser.getUsername(), 
 				inputUser.getPassword(), 
 				inputUser.getEmail(), 
 				inputUser.getPhCountryCode()+inputUser.getPhonenumber(), 
 				inputUser.getLastName(), 
-				inputUser.getFirstName());*/
+				inputUser.getFirstName());
 		
 		//Split Day, Month, Year. Calculate age. Update all of these into User object.
 		if (externalId != null) {
@@ -420,8 +420,15 @@ public class UserSecurityController {
 	@PostMapping("/accesscode/verify")
 	public ResponseEntity<Status> confirmAccessCode(@RequestBody AccessCode accessCode) throws URISyntaxException {	
 		try {
-			if(!cognitoHelper.VerifyAccessCode(accessCode.getUsername(), accessCode.getAccessCode())) {
+			if(!cognitoHelper.VerifyAccessCode(accessCode.getUsername(), accessCode.getAccessCode())) {				
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			} else {
+				List<User> userObj = userRepository.findByEmail(accessCode.getUsername());
+				if(!userObj.isEmpty()) {
+					User user = userObj.get(0);
+					user.setConfirmed(true);
+					userRepository.save(user);
+				}
 			}
 		} catch (CodeMismatchException exp) {
 			return ResponseEntity.ok().body(

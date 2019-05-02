@@ -257,44 +257,50 @@ public class UserController {
 			@RequestBody User inputUser) throws URISyntaxException {
 		
 		Optional<User> userObj = userRepository.findById(inputUser.getId());
-		User user = userObj.get();
-		
-		if(!user.isConfirmed() ) {
-			user.setmStatus(inputUser.getmStatus());
-			user.setWeight(inputUser.getWeight());
-			user.setHeightCm(inputUser.getHeightCm());
-			user.setHeightInch(inputUser.getHeightInch());
-			user.setFamilyType(inputUser.getFamilyType());
-			user.setFamilyValue(inputUser.getFamilyValue());
-			user.setBodyType(inputUser.getBodyType());
-			user.setDisabled(inputUser.getDisabled());
-			user.setFoodHabit(inputUser.getFoodHabit());
-			user.setDisablityInfo(inputUser.getDisablityInfo());	
+		if(userObj.isPresent()) {
+			User user = userObj.get();
 			
-			user.setCaste(inputUser.getCaste());
-			user.setSubcaste(inputUser.getSubcaste());
-			user.setGothram(inputUser.getGothram());
-			user.setDhosham(inputUser.getDhosham());	
-			
-			user.setCountry(inputUser.getCountry());
-			user.setPstate(inputUser.getPstate());
-			user.setCity(inputUser.getCity());
-			user.setDistrict(inputUser.getDistrict());
-			
-			user.setEducation(inputUser.getEducation());
-			user.setOccupation(inputUser.getOccupation());
-			user.setEmployment(inputUser.getEmployment());
-			user.setIncome(inputUser.getIncome());	
-			
-			user.setAbout(inputUser.getAbout());	
-			
-			userRepository.save(user);
-			return ResponseEntity.noContent().build();	
+			if(!user.isConfirmed() ) {
+				user.setmStatus(inputUser.getmStatus());
+				user.setWeight(inputUser.getWeight());
+				user.setHeightCm(inputUser.getHeightCm());
+				user.setHeightInch(inputUser.getHeightInch());
+				user.setFamilyType(inputUser.getFamilyType());
+				user.setFamilyValue(inputUser.getFamilyValue());
+				user.setBodyType(inputUser.getBodyType());
+				user.setDisabled(inputUser.getDisabled());
+				user.setFoodHabit(inputUser.getFoodHabit());
+				user.setDisablityInfo(inputUser.getDisablityInfo());	
+				
+				user.setCaste(inputUser.getCaste());
+				user.setSubcaste(inputUser.getSubcaste());
+				user.setGothram(inputUser.getGothram());
+				user.setDhosham(inputUser.getDhosham());	
+				
+				user.setCountry(inputUser.getCountry());
+				user.setPstate(inputUser.getPstate());
+				user.setCity(inputUser.getCity());
+				user.setDistrict(inputUser.getDistrict());
+				
+				user.setEducation(inputUser.getEducation());
+				user.setOccupation(inputUser.getOccupation());
+				user.setEmployment(inputUser.getEmployment());
+				user.setIncome(inputUser.getIncome());	
+				
+				user.setAbout(inputUser.getAbout());	
+				
+				userRepository.save(user);
+				return ResponseEntity.noContent().build();	
+			} else {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+						Util.populateStatus(ErrorMessageConstants.CODE_UNAUTHORIZED,
+								ErrorMessageConstants.MESSAGE_UNAUTHORIZED));
+			}	
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
 					Util.populateStatus(ErrorMessageConstants.CODE_UNAUTHORIZED,
 							ErrorMessageConstants.MESSAGE_UNAUTHORIZED));
-		}	
+		}
 	}
 	
 	@PutMapping("/completeprofile")

@@ -2,6 +2,7 @@ mongo "mongodb+srv://cluster0-thph3.mongodb.net/test" --username anand
 
 db.user.find({"email":"anandakumarv@gmail.com"})
 db.user.find({"email":"nndharbar@gmail.com"})
+db.user.find({"email":"adtpushpa@gmail.com"}).pretty()
 
 db.user.remove({"email":"anandakumarv@gmail.com"})
 db.user.remove({"email":"adtpushpa@gmail.com"})

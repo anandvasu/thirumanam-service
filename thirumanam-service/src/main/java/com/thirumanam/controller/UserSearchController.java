@@ -58,7 +58,7 @@ public class UserSearchController {
 	@PostMapping("/")
 	public ResponseEntity<List<User>> searchUser(@RequestBody SearchCriteria searchCriteria) {
 		long totalUsers = searchCriteria.getTotalDocs();
-		if(totalUsers == 0) {
+		if(!searchCriteria.isPageClick()) {
 			totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	
 		}
 		
