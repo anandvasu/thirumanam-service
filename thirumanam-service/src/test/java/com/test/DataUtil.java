@@ -60,7 +60,7 @@ public class DataUtil {
 		
 		//Set Professional Detail
 		inputUser.setEducation("AE");
-		inputUser.setOccupation("P");
+		inputUser.setOccupation(30);
 		inputUser.setEmployment("Software Engineer");
 		inputUser.setIncome(100000000L);
 		inputUser.setFP(featureProfile);		

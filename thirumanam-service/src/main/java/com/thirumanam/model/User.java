@@ -43,7 +43,7 @@ public class User {
 	private String horoscope;	
 	private String education;
 	private String employment;
-	private String occupation;	
+	private int occupation;		
 	private Long income;		
 	private String mCountryCode;
 	private String mobile;			
@@ -65,6 +65,14 @@ public class User {
 	private String otherState;
 	private String otherDistrict;
 	private int mtongue;
+	
+	public int getOccupation() {
+		return occupation;
+	}
+
+	public void setOccupation(int occupation) {
+		this.occupation = occupation;
+	}
 	
 	public int getMtongue() {
 		return mtongue;
@@ -88,16 +96,8 @@ public class User {
 
 	public void setSmokingHabit(String smokingHabit) {
 		this.smokingHabit = smokingHabit;
-	}
-	
-	public String getOccupation() {
-		return occupation;
-	}
-
-	public void setOccupation(String occupation) {
-		this.occupation = occupation;
-	}
-	
+	}	
+		
 	public int getGothram() {
 		return gothram;
 	}

@@ -33,7 +33,7 @@ public class SearchCriteria {
 		
 	private List<String> educations = new ArrayList<String>();	
 	private List<String> employments = new ArrayList<String>();
-	private List<String> occupations = new ArrayList<String>();	
+	private List<Integer> occupations = new ArrayList<Integer>();	
 	
 	private List<String> foodHabits = new ArrayList<String>();	
 	private List<String> smokingHabits = new ArrayList<String>();		
@@ -82,10 +82,10 @@ public class SearchCriteria {
 		this.income = income;
 	}
 	
-	public List<String> getOccupations() {
+	public List<Integer> getOccupations() {
 		return occupations;
 	}
-	public void setOccupations(List<String> occupations) {
+	public void setOccupations(List<Integer> occupations) {
 		this.occupations = occupations;
 	}
 	
