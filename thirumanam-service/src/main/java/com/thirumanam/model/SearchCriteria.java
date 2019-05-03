@@ -12,7 +12,7 @@ public class SearchCriteria {
 	private int ageGreater;
 	private int ageLess;
 	private String gender;		
-	private String income;	
+	private int income;	
 	private boolean pageClick;	
 	
 	private List<String> bodyTypes = new ArrayList<String>();
@@ -75,10 +75,10 @@ public class SearchCriteria {
 		this.drinkingHabits = drinkingHabits;
 	}
 	
-	public String getIncome() {
+	public int getIncome() {
 		return income;
 	}
-	public void setIncome(String income) {
+	public void setIncome(int income) {
 		this.income = income;
 	}
 	

@@ -44,7 +44,7 @@ public class User {
 	private String education;
 	private String employment;
 	private int occupation;		
-	private Long income;		
+	private int income;			
 	private String mCountryCode;
 	private String mobile;			
 	private String status;
@@ -65,6 +65,14 @@ public class User {
 	private String otherState;
 	private String otherDistrict;
 	private int mtongue;
+	
+	public int getIncome() {
+		return income;
+	}
+
+	public void setIncome(int income) {
+		this.income = income;
+	}
 	
 	public int getOccupation() {
 		return occupation;
@@ -496,11 +504,5 @@ public class User {
 	}
 	public void setbYear(int bYear) {
 		this.bYear = bYear;
-	}
-	public Long getIncome() {
-		return income;
-	}
-	public void setIncome(Long income) {
-		this.income = income;
 	}
 }

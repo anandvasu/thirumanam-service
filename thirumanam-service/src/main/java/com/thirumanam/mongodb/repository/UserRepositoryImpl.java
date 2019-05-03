@@ -205,15 +205,16 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 				criteria.and(FieldConstants.HOROSCOPE).exists(false);
 			}			
 			
-			if(searchCriteria.getIncome() != null && !searchCriteria.getIncome().isEmpty()) {
-				if(searchCriteria.getIncome().indexOf(ThirumanamConstant.HYPHEN) > 0) {
+			if(searchCriteria.getIncome() != 0) {
+				/*if(searchCriteria.getIncome().indexOf(ThirumanamConstant.HYPHEN) > 0) {
 					String incomeArr[] = searchCriteria.getIncome().split(ThirumanamConstant.HYPHEN);
 					Long lowValue = Long.parseLong(incomeArr[0].trim());
 					Long highValue = Long.parseLong(incomeArr[1].trim());
 					criteria.and(FieldConstants.INCOME).gt(lowValue).lt(highValue);
 				} else {
 					criteria.and(FieldConstants.INCOME).gt(Long.parseLong(searchCriteria.getIncome()));	
-				}							
+				}	*/		
+				criteria.and(FieldConstants.INCOME).is(searchCriteria.getIncome());
 			}		
 			
 			if(searchCriteria.getMtongues() != null && !searchCriteria.getMtongues().isEmpty()) {
