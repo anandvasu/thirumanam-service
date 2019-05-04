@@ -5,6 +5,7 @@ import java.util.List;
 
 public class SearchCriteria {
 
+	private String loggedInUserId;
 	private long totalDocs;	
 	private int minHeight;	
 	private int maxHeight;
@@ -23,6 +24,7 @@ public class SearchCriteria {
 	private List<Integer> mtongues = new ArrayList<Integer>();	
 	
 	private List<String> countries  = new ArrayList<String>();
+	
 	private List<Integer> states = new ArrayList<Integer>();
 	private List<Integer> districts = new ArrayList<Integer>();	
 	
@@ -40,6 +42,13 @@ public class SearchCriteria {
 	private List<String> drinkingHabits = new ArrayList<String>();	
 	
 	private List<String> blockedProfiles = new ArrayList<String>();
+	
+	public String getLoggedInUserId() {
+		return loggedInUserId;
+	}
+	public void setLoggedInUserId(String loggedInUserId) {
+		this.loggedInUserId = loggedInUserId;
+	}
 	
 	public boolean isPageClick() {
 		return pageClick;

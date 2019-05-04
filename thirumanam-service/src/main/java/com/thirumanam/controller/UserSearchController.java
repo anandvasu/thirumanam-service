@@ -58,6 +58,12 @@ public class UserSearchController {
 	@PostMapping("/")
 	public ResponseEntity<List<User>> searchUser(@RequestBody SearchCriteria searchCriteria) {
 		long totalUsers = searchCriteria.getTotalDocs();
+		
+		if(searchCriteria.getLoggedInUserId() != null) {
+			//we should not list the logged in user id in the search. so, adding the logged in user id into the blocked list.
+			searchCriteria.getBlockedProfiles().add(searchCriteria.getLoggedInUserId());
+		}
+		
 		if(!searchCriteria.isPageClick()) {
 			totalUsers = userRepositoryImpl.getSearchCount(searchCriteria);	
 		}
