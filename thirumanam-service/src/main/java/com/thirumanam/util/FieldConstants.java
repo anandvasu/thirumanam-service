@@ -12,6 +12,7 @@ public class FieldConstants {
 	public static final String COUNTRY = "country";
 	public static final String DISTRICT = "district";
 	public static final String AGE = "age";
+	public static final String PROTECT_IMAGE = "protectImage";
 	public static final String HEIGHT_INCH = "heightInch";
 	public static final String HEIGHT_CM = "heightCm";
 	public static final String RELIGION = "religion";

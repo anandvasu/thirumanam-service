@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class User {
 	
+	private boolean protectImage;
+	private boolean protectHscope;		
 	private String id;	
 	private String firstName;
 	private String lastName;	
@@ -65,6 +67,22 @@ public class User {
 	private String otherState;
 	private String otherDistrict;
 	private int mtongue;
+	
+	public boolean isProtectHscope() {
+		return protectHscope;
+	}
+
+	public void setProtectHscope(boolean protectHscope) {
+		this.protectHscope = protectHscope;
+	}
+		
+	public boolean getProtectImage() {
+		return protectImage;
+	}
+
+	public void setProtectImage(boolean protectImage) {
+		this.protectImage = protectImage;
+	}
 	
 	public int getIncome() {
 		return income;

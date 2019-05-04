@@ -66,6 +66,12 @@ public class UserSearchController {
 		int numberOfDocs = (skipnumber +10 < totalUsers) ? 10 : (int)(totalUsers-skipnumber);		
 		
 		List<User> usersList = userRepositoryImpl.searchUserData(searchCriteria, skipnumber, numberOfDocs);	
+		
+		for(User user:usersList) {
+			if(user.getProtectImage()) {
+				user.setThumbImage(null);
+			}
+		}
 						   
 		return ResponseEntity.ok()
 							 .header(ThirumanamConstant.HEADER_TOTAL_DOCS, Long.toString(totalUsers))

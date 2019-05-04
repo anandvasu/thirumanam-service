@@ -74,11 +74,13 @@ public class UserController {
 		User user = null;
 		if(userObj.isPresent()) {
 			user = userObj.get();
-			
-			Optional<UserInfo> userAddtionalDetailObj = userAdditionalDetailRepository.findById(profileId);
-			if(userAddtionalDetailObj.isPresent()) {
-				UserInfo userAdditional = userAddtionalDetailObj.get();
-				user.setImage(userAdditional.getImage());
+			user.setThumbImage(null);			
+			if(!user.getProtectImage()) {
+				Optional<UserInfo> userAddtionalDetailObj = userAdditionalDetailRepository.findById(profileId);
+				if(userAddtionalDetailObj.isPresent()) {
+					UserInfo userAdditional = userAddtionalDetailObj.get();
+					user.setImage(userAdditional.getImage());
+				}
 			}
 			
 			Optional<VisitedProfiles> vProfiles = visitedProfileRepository.findById(profileId);
@@ -363,7 +365,8 @@ public class UserController {
 			
 	@PostMapping("/image")
 	public ResponseEntity<Status> uploadProfileImage(@RequestParam("imageFile") MultipartFile imageFile, 
-			@RequestParam("profileId") String profileId) {
+			@RequestParam("profileId") String profileId,
+			@RequestParam("protectImage") boolean protectImage) {
 		
 		try {
 			
@@ -396,6 +399,7 @@ public class UserController {
 				ImageIO.write(compressedImage, ThirumanamConstant.IMAGE_PNG, outputFile);
 				InputStream compImageInputStream = new FileInputStream(outputFile);
 				user.setThumbImage(Base64.getEncoder().encodeToString(IOUtils.toByteArray(compImageInputStream)));
+				user.setProtectImage(protectImage);
 				userRepository.save(user);		
 				compImageInputStream.close();
 				byteArrInputStream.close();
