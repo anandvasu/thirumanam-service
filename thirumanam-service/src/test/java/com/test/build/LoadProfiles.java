@@ -44,7 +44,7 @@ public class LoadProfiles {
 		user.setFamilyValue("TL");
 		user.setFoodHabit("V");
 		user.setBodyType("AG");
-		user.setEducation("BE");
+		user.setEducation(15);
 		user.setEmployment("P");
 		user.setIncome(160);
 		user.setRegisterdBy("S");

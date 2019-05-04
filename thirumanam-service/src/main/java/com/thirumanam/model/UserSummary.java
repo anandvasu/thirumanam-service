@@ -11,7 +11,7 @@ public class UserSummary {
 	private int bYear;
 	private String gender;
 	private String city;
-	private String education;
+	private int education;
 	private String image;
 	
 	public String getImage() {
@@ -20,10 +20,10 @@ public class UserSummary {
 	public void setImage(String image) {
 		this.image = image;
 	}
-	public String getEducation() {
+	public int getEducation() {
 		return education;
 	}
-	public void setEducation(String education) {
+	public void setEducation(int education) {
 		this.education = education;
 	}
 	public String getProfileId() {

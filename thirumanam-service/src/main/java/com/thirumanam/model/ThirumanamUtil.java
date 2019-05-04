@@ -20,7 +20,7 @@ public class ThirumanamUtil {
 		counter = (user.getFoodHabit() != null) ? (counter + 1) : counter; //14
 		counter = (user.getBodyType() != null) ? (counter + 1) : counter; //15
 		counter = ((user.getHeightCm() != 0) || (user.getHeightInch() != 0 )) ? (counter + 1) : counter; //16
-		counter = (user.getEducation() != null) ? (counter + 1) : counter; //17
+		counter = (user.getEducation() != 0) ? (counter + 1) : counter; //17
 		counter = (user.getEmployment() != null) ? (counter + 1) : counter; //18
 		counter = (user.getIncome() != 0) ? (counter + 1) : counter; //19
 		counter = (user.getImage() != null) ? (counter + 1) : counter; //20

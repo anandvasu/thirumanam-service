@@ -43,7 +43,7 @@ public class User {
 	private int heightCm;
 	private int weight;
 	private String horoscope;	
-	private String education;
+	private int education;	
 	private String employment;
 	private int occupation;		
 	private int income;			
@@ -67,6 +67,14 @@ public class User {
 	private String otherState;
 	private String otherDistrict;
 	private int mtongue;
+	
+	public int getEducation() {
+		return education;
+	}
+
+	public void setEducation(int education) {
+		this.education = education;
+	}
 	
 	public boolean isProtectHscope() {
 		return protectHscope;
@@ -418,13 +426,7 @@ public class User {
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
-	public String getEducation() {
-		return education;
-	}
-	public void setEducation(String education) {
-		this.education = education;
-	}	
-	
+		
 	public String getCity() {
 		return city;
 	}

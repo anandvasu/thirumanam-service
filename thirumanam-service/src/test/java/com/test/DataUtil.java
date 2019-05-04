@@ -59,7 +59,7 @@ public class DataUtil {
 		inputUser.setCity("Villupuram");
 		
 		//Set Professional Detail
-		inputUser.setEducation("AE");
+		inputUser.setEducation(15);
 		inputUser.setOccupation(30);
 		inputUser.setEmployment("P");
 		inputUser.setIncome(100);
