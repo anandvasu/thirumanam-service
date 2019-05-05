@@ -74,8 +74,27 @@ public class UserController {
 		User user = null;
 		if(userObj.isPresent()) {
 			user = userObj.get();
-			user.setThumbImage(null);			
-			if(!user.getProtectImage()) {
+			user.setThumbImage(null);	
+			boolean allowPhoto = false;
+			if(user.getProtectImage()) {	
+				Optional<MessageList> messageListObj = messageRepository.findById(loggedInUserId);
+				if(messageListObj.isPresent()) {
+					MessageList messageList = messageListObj.get();
+					List<Message> sentItems = messageList.getSentItems();
+					for(Message message:sentItems) {
+						if(message.getPartnerMatrimonyId().equals(profileId) &&
+								message.getStatus().equals(ThirumanamConstant.MESSAGE_STATUS_ACCEPTED)) {
+							allowPhoto = true;
+							user.setProtectImage(false);
+							break;
+						}
+					}
+				}	
+			} else {
+				allowPhoto = true;
+			}
+			
+			if(allowPhoto) {
 				Optional<UserInfo> userAddtionalDetailObj = userAdditionalDetailRepository.findById(profileId);
 				if(userAddtionalDetailObj.isPresent()) {
 					UserInfo userAdditional = userAddtionalDetailObj.get();

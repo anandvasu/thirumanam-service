@@ -81,7 +81,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 					  .include(FieldConstants.BYEAR)
 					  .include(FieldConstants.EDUCATION)
 					  .include(FieldConstants.CITY)
-					  .include(FieldConstants.IMAGE);
+					  .include(FieldConstants.THUMB_IMAGE);
 		query.addCriteria(criteria);	
 		if(skipNumber > 0) {
 			query.skip(skipNumber);
