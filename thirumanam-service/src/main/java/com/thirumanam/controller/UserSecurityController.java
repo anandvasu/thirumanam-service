@@ -273,34 +273,31 @@ public class UserSecurityController {
 			AWSLoginResponse awsLoginResponse) throws ThirumanamException {
 		LoginResponse loginResponse = new LoginResponse();
 		loginResponse.setUserConfirmed(awsLoginResponse.isUserConfirmed());
-		if(awsLoginResponse.getExternalId() != null) {
-			if(awsLoginResponse.isUserConfirmed()) {
+		if(awsLoginResponse.getExternalId() != null) {			
 				List<User> userObj = userRepository.findByExternalId(awsLoginResponse.getExternalId());
 				if(!userObj.isEmpty()) {
 					User user = userObj.get(0);
-					loginResponse.setProfileId(user.getId());
-					loginResponse.setFirstName(user.getFirstName());
-					loginResponse.setLastName(user.getLastName());
-					loginResponse.setProfilePerCompleted(ThirumanamUtil.updateProfileCompPercent(user));
-					loginResponse.setGender(user.getGender());
-					loginResponse.setIdToken(awsLoginResponse.getIdToken());
-					loginResponse.setAccessToken(awsLoginResponse.getAccessToken());
-					loginResponse.setStatus(user.getStatus());
-					if(awsLoginResponse.getRefreshToken() != null) {
-						loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
+					if(awsLoginResponse.isUserConfirmed()) {						
+						loginResponse.setFirstName(user.getFirstName());
+						loginResponse.setLastName(user.getLastName());
+						loginResponse.setProfilePerCompleted(ThirumanamUtil.updateProfileCompPercent(user));
+						loginResponse.setGender(user.getGender());
+						loginResponse.setIdToken(awsLoginResponse.getIdToken());
+						loginResponse.setAccessToken(awsLoginResponse.getAccessToken());
+						loginResponse.setStatus(user.getStatus());
+						if(awsLoginResponse.getRefreshToken() != null) {
+							loginResponse.setRefreshToken(awsLoginResponse.getRefreshToken());
+						}
 					}
+					loginResponse.setProfileId(user.getId());
+					loginResponse.setUserName(user.getEmail());					
 					loginResponse.setSuccess(true);
 				} else {
 					throw new ThirumanamException(
 							ErrorMessageConstants.CODE_INVALID_USER_PASSWORD,
 						ErrorMessageConstants.INVALID_USER_PASSWORD);
 				}
-			}			
-		} else {
-			throw new ThirumanamException(
-					ErrorMessageConstants.CODE_INVALID_USER_PASSWORD,
-				ErrorMessageConstants.INVALID_USER_PASSWORD);			
-		}
+			}					
 		return loginResponse;
 	}
 	
